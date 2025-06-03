@@ -26,7 +26,10 @@ class EnvironmentProvider extends ServiceProvider
             'MANAGER_USER_MAIL' => env('MANAGER_USER_MAIL', 'root@madsecurity.com'),
             'MANAGER_USER_PASS' => env('MANAGER_USER_PASS', 'root'),
 
+            'MANAGER_PATH_PREFIX' => env('MANAGER_PATH_PREFIX', 'manager'),
             'MANAGER_HTTP_USER_AGENT' => env('MANAGER_HTTP_USER_AGENT', 'M&DSecurity@Manager'),
+
+            'MANAGER_VERIFICATION_ROUTE' => env('MANAGER_VERIFICATION_ROUTE', 'verify'),
         ];
 
         $errors = [];

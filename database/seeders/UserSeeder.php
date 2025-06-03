@@ -20,6 +20,7 @@ class UserSeeder extends Seeder
                 'name' => env('MANAGER_USER_NAME', 'root'),
                 'email' => $mail,
                 'password' => Hash::make(env('MANAGER_USER_PASS', 'root')),
+                'email_verified_at' => now(),
                 'important' => true,
                 'active' => true,
                 'user_id' => 1,

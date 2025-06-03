@@ -24,6 +24,7 @@ class User extends Authenticatable
         'important',
         'user_id',
         'email_verified_at',
+        'token',
     ];
 
     /**
@@ -48,48 +49,52 @@ class User extends Authenticatable
         'important' => 'boolean',
     ];
 
-    public function superior()
+    // Belongs
+    public function getSuperior()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function subordinates()
+    public function getSubordinates()
     {
         return $this->hasMany(User::class, 'user_id');
     }
 
-    public function permissions()
+    public function getPermissions()
     {
         return $this->hasMany(Permission::class, 'user_id');
     }
 
-    public function policies()
+    public function getPolicies()
     {
         return $this->hasMany(Policy::class, 'user_id');
     }
 
-    public function groups()
+    // Relationships
+    public function policies()
     {
         return $this->belongsToMany(Policy::class, 'policies_users');
     }
 
+    // Businesses
     public function hasPermission(string $action): bool
     {
-        if ($this->groups()->count() === 0)
+        if ($this->policies()->count() === 0)
         {
             return false;
         }
-        $hasAnyPermission = $this->groups()->whereHas('permissions')->exists();
+        $hasAnyPermission = $this->policies()->whereHas('permissions')->exists();
         if (!$hasAnyPermission)
         {
             return false;
         }
-        return $this->groups()->whereHas(
+        return $this->policies()->whereHas(
             'permissions',
             function ($query) use ($action)
             {
                 $query->where('action', $action);
             }
-        )->exists();
+        )
+        ->exists();
     }
 }

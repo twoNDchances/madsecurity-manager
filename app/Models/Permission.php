@@ -16,16 +16,19 @@ class Permission extends Model
         'user_id',
     ];
 
+    // Belongs
+    public function getOwner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Relationships
     public function policies()
     {
         return $this->belongsToMany(Policy::class, 'permissions_policies');
     }
 
-    public function owner()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
+    // Businesses
     private static array $methodDescriptions = [
         'all' => 'Full',
         'viewAny' => 'List',

@@ -5,12 +5,11 @@ namespace App\Services;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 
 class FilamentFormService
 {
-    public function textInput(
-        string $name, ?string $label = null, ?string $placeholder = null, ?array $rules = null
-    )
+    public static function textInput($name, $label = null, $placeholder = null, $rules = null)
     {
         return TextInput::make($name)
         ->label($label)
@@ -19,21 +18,25 @@ class FilamentFormService
         ->rules($rules);
     }
 
-    public function textarea(
-        string $name, ?string $label = null, ?string $placeholder = null
-    )
+    public static function textarea($name, $label = null, $placeholder = null)
     {
         return Textarea::make($name)
         ->label($label)
         ->placeholder($placeholder);
     }
 
-    public function select(
-        string $name, ?string $label = null, array|callable|null $options = null
-    )
+    public static function select($name, $label = null, $options = null, $rules = [])
     {
         return Select::make($name)
         ->label($label)
-        ->options($options);
+        ->options($options)
+        ->rules($rules);
+    }
+
+    public static function toggle($name, $label = null, $rules = [])
+    {
+        return Toggle::make($name)
+        ->label($label)
+        ->rules($rules);
     }
 }

@@ -24,7 +24,6 @@ class PolicySeeder extends Seeder
             ]);
             $permissions = Permission::where('action', 'like', '%.all')->pluck('id');
             $policy->permissions()->sync($permissions);
-            $user->groups()->sync([$policy->id]);
         }
     }
 }
