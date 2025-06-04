@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Wordlist extends Model
+class Tag extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
-        'alias',
+        'color',
         'description',
-        'user_id'
+        'user_id',
     ];
 
     // Belongs
@@ -23,13 +23,8 @@ class Wordlist extends Model
     }
 
     // Relationships
-    public function words()
+    public function wordlists()
     {
-        return $this->hasMany(Word::class, 'wordlist_id');
-    }
-
-    public function tags()
-    {
-        return $this->morphToMany(Tag::class,'taggable');
+        return $this->morphToMany(Wordlist::class, 'taggable');
     }
 }

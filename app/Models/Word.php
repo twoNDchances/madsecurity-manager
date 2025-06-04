@@ -14,6 +14,7 @@ class Word extends Model
         'wordlist_id',
     ];
 
+    // Belongs
     public function wordlist()
     {
         return $this->belongsTo(Wordlist::class, 'wordlist_id');

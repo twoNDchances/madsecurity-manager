@@ -2,10 +2,12 @@
 
 namespace App\Services;
 
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\ToggleButtons;
 
 class FilamentFormService
 {
@@ -39,5 +41,21 @@ class FilamentFormService
         return Toggle::make($name)
         ->label($label)
         ->rules($rules);
+    }
+
+    public static function toggleButton($name, $label = null, $rules = [], $options = [], $colors = [])
+    {
+        return ToggleButtons::make($name)
+        ->label($label)
+        ->rules($rules)
+        ->options($options)
+        ->colors($colors);
+    }
+
+    public static function colorPicker($name, $label = null)
+    {
+        return ColorPicker::make($name)
+        ->label($label)
+        ->default('#000000');
     }
 }

@@ -69,7 +69,8 @@ class PolicyResource extends Resource
             'Permission Name',
             $rules
         )
-        ->required();
+        ->required()
+        ->unique(ignoreRecord: true);
     }
 
     private static function setPermissions()
