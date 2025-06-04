@@ -46,6 +46,10 @@ class ManagerPanelProvider extends PanelProvider
             Authenticate::class,
         ])
         ->favicon(asset('images/logo/favicon.png'))
-        ->sidebarCollapsibleOnDesktop();
+        ->sidebarCollapsibleOnDesktop()
+        ->navigationGroups([
+            'Managements',
+            'Privileges',
+        ]);
     }
 }

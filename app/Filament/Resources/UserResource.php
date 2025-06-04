@@ -4,15 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use App\Services\AuthenticationService;
 use App\Services\FilamentColumnService;
 use App\Services\FilamentFormService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class UserResource extends Resource
 {
@@ -69,8 +70,8 @@ class UserResource extends Resource
         ];
         return FilamentFormService::textInput(
             'name',
+            null,
             'User Name',
-            'Name',
             $rules
         )
         ->required();
@@ -86,8 +87,8 @@ class UserResource extends Resource
         ];
         return FilamentFormService::textInput(
             'email',
+            null,
             'User Email',
-            'user@email.com',
             $rules
         )
         ->required()
@@ -114,8 +115,8 @@ class UserResource extends Resource
         ];
         return FilamentFormService::textInput(
             'password',
+            null,
             'User Password',
-            'S3cr3tp@ssw0rd',
             $rules
         )
         ->required($condition)
@@ -154,10 +155,15 @@ class UserResource extends Resource
 
     private static function setPolicies()
     {
+        $rules = [
+            'nullable',
+            Rule::exists('policies', 'id'),
+        ];
         return FilamentFormService::select(
             'policies',
-            'User Policies',
+            'Policies',
             null,
+            $rules,
         )
         ->relationship('policies', 'name')
         ->multiple()
@@ -198,17 +204,46 @@ class UserResource extends Resource
     {
         return $table
         ->columns([
-            //
+            FilamentColumnService::text('name', null),
+            FilamentColumnService::text('email', null),
+            self::getActivation(),
+            FilamentColumnService::icon('email_verified_at', 'Verified')->boolean(),
+            self::getPolicies(),
+            FilamentColumnService::text('getSuperior.email', 'Created by'),
         ])
         ->filters([
             //
         ])
         ->actions([
-            FilamentColumnService::actionGroup(),
+            FilamentColumnService::actionGroup(
+                delete: false,
+                more: [
+                    FilamentColumnService::deleteUserAction(),
+                ]
+            ),
         ])
         ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
+            FilamentColumnService::deleteUserBulkAction(),
         ]);
+    }
+
+    private static function getActivation()
+    {
+        $user = AuthenticationService::get();
+        if (AuthenticationService::can($user, 'user', 'update'))
+        {
+            return FilamentColumnService::toggle('active', 'Activated');
+        }
+        return FilamentColumnService::icon('active', 'Activated');
+    }
+
+    private static function getPolicies()
+    {
+        return FilamentColumnService::text('policies.name', 'Policies')
+        ->listWithLineBreaks()
+        ->bulleted()
+        ->limitList(5)
+        ->expandableLimitedList();
     }
 
     public static function getRelations(): array

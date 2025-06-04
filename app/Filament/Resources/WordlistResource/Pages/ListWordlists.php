@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Resources\WordlistResource\Pages;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\WordlistResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListUsers extends ListRecords
+class ListWordlists extends ListRecords
 {
-    protected static string $resource = UserResource::class;
+    protected static string $resource = WordlistResource::class;
 
     protected function getHeaderActions(): array
     {

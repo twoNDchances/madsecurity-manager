@@ -14,8 +14,7 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make()
-            ->icon('heroicon-o-trash'),
+            Actions\DeleteAction::make()->icon('heroicon-o-trash'),
         ];
     }
 

@@ -25,7 +25,7 @@ class Permission extends Model
     // Relationships
     public function policies()
     {
-        return $this->belongsToMany(Policy::class, 'permissions_policies');
+        return $this->belongsToMany(Policy::class, 'policies_permissions');
     }
 
     // Businesses
@@ -59,7 +59,7 @@ class Permission extends Model
             {
                 continue;
             }
-            $resource = strtolower(str_replace('Policy', '', class_basename($className)));
+            $resource = strtolower(preg_replace('/Policy$/', '', class_basename($className)));
             $methods = get_class_methods($className);
             foreach ($methods as $method)
             {
@@ -83,5 +83,21 @@ class Permission extends Model
             }
         }
         return $result;
+    }
+
+    public static function getAvailablePermissions(): array
+    {
+        $permissions = [];
+        $allPermissions = self::getPolicyPermissionOptions();
+        $excluded = self::flattenExclusionList();
+        foreach ($allPermissions as $key => $value)
+        {
+            if (in_array($key, $excluded))
+            {
+                continue;
+            }
+            $permissions[$key] = $value;
+        }
+        return $permissions;
     }
 }

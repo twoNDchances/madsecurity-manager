@@ -5,6 +5,8 @@ namespace App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource;
 use App\Mail\VerificationMail;
 use App\Services\AuthenticationService;
+use App\Services\NotificationService;
+use Exception;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -20,9 +22,20 @@ class CreateUser extends CreateRecord
         $data['user_id'] = AuthenticationService::get()?->id;
         if ($data['force_verification'])
         {
-            $token = Hash::make(Str::uuid());
-            $data['token'] = $token;
-            Mail::to($data['email'])->send(new VerificationMail($data['name'], $token));
+            $data['token'] = Str::uuid();
+            try
+            {
+                Mail::to($data['email'])->send(new VerificationMail($data['name'], $data['token']));
+            }
+            catch (Exception $exception)
+            {
+                NotificationService::notify(
+                    'warning',
+                    'Unable to send verification email',
+                    $exception->getMessage(),
+                );
+                $data['email_verified_at'] = now();
+            }
         }
         else
         {

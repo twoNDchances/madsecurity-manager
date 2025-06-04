@@ -22,7 +22,8 @@ class FilamentFormService
     {
         return Textarea::make($name)
         ->label($label)
-        ->placeholder($placeholder);
+        ->placeholder($placeholder)
+        ->rows(6);
     }
 
     public static function select($name, $label = null, $options = null, $rules = [])
