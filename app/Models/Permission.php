@@ -28,6 +28,11 @@ class Permission extends Model
         return $this->belongsToMany(Policy::class, 'policies_permissions');
     }
 
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class,'taggable');
+    }
+
     // Businesses
     private static array $methodDescriptions = [
         'all' => 'Full',

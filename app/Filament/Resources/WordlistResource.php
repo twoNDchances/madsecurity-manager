@@ -7,6 +7,7 @@ use App\Filament\Resources\WordlistResource\Pages;
 use App\Models\Wordlist;
 use App\Services\FilamentColumnService;
 use App\Services\FilamentFormService;
+use App\Services\TagFieldService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -95,17 +96,7 @@ class WordlistResource extends Resource
 
     private static function setTags()
     {
-        $former = [
-            TagResource::main(),
-        ];
-        $creator = fn($data) => CreateTag::callByStatic($data)->id;
-        return FilamentFormService::select('tags')
-        ->relationship('tags', 'name')
-        ->createOptionForm($former)
-        ->createOptionUsing($creator)
-        ->searchable()
-        ->multiple()
-        ->preload();
+        return TagFieldService::setTags();
     }
 
     private static function setDescription()
@@ -171,17 +162,7 @@ class WordlistResource extends Resource
 
     private static function getTags()
     {
-        $color = function($record, $state)
-        {
-            $tags = $record->tags()->pluck('color', 'name')->toArray();
-            return Color::hex($tags[$state]);
-        };
-        return FilamentColumnService::text('tags.name')
-        ->badge()
-        ->color($color)
-        ->listWithLineBreaks()
-        ->limitList(3)
-        ->expandableLimitedList();
+        return TagFieldService::getTags();
     }
 
     private static function getOwner()

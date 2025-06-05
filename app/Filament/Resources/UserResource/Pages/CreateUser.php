@@ -8,6 +8,7 @@ use App\Services\AuthenticationService;
 use App\Services\NotificationService;
 use Exception;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
@@ -42,6 +43,12 @@ class CreateUser extends CreateRecord
             $data['email_verified_at'] = now();
         }
         return $data;
+    }
+
+    public static function callByStatic(array $data): Model
+    {
+        $mutater = (new static())->mutateFormDataBeforeCreate($data);
+        return (new static())->handleRecordCreation($mutater);
     }
 
     protected function getRedirectUrl(): string

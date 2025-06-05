@@ -76,6 +76,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Policy::class, 'policies_users');
     }
 
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class,'taggable');
+    }
+
     // Businesses
     public function hasPermission(string $action): bool
     {

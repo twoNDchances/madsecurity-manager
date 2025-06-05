@@ -32,5 +32,10 @@ class Policy extends Model
         return $this->belongsToMany(User::class, 'policies_users');
     }
 
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class,'taggable');
+    }
+
     // Businesses
 }

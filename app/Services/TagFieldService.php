@@ -1,0 +1,40 @@
+<?php
+
+namespace App\Services;
+
+use App\Filament\Resources\TagResource;
+use App\Filament\Resources\TagResource\Pages\CreateTag;
+use Filament\Support\Colors\Color;
+
+class TagFieldService
+{
+    public static function setTags()
+    {
+        $former = [
+            TagResource::main(),
+        ];
+        $creator = fn($data) => CreateTag::callByStatic($data)->id;
+        return FilamentFormService::select('tags')
+        ->relationship('tags', 'name')
+        ->createOptionForm($former)
+        ->createOptionUsing($creator)
+        ->searchable()
+        ->multiple()
+        ->preload();
+    }
+
+    public static function getTags()
+    {
+        $color = function($record, $state)
+        {
+            $tags = $record->tags()->pluck('color', 'name')->toArray();
+            return Color::hex($tags[$state]);
+        };
+        return FilamentColumnService::text('tags.name')
+        ->badge()
+        ->color($color)
+        ->listWithLineBreaks()
+        ->limitList(3)
+        ->expandableLimitedList();
+    }
+}

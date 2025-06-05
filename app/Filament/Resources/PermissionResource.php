@@ -6,6 +6,7 @@ use App\Filament\Resources\PermissionResource\Pages;
 use App\Models\Permission;
 use App\Services\FilamentColumnService;
 use App\Services\FilamentFormService;
+use App\Services\TagFieldService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -45,6 +46,7 @@ class PermissionResource extends Resource
         ->schema([
             self::setName(),
             self::setAction(),
+            self::setTags()->columnSpanFull(),
             self::setDescription()->columnSpanFull(),
         ]);
     }
@@ -91,6 +93,11 @@ class PermissionResource extends Resource
         ->searchable();
     }
 
+    private static function setTags()
+    {
+        return TagFieldService::setTags();
+    }
+
     private static function setDescription()
     {
         return FilamentFormService::textarea(
@@ -122,11 +129,12 @@ class PermissionResource extends Resource
     {
         return $table
         ->columns([
-            FilamentColumnService::text('name'),
+            self::getName(),
             self::getResource(),
             self::getAction(),
             self::getPolicies(),
-            FilamentColumnService::text('getOwner.email', 'Created by'),
+            self::getTags(),
+            self::getOwner(),
         ])
         ->filters([
             //
@@ -137,6 +145,11 @@ class PermissionResource extends Resource
         ->bulkActions([
             Tables\Actions\DeleteBulkAction::make(),
         ]);
+    }
+
+    private static function getName()
+    {
+        return FilamentColumnService::text('name');
     }
 
     private static function getResource()
@@ -158,6 +171,16 @@ class PermissionResource extends Resource
         ->bulleted()
         ->limitList(5)
         ->expandableLimitedList();
+    }
+
+    private static function getTags()
+    {
+        return TagFieldService::getTags();
+    }
+
+    private static function getOwner()
+    {
+        return FilamentColumnService::text('getOwner.email', 'Created by');
     }
 
     public static function getRelations(): array

@@ -23,8 +23,23 @@ class Tag extends Model
     }
 
     // Relationships
+    public function permissions()
+    {
+        return $this->morphedByMany(Permission::class, 'taggable');
+    }
+
+    public function policies()
+    {
+        return $this->morphedByMany(Policy::class, 'taggable');
+    }
+
+    public function users()
+    {
+        return $this->morphedByMany(User::class, 'taggable');
+    }
+
     public function wordlists()
     {
-        return $this->morphToMany(Wordlist::class, 'taggable');
+        return $this->morphedByMany(Wordlist::class, 'taggable');
     }
 }

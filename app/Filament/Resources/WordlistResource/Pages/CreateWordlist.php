@@ -12,36 +12,48 @@ class CreateWordlist extends CreateRecord
 {
     protected static string $resource = WordlistResource::class;
 
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['user_id'] = AuthenticationService::get()?->id;
+        $words = array_filter(array_map(
+            'trim',
+            explode("\n", $data['content'])
+        ));
+        $batchSize = 10000;
+        $data['content'] = array_chunk($words, $batchSize);
+        return $data;
+    }
+
     protected function handleRecordCreation(array $data): Model
     {
         $wordlist = static::getModel()::create([
             'name' => $data['name'],
             'alias' => $data['alias'],
             'description' => $data['description'],
-            'user_id' => AuthenticationService::get()?->id,
+            'user_id' => $data['user_id'],
         ]);
-        $words = array_filter(array_map(
-            'trim',
-            explode("\n", $data['content'])
-        ));
         $now = now();
-        $batchSize = 10000;
-        $chunks = array_chunk($words, $batchSize);
-        foreach ($chunks as $chunk)
+        foreach ($data['content'] as $chunk)
         {
             $records = [];
             foreach ($chunk as $line)
             {
                 $records[] = [
                     'content' => $line,
+                    'wordlist_id' => $wordlist->id,
                     'created_at' => $now,
                     'updated_at' => $now,
-                    'wordlist_id' => $wordlist->id,
                 ];
             }
             Word::insert($records);
         }
         return $wordlist;
+    }
+
+    public static function callByStatic(array $data): Model
+    {
+        $mutater = (new static())->mutateFormDataBeforeCreate($data);
+        return (new static())->handleRecordCreation($mutater);
     }
 
     protected function getRedirectUrl(): string

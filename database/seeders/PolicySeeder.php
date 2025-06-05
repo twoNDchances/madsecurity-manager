@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Permission;
 use App\Models\Policy;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -24,6 +25,7 @@ class PolicySeeder extends Seeder
             ]);
             $permissions = Permission::where('action', 'like', '%.all')->pluck('id');
             $policy->permissions()->sync($permissions);
+            Tag::where('name', 'default assets')->first()->policies()->sync($policy->id);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Permission;
+use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -16,13 +17,14 @@ class PermissionSeeder extends Seeder
         $user = User::where('email', env('MANAGER_USER_MAIL', 'root@madsecurity.com'))->first()->id;
         $policies = Permission::getPolicyPermissionOptions();
         $excluded = Permission::flattenExclusionList();
+        $ids = [];
         foreach ($policies as $key => $value)
         {
             if (in_array($key, $excluded))
             {
                 continue;
             }
-            Permission::createOrFirst(
+            $permsision = Permission::createOrFirst(
                 [
                     'name' => $value,
                     'action' => $key
@@ -33,6 +35,8 @@ class PermissionSeeder extends Seeder
                     'user_id' => $user,
                 ]
             );
+            $ids[] = $permsision->id;
         }
+        Tag::where('name', 'default assets')->first()->permissions()->sync($ids);
     }
 }

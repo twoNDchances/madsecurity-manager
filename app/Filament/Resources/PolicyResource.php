@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\PermissionResource\Pages\CreatePermission;
 use App\Filament\Resources\PolicyResource\Pages;
+use App\Filament\Resources\TagResource\Pages\CreateTag;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Models\Policy;
 use App\Services\FilamentColumnService;
 use App\Services\FilamentFormService;
+use App\Services\TagFieldService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -33,7 +37,7 @@ class PolicyResource extends Resource
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::information()->columns(1)->columnSpan(2),
+            self::information()->columns(2)->columnSpan(2),
             self::scope()->columnSpan(1),
         ]);
     }
@@ -44,7 +48,8 @@ class PolicyResource extends Resource
         ->schema([
             self::setName(),
             self::setPermissions(),
-            self::setDescription(),
+            self::setTags()->columnSpanFull(),
+            self::setDescription()->columnSpanFull(),
         ]);
     }
     
@@ -82,6 +87,7 @@ class PolicyResource extends Resource
         $former = [
             PermissionResource::main(),
         ];
+        $creator = fn($data) => CreatePermission::callByStatic($data);
         return FilamentFormService::select(
             'permissions',
             'Permissions',
@@ -92,7 +98,13 @@ class PolicyResource extends Resource
         ->multiple()
         ->searchable()
         ->preload()
-        ->createOptionForm($former);
+        ->createOptionForm($former)
+        ->createOptionUsing($creator);
+    }
+
+    private static function setTags()
+    {
+        return TagFieldService::setTags();
     }
 
     private static function setDescription()
@@ -113,6 +125,7 @@ class PolicyResource extends Resource
         $former = [
             UserResource::main(),
         ];
+        $creator = fn($data) => CreateUser::callByStatic($data);
         return FilamentFormService::select(
             'users',
             'Users',
@@ -123,17 +136,19 @@ class PolicyResource extends Resource
         ->multiple()
         ->searchable()
         ->preload()
-        ->createOptionForm($former);
+        ->createOptionForm($former)
+        ->createOptionUsing($creator);
     }
 
     public static function table(Table $table): Table
     {
         return $table
         ->columns([
-            FilamentColumnService::text('name'),
+            self::getName(),
             self::getUsers(),
             self::getPermissions(),
-            FilamentColumnService::text('getOwner.email', 'Created by'),
+            self::getTags(),
+            self::getOwner(),
         ])
         ->filters([
             //
@@ -144,6 +159,11 @@ class PolicyResource extends Resource
         ->bulkActions([
             Tables\Actions\DeleteBulkAction::make(),
         ]);
+    }
+
+    private static function getName()
+    {
+        return FilamentColumnService::text('name');
     }
 
     private static function getUsers()
@@ -162,6 +182,16 @@ class PolicyResource extends Resource
         ->bulleted()
         ->limitList(5)
         ->expandableLimitedList();
+    }
+
+    private static function getTags()
+    {
+        return TagFieldService::getTags();
+    }
+
+    private static function getOwner()
+    {
+        return FilamentColumnService::text('getOwner.email', 'Created by');
     }
 
     public static function getRelations(): array

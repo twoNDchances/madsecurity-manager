@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\AuthenticationService;
 use App\Services\FilamentColumnService;
 use App\Services\FilamentFormService;
+use App\Services\TagFieldService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
@@ -47,6 +48,7 @@ class UserResource extends Resource
             self::setName(),
             self::setEmail(),
             self::setPassword()->columnSpanFull(),
+            self::setTags()->columnSpanFull(),
             self::forceVerification()->columnSpanFull(),
         ]);
     }
@@ -137,6 +139,11 @@ class UserResource extends Resource
         ->action($action);
     }
 
+    private static function setTags()
+    {
+        return TagFieldService::setTags();
+    }
+
     private static function forceVerification()
     {
         $condition = fn($livewire) => $livewire instanceOf CreateRecord;
@@ -204,12 +211,13 @@ class UserResource extends Resource
     {
         return $table
         ->columns([
-            FilamentColumnService::text('name', null),
-            FilamentColumnService::text('email', null),
+            self::getName(),
+            self::getEmail(),
             self::getActivation(),
-            FilamentColumnService::icon('email_verified_at', 'Verified')->boolean(),
+            self::getVerified(),
             self::getPolicies(),
-            FilamentColumnService::text('getSuperior.email', 'Created by'),
+            self::getTags(),
+            self::getOwner(),
         ])
         ->filters([
             //
@@ -227,6 +235,16 @@ class UserResource extends Resource
         ]);
     }
 
+    private static function getName()
+    {
+        return FilamentColumnService::text('name', null);
+    }
+
+    private static function getEmail()
+    {
+        return FilamentColumnService::text('email', null);
+    }
+
     private static function getActivation()
     {
         $user = AuthenticationService::get();
@@ -237,6 +255,11 @@ class UserResource extends Resource
         return FilamentColumnService::icon('active', 'Activated');
     }
 
+    private static function getVerified()
+    {
+        return FilamentColumnService::icon('email_verified_at', 'Verified')->boolean();
+    }
+
     private static function getPolicies()
     {
         return FilamentColumnService::text('policies.name', 'Policies')
@@ -244,6 +267,16 @@ class UserResource extends Resource
         ->bulleted()
         ->limitList(5)
         ->expandableLimitedList();
+    }
+
+    private static function getTags()
+    {
+        return TagFieldService::getTags();
+    }
+
+    private static function getOwner()
+    {
+        return FilamentColumnService::text('getSuperior.email', 'Created by');
     }
 
     public static function getRelations(): array

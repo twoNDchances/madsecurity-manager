@@ -91,6 +91,10 @@ class TagResource extends Resource
         ->columns([
             self::getName(),
             self::getColor(),
+            self::getTypes('permissions.name'),
+            self::getTypes('policies.name'),
+            self::getTypes('users.email'),
+            self::getTypes('wordlists.alias'),
             self::getOwner(),
         ])
         ->filters([
@@ -113,12 +117,24 @@ class TagResource extends Resource
 
     private static function getName()
     {
-        return FilamentColumnService::text('name');
+        $description = fn($record) => $record->description;
+        return FilamentColumnService::text('name')
+        ->description($description)
+        ->wrap();
     }
 
     private static function getColor()
     {
         return FilamentColumnService::color('color');
+    }
+
+    private static function getTypes($name)
+    {
+        return FilamentColumnService::text($name)
+        ->listWithLineBreaks()
+        ->limitList(3)
+        ->expandableLimitedList()
+        ->wrap();
     }
 
     private static function getOwner()
