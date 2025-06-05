@@ -23,6 +23,11 @@ class Tag extends Model
     }
 
     // Relationships
+    public function composers()
+    {
+        return $this->morphedByMany(Composer::class, 'taggable');
+    }
+
     public function permissions()
     {
         return $this->morphedByMany(Permission::class, 'taggable');

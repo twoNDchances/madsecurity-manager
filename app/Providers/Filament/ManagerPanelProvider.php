@@ -51,8 +51,8 @@ class ManagerPanelProvider extends PanelProvider
         ->sidebarCollapsibleOnDesktop()
         ->navigationGroups([
             'Managements',
+            'Extensions',
             'Privileges',
-            'Classifies',
         ])
         ->plugins([
             QuickCreatePlugin::make(),
