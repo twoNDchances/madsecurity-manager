@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\TagResource\Pages\CreateTag;
 use App\Filament\Resources\WordlistResource\Pages;
 use App\Models\Wordlist;
 use App\Services\FilamentColumnService;
@@ -9,6 +10,7 @@ use App\Services\FilamentFormService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -43,6 +45,7 @@ class WordlistResource extends Resource
         ->schema([
             self::setName(),
             self::setAlias(),
+            self::setTags()->columnSpanFull(),
             self::setDescription()->columnSpanFull(),
         ]);
     }
@@ -90,6 +93,21 @@ class WordlistResource extends Resource
         ->unique(ignoreRecord: true);
     }
 
+    private static function setTags()
+    {
+        $former = [
+            TagResource::main(),
+        ];
+        $creator = fn($data) => CreateTag::callByStatic($data)->id;
+        return FilamentFormService::select('tags')
+        ->relationship('tags', 'name')
+        ->createOptionForm($former)
+        ->createOptionUsing($creator)
+        ->searchable()
+        ->multiple()
+        ->preload();
+    }
+
     private static function setDescription()
     {
         return FilamentFormService::textarea(
@@ -119,10 +137,11 @@ class WordlistResource extends Resource
     {
         return $table
         ->columns([
-            FilamentColumnService::text('name'),
-            FilamentColumnService::text('alias'),
-            FilamentColumnService::text('words_count')->counts('words'),
-            FilamentColumnService::text('getOwner.email', 'Created by'),
+            self::getName(),
+            self::getAlias(),
+            self::getCounter(),
+            self::getTags(),
+            self::getOwner(),
         ])
         ->filters([
             //
@@ -133,6 +152,41 @@ class WordlistResource extends Resource
         ->bulkActions([
             Tables\Actions\DeleteBulkAction::make(),
         ]);
+    }
+
+    private static function getName()
+    {
+        return FilamentColumnService::text('name');
+    }
+
+    private static function getAlias()
+    {
+        return FilamentColumnService::text('alias');
+    }
+
+    private static function getCounter()
+    {
+        return FilamentColumnService::text('words_count')->counts('words');
+    }
+
+    private static function getTags()
+    {
+        $color = function($record, $state)
+        {
+            $tags = $record->tags()->pluck('color', 'name')->toArray();
+            return Color::hex($tags[$state]);
+        };
+        return FilamentColumnService::text('tags.name')
+        ->badge()
+        ->color($color)
+        ->listWithLineBreaks()
+        ->limitList(3)
+        ->expandableLimitedList();
+    }
+
+    private static function getOwner()
+    {
+        return FilamentColumnService::text('getOwner.email', 'Created by');
     }
 
     public static function getRelations(): array

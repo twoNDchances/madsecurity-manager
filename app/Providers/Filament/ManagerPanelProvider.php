@@ -50,6 +50,7 @@ class ManagerPanelProvider extends PanelProvider
         ->navigationGroups([
             'Managements',
             'Privileges',
+            'Classifies',
         ]);
     }
 }

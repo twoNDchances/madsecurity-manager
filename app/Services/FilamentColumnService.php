@@ -7,6 +7,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ViewAction;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -90,5 +91,13 @@ class FilamentColumnService
     public static function toggle($name, $label = null)
     {
         return ToggleColumn::make($name)->label($label)->searchable()->sortable()->toggleable();
+    }
+
+    public static function color($name, $label = null)
+    {
+        return ColorColumn::make($name)->label($label)->searchable()->sortable()->toggleable()
+        ->copyable()
+        ->copyMessage('Color code copied')
+        ->copyMessageDuration(1500);
     }
 }

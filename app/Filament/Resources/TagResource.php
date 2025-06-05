@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
 use App\Models\Tag;
+use App\Services\FilamentColumnService;
 use App\Services\FilamentFormService;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -17,9 +18,7 @@ class TagResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-hashtag';
 
-    protected static ?string $navigationGroup = 'Managements';
-
-    protected static ?int $navigationSort = 5;
+    protected static ?string $navigationGroup = 'Classifies';
 
     public static function form(Form $form): Form
     {
@@ -33,16 +32,7 @@ class TagResource extends Resource
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::definition()->columnSpan(1),
-            self::information()->columns(2)->columnSpan(2),
-        ]);
-    }
-
-    private static function definition()
-    {
-        return Forms\Components\Section::make('Tag Definition')
-        ->schema([
-            self::setTaggable()
+            self::information()->columns(2)->columnSpanFull(),
         ]);
     }
 
@@ -50,15 +40,14 @@ class TagResource extends Resource
     {
         return Forms\Components\Section::make('Tag Information')
         ->schema([
-            self::setName(),
-            self::setColor(),
-            self::setDescription()->columnSpanFull(),
+            Forms\Components\Grid::make(1)
+            ->schema([
+                self::setName(),
+                self::setColor(),
+            ])
+            ->columnSpan(1),
+            self::setDescription()->columnSpan(1),
         ]);
-    }
-
-    private static function setTaggable()
-    {
-        // return Forms\Components\MorphToSelect::make('');
     }
 
     private static function setName()
@@ -100,18 +89,18 @@ class TagResource extends Resource
     {
         return $table
         ->columns([
-            //
+            self::getName(),
+            self::getColor(),
+            self::getOwner(),
         ])
         ->filters([
             //
         ])
         ->actions([
-            Tables\Actions\EditAction::make(),
+            FilamentColumnService::actionGroup(),
         ])
         ->bulkActions([
-            Tables\Actions\BulkActionGroup::make([
-                Tables\Actions\DeleteBulkAction::make(),
-            ]),
+            Tables\Actions\DeleteBulkAction::make(),
         ]);
     }
 
@@ -120,6 +109,21 @@ class TagResource extends Resource
         return [
             //
         ];
+    }
+
+    private static function getName()
+    {
+        return FilamentColumnService::text('name');
+    }
+
+    private static function getColor()
+    {
+        return FilamentColumnService::color('color');
+    }
+
+    private static function getOwner()
+    {
+        return FilamentColumnService::text('getOwner.email', 'Created by');
     }
 
     public static function getPages(): array
