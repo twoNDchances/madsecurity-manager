@@ -38,6 +38,11 @@ class Tag extends Model
         return $this->morphedByMany(Policy::class, 'taggable');
     }
 
+    public function targets()
+    {
+        return $this->morphedByMany(Target::class, 'taggable');
+    }
+
     public function users()
     {
         return $this->morphedByMany(User::class, 'taggable');

@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('composers', function (Blueprint $table) {
             $table->id();
             $table->longText('yaml');
-            $table->text('resources');
-            $table->integer('pass');
-            $table->integer('fall');
+            $table->json('resources')->nullable();
+            $table->integer('pass')->nullable();
+            $table->integer('fall')->nullable();
+            $table->longText('output')->nullable();
             $table->foreignId('user_id')->nullable()->index()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });

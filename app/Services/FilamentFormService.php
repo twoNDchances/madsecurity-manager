@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -57,5 +59,18 @@ class FilamentFormService
         return ColorPicker::make($name)
         ->label($label)
         ->default('#000000');
+    }
+
+    public static function checkboxList($name, $label = null, $options = [])
+    {
+        return CheckboxList::make($name)
+        ->label($label)
+        ->options($options);
+    }
+
+    public static function fileUpload($name, $label = null)
+    {
+        return FileUpload::make($name)
+        ->label($label);
     }
 }
