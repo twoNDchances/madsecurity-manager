@@ -85,7 +85,11 @@ class TargetResource extends Resource
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::information()->columnSpan(1),
+            Forms\Components\Grid::make(1)
+            ->schema([
+                self::information(),
+                self::description(),
+            ])->columnSpan(1),
             self::definition()->columns(6)->columnSpan(2),
         ]);
     }
@@ -97,6 +101,13 @@ class TargetResource extends Resource
             self::setPhase(),
             self::setType(),
             self::setSuperior(),
+        ]);
+    }
+
+    private static function description()
+    {
+        return Forms\Components\Section::make('Target Description')
+        ->schema([
             self::setTags(),
             self::setDescription(),
         ]);
@@ -114,7 +125,7 @@ class TargetResource extends Resource
             Forms\Components\Fieldset::make('Attribution')
             ->schema([
                 self::setDatatype()->columnSpanFull(),
-                self::setWordlists()->columnSpanFull(),
+                self::setWordlist()->columnSpanFull(),
             ])->columnSpan(3),
             Forms\Components\Fieldset::make('Transformation')
             ->schema([
@@ -165,6 +176,11 @@ class TargetResource extends Resource
             4 => self::$types[4],
             default => [],
         };
+        $colors = [
+            'target' => 'purple',
+            'header' => 'info',
+            'url.args' => 'warning',
+        ];
         $state = function ($state, $set)
         {
             if ($state != 'target')
@@ -178,6 +194,7 @@ class TargetResource extends Resource
             null,
             $rules,
             $options,
+            $colors,
         )
         ->required()
         ->inline()
@@ -200,6 +217,15 @@ class TargetResource extends Resource
             },
         ];
         $condition = fn($get) => $get('type') == 'target';
+        $state = function($state, $set)
+        {
+            if ($state)
+            {
+                $target = Target::find($state);
+                $set('datatype', $target->final_datatype);
+                $set('name', $target->name . '_' . now()->timestamp);
+            }
+        };
         return FilamentFormService::select(
             'target_id',
             'Referer',
@@ -210,7 +236,9 @@ class TargetResource extends Resource
         ->visible($condition)
         ->relationship('getSuperior', 'alias')
         ->searchable()
-        ->preload();
+        ->preload()
+        ->reactive()
+        ->afterStateUpdated($state);
     }
 
     private static function setTags()
@@ -305,7 +333,7 @@ class TargetResource extends Resource
         ->afterStateUpdated($state);
     }
 
-    private static function setWordlists()
+    private static function setWordlist()
     {
         $rules = [
             'required_if:datatype,array',
@@ -318,17 +346,16 @@ class TargetResource extends Resource
         ];
         $creator = fn($data) => CreateWordlist::callByStatic($data)->id;
         return FilamentFormService::select(
-            'wordlists',
+            'wordlist_id',
             null,
             [],
             $rules,
         )
         ->required($condition)
         ->visible($condition)
-        ->relationship('wordlists', 'alias')
+        ->relationship('getWordlist', 'alias')
         ->searchable()
         ->preload()
-        ->multiple()
         ->createOptionForm($former)
         ->createOptionUsing($creator);
     }

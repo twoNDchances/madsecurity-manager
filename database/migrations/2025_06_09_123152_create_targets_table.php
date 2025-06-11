@@ -26,6 +26,7 @@ return new class extends Migration
             $table->boolean('immutable')->default(false);
             $table->foreignId('user_id')->nullable()->index()->constrained('users')->nullOnDelete();
             $table->foreignId('target_id')->nullable()->index()->constrained('targets')->nullOnDelete();
+            $table->foreignId('wordlist_id')->nullable()->index()->constrained('wordlists')->nullOnDelete();
             $table->timestamps();
         });
     }

@@ -23,6 +23,7 @@ class Target extends Model
         'immutable',
         'user_id',
         'target_id',
+        'wordlist_id',
     ];
 
     protected $casts = [
@@ -46,12 +47,12 @@ class Target extends Model
         return $this->hasMany(Target::class, 'target_id');
     }
 
-    // Relationships
-    public function wordlists()
+    public function getWordlist()
     {
-        return $this->belongsToMany(Wordlist::class, 'wordlists_targets');
+        return $this->belongsTo(Wordlist::class, 'wordlist_id');
     }
 
+    // Relationships
     public function tags()
     {
         return $this->morphToMany(Tag::class,'taggable');
