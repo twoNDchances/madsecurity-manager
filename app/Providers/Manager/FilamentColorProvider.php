@@ -22,11 +22,13 @@ class FilamentColorProvider extends ServiceProvider
     public function boot(): void
     {
         $colors = [
+            'indigo' => Color::Indigo,
             'purple' => Color::Purple,
             'cyan' => Color::Cyan,
             'sky' => Color::Sky,
             'teal' => Color::Teal,
             'slate' => Color::Slate,
+            'rose' => Color::Rose,
         ];
 
         FilamentColor::register($colors);

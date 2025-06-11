@@ -5,6 +5,7 @@ namespace App\Services;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -72,5 +73,11 @@ class FilamentFormService
     {
         return FileUpload::make($name)
         ->label($label);
+    }
+
+    public static function placeholder($name, $heperText = null)
+    {
+        return Placeholder::make($name)
+        ->helperText($heperText);
     }
 }

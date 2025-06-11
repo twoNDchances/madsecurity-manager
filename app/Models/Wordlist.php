@@ -28,6 +28,11 @@ class Wordlist extends Model
         return $this->hasMany(Word::class, 'wordlist_id');
     }
 
+    public function targets()
+    {
+        return $this->belongsToMany(Target::class, 'wordlists_targets');
+    }
+
     public function tags()
     {
         return $this->morphToMany(Tag::class,'taggable');
