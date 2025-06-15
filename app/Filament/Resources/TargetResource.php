@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class TargetResource extends Resource
@@ -73,6 +74,13 @@ class TargetResource extends Resource
         ],
     ];
 
+    private static array $hashes = [
+        'md5' => 'MD5',
+        'sha1' => 'SHA128',
+        'sha256' => 'SHA256',
+        'sha512' => 'SHA512',
+    ];
+
     public static function form(Form $form): Form
     {
         return $form
@@ -85,12 +93,35 @@ class TargetResource extends Resource
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            Forms\Components\Grid::make(1)
+            self::definition()->columns(2)->columnSpan(2),
+            self::information()->columnSpan(1),
+        ]);
+    }
+
+    private static function definition()
+    {
+        return Forms\Components\Section::make('Target Definition')
+        ->schema([
+            Forms\Components\Fieldset::make('Representation')
             ->schema([
-                self::information(),
-                self::description(),
+                self::setName()->columnSpanFull(),
+                self::setAlias()->columnSpanFull(),
             ])->columnSpan(1),
-            self::definition()->columns(6)->columnSpan(2),
+            Forms\Components\Fieldset::make('Attribution')
+            ->schema([
+                self::setDatatype()->columnSpanFull(),
+                self::setWordlist()->columnSpanFull(),
+            ])->columnSpan(1),
+            Forms\Components\Fieldset::make('Transformation')
+            ->schema([
+                self::setEngine(),
+                self::setPlaceholder(),
+                self::setIndexOf(),
+                self::setNumber(),
+                self::setHash(),
+            ])->columnSpanFull(),
+            self::setTags(),
+            self::setDescription(),
         ]);
     }
 
@@ -104,35 +135,265 @@ class TargetResource extends Resource
         ]);
     }
 
-    private static function description()
+    private static function setName()
     {
-        return Forms\Components\Section::make('Target Description')
-        ->schema([
-            self::setTags(),
-            self::setDescription(),
-        ]);
+        $rules = [
+            'required',
+            'string',
+            'max:255',
+        ];
+        $condition = fn($get) => $get('target_id') ? true : false;
+        $state = function($state, $get, $set)
+        {
+            if (!$get('alias'))
+            {
+                $set('alias', Str::slug($state));
+            }
+        };
+        $helperText = function($get)
+        {
+            if ($get('datatype') == 'array')
+            {
+                return 'Just a name for this Target';
+            }
+            return 'The ' . Str::title($get('datatype')) . ' datatype requires a single value';
+        };
+        return FilamentFormService::textInput(
+            'name',
+            null,
+            'Target Name',
+            $rules,
+        )
+        ->required()
+        ->readOnly($condition)
+        ->afterStateUpdated($state)
+        ->helperText($helperText);
     }
 
-    private static function definition()
+    private static function setAlias()
     {
-        return Forms\Components\Section::make('Target Definition')
-        ->schema([
-            Forms\Components\Fieldset::make('Representation')
-            ->schema([
-                self::setName()->columnSpanFull(),
-                self::setAlias()->columnSpanFull(),
-            ])->columnSpan(3),
-            Forms\Components\Fieldset::make('Attribution')
-            ->schema([
-                self::setDatatype()->columnSpanFull(),
-                self::setWordlist()->columnSpanFull(),
-            ])->columnSpan(3),
-            Forms\Components\Fieldset::make('Transformation')
-            ->schema([
-                self::setEngine(),
-                self::setPlaceholder(),
-            ]),
+        $rules = [
+            'required',
+            'string',
+            'max:255',
+            'alpha_dash',
+            function($record)
+            {
+                if ($record)
+                {
+                    return Rule::unique('targets', 'alias')->ignore($record->id);
+                }
+                return 'unique:targets,alias';
+            },
+        ];
+        return FilamentFormService::textInput(
+            'alias',
+            null,
+            'Target Alias',
+            $rules,
+        )
+        ->required()
+        ->alphaDash()
+        ->unique(ignoreRecord: true)
+        ->helperText('Autofill if left blank');
+    }
+
+    private static function setDatatype()
+    {
+        $rules = [
+            'required',
+            'string',
+            Rule::in(array_keys(self::$datatypes)),
+        ];
+        $colors = [
+            'array' => 'warning',
+            'number' => 'success',
+            'string' => 'info',
+        ];
+        $state = function($state, $set)
+        {
+            if ($state)
+            {
+                $set('engine', null);
+                $set('number', null);
+                $set('indexOf', null);
+                $set('hash', null);
+                return;
+            }
+        };
+        $condition = fn($get) => $get('target_id') ? true : false;
+        return FilamentFormService::toggleButton(
+            'datatype',
+            null,
+            $rules,
+            self::$datatypes,
+        )
+        ->required()
+        ->inline()
+        ->default('array')
+        ->colors($colors)
+        ->reactive()
+        ->afterStateUpdated($state)
+        ->disabled($condition)
+        ->dehydrated();
+    }
+
+    private static function setWordlist()
+    {
+        $rules = [
+            'nullable',
+            'integer',
+            Rule::exists('wordlists', 'id'),
+        ];
+        $condition = fn($get) => $get('datatype') == 'array' && !$get('target_id');
+        $former = [
+            WordlistResource::main(),
+        ];
+        $creator = fn($data) => CreateWordlist::callByStatic($data)->id;
+        return FilamentFormService::select(
+            'wordlist_id',
+            null,
+            [],
+            $rules,
+        )
+        ->visible($condition)
+        ->relationship('getWordlist', 'alias')
+        ->searchable()
+        ->preload()
+        ->createOptionForm($former)
+        ->createOptionUsing($creator)
+        ->helperText('The Array datatype can use a Wordlist Alias, line break for each element');
+    }
+
+    private static function setEngine()
+    {
+        $rules = [
+            'nullable',
+            'string',
+            fn($get) => $get('datatype') ? Rule::in(array_keys(self::$engines[$get('datatype')])) : null,
+        ];
+        $options = fn($get) => $get('datatype') ? self::$engines[$get('datatype')] : [];
+        return FilamentFormService::select(
+            'engine',
+            null,
+            $options,
+            $rules,
+        )
+        ->searchable()
+        ->reactive();
+    }
+
+    private static function setPlaceholder()
+    {
+        $condition = fn($get) => !in_array($get('engine'), [
+            'indexOf', 'addition', 'subtraction', 'multiplication', 'division', 'powerOf', 'remainder', 'hash'
         ]);
+        return FilamentFormService::placeholder(
+            'no_configuration', 
+            'Engine currently does not need configuration'
+        )
+        ->visible($condition);
+    }
+
+    private static function setIndexOf()
+    {
+        $rules = [
+            'required_if:engine,indexOf',
+            'integer',
+            'min:0',
+            fn($get) => function($attribute, $value, $fail) use ($get)
+            {
+                $wordlist = null;
+                if ($get('target_id'))
+                {
+                    $target = Target::find($get('target_id'));
+                    if ($target->immutable)
+                    {
+                        return;
+                    }
+                    $root = Target::getRoot($target);
+                    $wordlist = Wordlist::find($root->wordlist_id);
+                }
+
+                if ($get('wordlist_id'))
+                {
+                    $wordlist = Wordlist::find($get('wordlist_id'));
+                }
+
+                $counter = $wordlist->words()->count();
+                if ($counter == 0 || ($counter - 1) < $value)
+                {
+                    $fail("The {$attribute} has crossed the limit, total {$counter}");
+                    return;
+                }
+                $fail("The Wordlist required for {$attribute}");
+            }
+        ];
+        $condition = fn($get) => $get('engine') == 'indexOf';
+        return FilamentFormService::textInput(
+            'engine_configuration',
+            'Index',
+            'Index Of Array',
+            $rules,
+        )
+        ->required($condition)
+        ->visible($condition)
+        ->integer()
+        ->minValue(0);
+    }
+
+    private static function setNumber()
+    {
+        $rules = [
+            'required_if:engine,addition,subtraction,multiplication,division,powerOf,remainder',
+            'numeric'
+        ];
+        $condition = fn($get) => in_array($get('engine'), array_keys(self::$engines['number']));
+        return FilamentFormService::textInput(
+            'engine_configuration',
+            'Number',
+            'Number',
+            $rules,
+        )
+        ->required($condition)
+        ->visible($condition)
+        ->integer();
+    }
+
+    private static function setHash()
+    {
+        $rules = [
+            'required_if:engine,hash',
+            Rule::in(array_keys(self::$hashes))
+        ];
+        $condition = fn($get) => $get('engine') == 'hash';
+        return FilamentFormService::select(
+            'engine_configuration',
+            'Algorithm',
+            self::$hashes,
+            $rules,
+        )
+        ->required($condition)
+        ->visible($condition);
+    }
+
+    private static function setTags()
+    {
+        return TagFieldService::setTags();
+    }
+
+    private static function setDescription()
+    {
+        $rules = [
+            'nullable',
+            'string',
+        ];
+        return FilamentFormService::textarea(
+            'description',
+            null,
+            'Some description for this Target',
+        )
+        ->rules($rules);
     }
 
     private static function setPhase()
@@ -207,12 +468,32 @@ class TargetResource extends Resource
         $rules = [
             'required_if:type,target',
             'integer',
-            function($record)
+            fn($record, $get) => function($attribute, $value, $fail) use ($record, $get)
             {
-                dd($record);
-                if (Target::getRoot($record)->id == $record->id)
+                $target = Target::find($value);
+                if (!$target)
                 {
+                    $fail("The {$attribute} is invalid");
+                    return;
+                }
+                if ($target->phase != $get('phase'))
+                {
+                    $fail("The phase of {$attribute} mismatch");
+                    return;
+                }
+                if ($record)
+                {
+                    if ($record->id == $value)
+                    {
+                        $fail("The {$attribute} can't reference to itself");
+                        return;
+                    }
 
+                    if (Target::getRoot($record)->id == $record->id)
+                    {
+                        $fail("The {$attribute} cannot be selected because it creates a circular reference to itself (via root)");
+                        return;
+                    }
                 }
             },
         ];
@@ -223,9 +504,14 @@ class TargetResource extends Resource
             {
                 $target = Target::find($state);
                 $set('datatype', $target->final_datatype);
-                $set('name', $target->name . '_' . now()->timestamp);
+                $set('name', $target->type . '_' . $target->name . '_' . now()->timestamp);
+            }
+            else
+            {
+                $set('name', null);
             }
         };
+        $filter = fn($query, $get) => $query->where('phase', $get('phase'));
         return FilamentFormService::select(
             'target_id',
             'Referer',
@@ -234,169 +520,16 @@ class TargetResource extends Resource
         )
         ->required($condition)
         ->visible($condition)
-        ->relationship('getSuperior', 'alias')
-        ->searchable()
-        ->preload()
-        ->reactive()
-        ->afterStateUpdated($state);
-    }
-
-    private static function setTags()
-    {
-        return TagFieldService::setTags();
-    }
-
-    private static function setDescription()
-    {
-        $rules = [
-            'nullable',
-            'string',
-        ];
-        return FilamentFormService::textarea(
-            'description',
-            null,
-            'Some description for this Target',
-        )
-        ->rules($rules);
-    }
-
-    private static function setName()
-    {
-        $rules = [
-            'required',
-            'string',
-            'max:255',
-        ];
-        $condition = fn($get) => $get('target_id') ? true : false;
-        return FilamentFormService::textInput(
-            'name',
-            null,
-            'Target Name',
-            $rules,
-        )
-        ->required()
-        ->readOnly($condition);
-    }
-
-    private static function setAlias()
-    {
-        $rules = [
-            'required',
-            'string',
-            'max:255',
-            function($record)
-            {
-                if ($record)
-                {
-                    return Rule::unique('targets', 'alias')->ignore($record->id);
-                }
-                return 'unique:targets,alias';
-            },
-        ];
-        return FilamentFormService::textInput(
+        ->relationship(
+            'getSuperior',
             'alias',
-            null,
-            'Target Alias',
-            $rules,
+            $filter,
+            true,
         )
-        ->required()
-        ->unique(ignoreRecord: true);
-    }
-
-    private static function setDatatype()
-    {
-        $colors = [
-            'array' => 'warning',
-            'number' => 'success',
-            'string' => 'info',
-        ];
-        $rules = [
-            'required',
-            'string',
-            Rule::in(array_keys(self::$datatypes)),
-        ];
-        $state = function()
-        {
-
-        };
-        return FilamentFormService::toggleButton(
-            'datatype',
-            null,
-            $rules,
-            self::$datatypes,
-        )
-        ->required()
-        ->inline()
-        ->default('array')
-        ->colors($colors)
-        ->reactive()
-        ->afterStateUpdated($state);
-    }
-
-    private static function setWordlist()
-    {
-        $rules = [
-            'required_if:datatype,array',
-            'integer',
-            Rule::exists('wordlists', 'id'),
-        ];
-        $condition = fn($get) => $get('datatype') == 'array';
-        $former = [
-            WordlistResource::main(),
-        ];
-        $creator = fn($data) => CreateWordlist::callByStatic($data)->id;
-        return FilamentFormService::select(
-            'wordlist_id',
-            null,
-            [],
-            $rules,
-        )
-        ->required($condition)
-        ->visible($condition)
-        ->relationship('getWordlist', 'alias')
         ->searchable()
         ->preload()
-        ->createOptionForm($former)
-        ->createOptionUsing($creator);
-    }
-
-    private static function setEngine()
-    {
-        $rules = [
-            'nullable',
-            'string',
-            fn($get) => $get('datatype') ? Rule::in(array_keys(self::$engines[$get('datatype')])) : null,
-        ];
-        $options = fn($get) => $get('datatype') ? self::$engines[$get('datatype')] : [];
-        return FilamentFormService::select(
-            'engine',
-            null,
-            $options,
-            $rules,
-        )
-        ->searchable()
-        ->reactive();
-    }
-
-    private static function setPlaceholder()
-    {
-        $condition = fn($get) => !in_array($get('engine'), [
-            'indexOf', 'addition', 'subtraction', 'multiplication', 'division', 'powerOf', 'remainder', 'hash'
-        ]);
-        return FilamentFormService::placeholder(
-            'no_configuration', 
-            'Engine currently does not need configuration'
-        )
-        ->visible($condition);
-    }
-
-    private static function setIndexOf()
-    {
-        $rules = [
-            'required_if:engine,indexOf',
-            
-        ];
-        $condition = fn($get) => $get('engine') == 'indexOf';
+        ->reactive()
+        ->afterStateUpdated($state);
     }
 
     public static function table(Table $table): Table
