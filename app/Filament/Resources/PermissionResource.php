@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermissionResource\Pages;
 use App\Models\Permission;
-use App\Services\FilamentColumnService;
+use App\Services\FilamentTableService;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use Filament\Forms;
@@ -86,8 +86,8 @@ class PermissionResource extends Resource
         return FilamentFormService::select(
             'action',
             null,
-            $options,
             $rules,
+            $options,
         )
         ->required()
         ->searchable();
@@ -116,8 +116,8 @@ class PermissionResource extends Resource
         return FilamentFormService::select(
             'policies',
             'Policies',
-            null,
             $rules,
+            null,
         )
         ->relationship('policies', 'name')
         ->multiple()
@@ -140,7 +140,7 @@ class PermissionResource extends Resource
             //
         ])
         ->actions([
-            FilamentColumnService::actionGroup(),
+            FilamentTableService::actionGroup(),
         ])
         ->bulkActions([
             Tables\Actions\DeleteBulkAction::make(),
@@ -149,24 +149,24 @@ class PermissionResource extends Resource
 
     private static function getName()
     {
-        return FilamentColumnService::text('name');
+        return FilamentTableService::text('name');
     }
 
     private static function getResource()
     {
         $state = fn($record) => Str::title(explode('.', $record->action)[0]);
-        return FilamentColumnService::text('resource')->getStateUsing($state);
+        return FilamentTableService::text('resource')->getStateUsing($state);
     }
 
     private static function getAction()
     {
         $state = fn($record) => Str::headline(explode('.', $record->action)[1]);
-        return FilamentColumnService::text('action')->getStateUsing($state);
+        return FilamentTableService::text('action')->getStateUsing($state);
     }
 
     private static function getPolicies()
     {
-        return FilamentColumnService::text('policies.name', 'Policies')
+        return FilamentTableService::text('policies.name', 'Policies')
         ->listWithLineBreaks()
         ->bulleted()
         ->limitList(5)
@@ -180,7 +180,7 @@ class PermissionResource extends Resource
 
     private static function getOwner()
     {
-        return FilamentColumnService::text('getOwner.email', 'Created by');
+        return FilamentTableService::text('getOwner.email', 'Created by');
     }
 
     public static function getRelations(): array

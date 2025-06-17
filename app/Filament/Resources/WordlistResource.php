@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TagResource\Pages\CreateTag;
 use App\Filament\Resources\WordlistResource\Pages;
 use App\Models\Wordlist;
-use App\Services\FilamentColumnService;
+use App\Services\FilamentTableService;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use Filament\Forms;
@@ -138,7 +138,7 @@ class WordlistResource extends Resource
             //
         ])
         ->actions([
-            FilamentColumnService::actionGroup(),
+            FilamentTableService::actionGroup(),
         ])
         ->bulkActions([
             Tables\Actions\DeleteBulkAction::make(),
@@ -147,17 +147,17 @@ class WordlistResource extends Resource
 
     private static function getName()
     {
-        return FilamentColumnService::text('name');
+        return FilamentTableService::text('name');
     }
 
     private static function getAlias()
     {
-        return FilamentColumnService::text('alias');
+        return FilamentTableService::text('alias');
     }
 
     private static function getCounter()
     {
-        return FilamentColumnService::text('words_count')->counts('words');
+        return FilamentTableService::text('words_count')->counts('words');
     }
 
     private static function getTags()
@@ -167,7 +167,7 @@ class WordlistResource extends Resource
 
     private static function getOwner()
     {
-        return FilamentColumnService::text('getOwner.email', 'Created by');
+        return FilamentTableService::text('getOwner.email', 'Created by');
     }
 
     public static function getRelations(): array

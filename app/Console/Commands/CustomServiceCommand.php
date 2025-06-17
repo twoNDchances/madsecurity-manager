@@ -5,7 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-class MakeServiceCommand extends Command
+class CustomServiceCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -19,7 +19,7 @@ class MakeServiceCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Create a service class';
+    protected $description = 'Create a Service class';
 
     /**
      * Execute the console command.

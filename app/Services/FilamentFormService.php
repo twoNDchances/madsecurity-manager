@@ -31,7 +31,7 @@ class FilamentFormService
         ->rows(6);
     }
 
-    public static function select($name, $label = null, $options = null, $rules = [])
+    public static function select($name, $label = null, $rules = [], $options = null)
     {
         return Select::make($name)
         ->label($label)
@@ -52,7 +52,8 @@ class FilamentFormService
         ->label($label)
         ->rules($rules)
         ->options($options)
-        ->colors($colors);
+        ->colors($colors)
+        ->inline();
     }
 
     public static function colorPicker($name, $label = null)

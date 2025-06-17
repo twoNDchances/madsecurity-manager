@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ComposerResource\Pages;
 use App\Models\Composer;
 use App\Rules\ComposerSyntaxRule;
-use App\Services\FilamentColumnService;
+use App\Services\FilamentTableService;
 use App\Services\FilamentFormService;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -168,7 +168,7 @@ class ComposerResource extends Resource
             //
         ])
         ->actions([
-            FilamentColumnService::actionGroup(),
+            FilamentTableService::actionGroup(),
         ])
         ->bulkActions([
             Tables\Actions\DeleteBulkAction::make(),

@@ -4,7 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
 use App\Models\Tag;
-use App\Services\FilamentColumnService;
+use App\Services\FilamentTableService;
 use App\Services\FilamentFormService;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -101,7 +101,7 @@ class TagResource extends Resource
             //
         ])
         ->actions([
-            FilamentColumnService::actionGroup(),
+            FilamentTableService::actionGroup(),
         ])
         ->bulkActions([
             Tables\Actions\DeleteBulkAction::make(),
@@ -118,19 +118,19 @@ class TagResource extends Resource
     private static function getName()
     {
         $description = fn($record) => $record->description;
-        return FilamentColumnService::text('name')
+        return FilamentTableService::text('name')
         ->description($description)
         ->wrap();
     }
 
     private static function getColor()
     {
-        return FilamentColumnService::color('color');
+        return FilamentTableService::color('color');
     }
 
     private static function getTypes($name)
     {
-        return FilamentColumnService::text($name)
+        return FilamentTableService::text($name)
         ->listWithLineBreaks()
         ->limitList(3)
         ->expandableLimitedList()
@@ -139,7 +139,7 @@ class TagResource extends Resource
 
     private static function getOwner()
     {
-        return FilamentColumnService::text('getOwner.email', 'Created by');
+        return FilamentTableService::text('getOwner.email', 'Created by');
     }
 
     public static function getPages(): array

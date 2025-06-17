@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use App\Services\AuthenticationService;
-use App\Services\FilamentColumnService;
+use App\Services\FilamentTableService;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use Filament\Forms;
@@ -169,8 +169,8 @@ class UserResource extends Resource
         return FilamentFormService::select(
             'policies',
             'Policies',
-            null,
             $rules,
+            null,
         )
         ->relationship('policies', 'name')
         ->multiple()
@@ -223,26 +223,26 @@ class UserResource extends Resource
             //
         ])
         ->actions([
-            FilamentColumnService::actionGroup(
+            FilamentTableService::actionGroup(
                 delete: false,
                 more: [
-                    FilamentColumnService::deleteUserAction(),
+                    FilamentTableService::deleteUserAction(),
                 ]
             ),
         ])
         ->bulkActions([
-            FilamentColumnService::deleteUserBulkAction(),
+            FilamentTableService::deleteUserBulkAction(),
         ]);
     }
 
     private static function getName()
     {
-        return FilamentColumnService::text('name', null);
+        return FilamentTableService::text('name', null);
     }
 
     private static function getEmail()
     {
-        return FilamentColumnService::text('email', null);
+        return FilamentTableService::text('email', null);
     }
 
     private static function getActivation()
@@ -250,19 +250,19 @@ class UserResource extends Resource
         $user = AuthenticationService::get();
         if (AuthenticationService::can($user, 'user', 'update'))
         {
-            return FilamentColumnService::toggle('active', 'Activated');
+            return FilamentTableService::toggle('active', 'Activated');
         }
-        return FilamentColumnService::icon('active', 'Activated');
+        return FilamentTableService::icon('active', 'Activated');
     }
 
     private static function getVerified()
     {
-        return FilamentColumnService::icon('email_verified_at', 'Verified')->boolean();
+        return FilamentTableService::icon('email_verified_at', 'Verified')->boolean();
     }
 
     private static function getPolicies()
     {
-        return FilamentColumnService::text('policies.name', 'Policies')
+        return FilamentTableService::text('policies.name', 'Policies')
         ->listWithLineBreaks()
         ->bulleted()
         ->limitList(5)
@@ -276,7 +276,7 @@ class UserResource extends Resource
 
     private static function getOwner()
     {
-        return FilamentColumnService::text('getSuperior.email', 'Created by');
+        return FilamentTableService::text('getSuperior.email', 'Created by');
     }
 
     public static function getRelations(): array

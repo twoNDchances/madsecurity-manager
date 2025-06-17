@@ -30,7 +30,7 @@ class TagFieldService
             $tags = $record->tags()->pluck('color', 'name')->toArray();
             return Color::hex($tags[$state]);
         };
-        return FilamentColumnService::text('tags.name')
+        return FilamentTableService::text('tags.name')
         ->badge()
         ->color($color)
         ->listWithLineBreaks()

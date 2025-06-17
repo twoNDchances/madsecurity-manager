@@ -12,7 +12,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 
-class FilamentColumnService
+class FilamentTableService
 {
     public static function actionGroup($view = true, $edit = true, $delete = true, $more = [])
     {
@@ -74,27 +74,6 @@ class FilamentColumnService
                 return;
             }
             NotificationService::notify('success', 'Deleted successfully', "Deleted $counter records");
-        };
-        return DeleteBulkAction::make()->action($action);
-    }
-
-    public static function deleteTargetBulkAction()
-    {
-        $action = function ($records)
-        {
-            $counter = 0;
-            foreach ($records as $record)
-            {
-                if ($record->immutable) continue;
-                $record->delete();
-                $counter++;
-            }
-            if ($counter == 0)
-            {
-                NotificationService::notify('failure', 'Fail','No records can be deleted');
-                return;
-            }
-            NotificationService::notify('success','Deleted successfully', "Deleted $counter records");
         };
         return DeleteBulkAction::make()->action($action);
     }
