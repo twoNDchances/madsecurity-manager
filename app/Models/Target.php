@@ -59,7 +59,7 @@ class Target extends Model
     }
 
     // Businesses
-    public static function getRoot(Target $target)
+    public static function getRoot($target)
     {
         if (!$target->target_id)
         {
