@@ -34,7 +34,7 @@ class Target extends Model
     // Belongs
     public function getOwner()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function getSuperior()
