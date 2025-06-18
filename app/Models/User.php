@@ -70,6 +70,26 @@ class User extends Authenticatable
         return $this->hasMany(Policy::class, 'user_id');
     }
 
+    public function getRules()
+    {
+        return $this->hasMany(Rule::class, 'user_id');
+    }
+
+    public function getTags()
+    {
+        return $this->hasMany(Tag::class, 'user_id');
+    }
+
+    public function getTargets()
+    {
+        return $this->hasMany(Target::class, 'user_id');
+    }
+
+    public function getWordlists()
+    {
+        return $this->hasMany(Wordlist::class, 'user_id');
+    }
+
     // Relationships
     public function policies()
     {

@@ -58,6 +58,11 @@ class Target extends Model
         return $this->morphToMany(Tag::class,'taggable');
     }
 
+    public function rules()
+    {
+        return $this->hasMany(Rule::class,'target_id');
+    }
+
     // Businesses
     public static function getRoot($target)
     {

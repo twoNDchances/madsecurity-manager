@@ -36,7 +36,6 @@ class PolicyForm
             'permissions',
             'Permissions',
             self::$validator::permissions(),
-            null,
         )
         ->relationship('permissions', 'name')
         ->multiple()
@@ -71,7 +70,6 @@ class PolicyForm
             'users',
             'Users',
             self::$validator::users(),
-            null,
         )
         ->relationship('users', 'name')
         ->multiple()

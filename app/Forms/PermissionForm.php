@@ -57,7 +57,6 @@ class PermissionForm
             'policies',
             'Policies',
             self::$validator::policies(),
-            null,
         )
         ->relationship('policies', 'name')
         ->multiple()

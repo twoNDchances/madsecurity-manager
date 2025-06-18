@@ -17,6 +17,16 @@ class EditTarget extends EditRecord
         ];
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['final_datatype'] = match ($data['engine']) {
+            'indexOf' => 'string',
+            'length' => 'number',
+            default => $data['datatype'],
+        };
+        return $data;
+    }
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

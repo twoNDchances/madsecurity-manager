@@ -3,6 +3,7 @@
 namespace App\Validators;
 
 use App\Models\Target;
+use Illuminate\Validation\Rule;
 
 class RuleValidator
 {
@@ -13,15 +14,6 @@ class RuleValidator
         3 => '3. Response Header',
         4 => '4. Response Body',
         5 => '5. Full Response',
-    ];
-
-    public static array $phaseColors = [
-        0 => 'alternative',
-        1 => 'info',
-        2 => 'warning',
-        3 => 'success',
-        4 => 'cyan',
-        5 => 'danger',
     ];
 
     public static array $comparators = [
@@ -57,6 +49,14 @@ class RuleValidator
         'report' => 'Report',
     ];
 
+    public static array $requestMethods = [
+        'get' => 'GET',
+        'post' => 'POST',
+        'patch' => 'PATCH',
+        'put' => 'PUT',
+        'delete' => 'DELETE',
+    ];
+
     public static array $severities = [
         'notice' => 'NOTICE',
         'warning' => 'WARNING',
@@ -80,6 +80,14 @@ class RuleValidator
             'string',
             'max:255',
             'alpha_dash',
+            function($record)
+            {
+                if ($record)
+                {
+                    return Rule::unique('rules', 'alias')->ignore($record->id);
+                }
+                return 'unique:rules,alias';
+            },
         ];
     }
 
@@ -101,6 +109,156 @@ class RuleValidator
                 ',',
                 Target::where('phase', $get('phase'))->pluck('id')->toArray()
             ),
+        ];
+    }
+
+    public static function comparator()
+    {
+        return [
+            'required',
+            'string',
+            'starts_with:@',
+            function($get)
+            {
+                $finalDatatype = Target::find($get('target_id'))?->final_datatype;
+                $rule = null;
+                if ($finalDatatype)
+                {
+                    $rule = 'in:' . implode(
+                        ',',
+                        array_keys(self::$comparators[$finalDatatype])
+                    );
+                }
+                return $rule;
+            }
+        ];
+    }
+
+    public static function inverse()
+    {
+        return [
+            'required',
+            'boolean',
+        ];
+    }
+
+    public static function value()
+    {
+        return [
+            'required_unless:comparator,@check,@checkRegex,@inRange',
+            'string',
+        ];
+    }
+
+    public static function anyNumber()
+    {
+        return [
+            'required_if:comparator,@equal,@lessThan,@greaterThan,@lessThanOrEqual,@greaterThanOrEqual',
+            'numeric',
+        ];
+    }
+
+    public static function specificNumber()
+    {
+        return [
+            'required_if:comparator,@inRange',
+            'numeric',
+        ];
+    }
+
+    public static function wordlist()
+    {
+        return [
+            'required_if:comparator,@check,@checkRegex',
+            'integer',
+            'exists:wordlists,id',
+        ];
+    }
+
+    public static function action()
+    {
+        return [
+            'nullable',
+            'string',
+            'in:' . implode(
+                ',',
+                array_keys(self::$actions),
+            ),
+        ];
+    }
+
+    public static function severity()
+    {
+        return [
+            'required_if:action,inspect',
+            'string',
+            'in:' . implode(
+                ',',
+                array_keys(self::$severities),
+            )
+        ];
+    }
+
+    public static function requestMethod()
+    {
+        return [
+            'required_if:action,request',
+            'string',
+            'in:' . implode(
+                ',',
+                array_keys(self::$requestMethods),
+            ),
+        ];
+    }
+
+    public static function requestURL()
+    {
+        return [
+            'required_if:action,request',
+            'string',
+            'url',
+        ];
+    }
+
+    public static function score()
+    {
+        return [
+            'required_if:action,setScore',
+            'integer',
+        ];
+    }
+
+    public static function level()
+    {
+        return [
+            'required_if:action,setScore',
+            'integer',
+            'min:1',
+        ];
+    }
+
+    public static function groups()
+    {
+        return [
+            'nullable',
+            'integer',
+            'exists:groups,id',
+        ];
+    }
+
+    public static function description()
+    {
+        return [
+            'nullable',
+            'string',
+        ];
+    }
+
+    public static function logistic()
+    {
+        return [
+            'required',
+            'boolean',
         ];
     }
 }

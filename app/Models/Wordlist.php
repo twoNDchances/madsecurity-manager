@@ -30,7 +30,12 @@ class Wordlist extends Model
 
     public function targets()
     {
-        return $this->belongsToMany(Target::class, 'wordlists_targets');
+        return $this->hasMany(Target::class, 'wordlist_id');
+    }
+
+    public function rules()
+    {
+        return $this->hasMany(Rule::class, 'wordlist_id');
     }
 
     public function tags()

@@ -89,6 +89,7 @@ class TargetResource extends Resource
             self::$table::engine(),
             self::$table::finalDatatype(),
             self::$table::superior(),
+            self::$table::tags(),
             self::$table::owner(),
         ])
         ->filters([

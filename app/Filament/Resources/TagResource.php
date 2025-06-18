@@ -17,7 +17,7 @@ class TagResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-hashtag';
 
-    protected static ?string $navigationGroup = 'Extensions';
+    protected static ?string $navigationGroup = 'Utilities';
 
     private static $form = TagForm::class;
 
@@ -61,6 +61,7 @@ class TagResource extends Resource
             self::$table::color(),
             self::$table::types('permissions.name'),
             self::$table::types('policies.name'),
+            self::$table::types('rules.alias'),
             self::$table::types('targets.alias'),
             self::$table::types('users.email'),
             self::$table::types('wordlists.alias'),

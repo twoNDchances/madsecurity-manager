@@ -13,6 +13,11 @@ class CreateTarget extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['final_datatype'] = match ($data['engine']) {
+            'indexOf' => 'string',
+            'length' => 'number',
+            default => $data['datatype'],
+        };
         $data['user_id'] = AuthenticationService::get()?->id;
         return $data;
     }

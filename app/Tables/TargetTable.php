@@ -4,12 +4,18 @@ namespace App\Tables;
 
 use App\Services\FilamentTableService;
 use App\Services\NotificationService;
-use App\Validators\TargetValidator;
+use App\Services\TagFieldService;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Support\Str;
 
 class TargetTable
 {
+    private static array $datatypeColors = [
+        'warning' => 'array',
+        'success' => 'number',
+        'info' => 'string',
+    ];
+
     public static function name()
     {
         $tooltip = function ($column)
@@ -58,7 +64,7 @@ class TargetTable
     {
         return FilamentTableService::text('datatype')
         ->badge()
-        ->colors(TargetValidator::$datatypes);
+        ->colors(self::$datatypeColors);
     }
 
     public static function engine()
@@ -75,7 +81,7 @@ class TargetTable
             'Final Datatype'
         )
         ->badge()
-        ->colors(TargetValidator::$datatypes);
+        ->colors(self::$datatypeColors);
     }
 
     public static function superior()
@@ -96,6 +102,11 @@ class TargetTable
         ->limit(16)
         ->tooltip($tooltip)
         ->color('cyan');
+    }
+
+    public static function tags()
+    {
+        return TagFieldService::getTags();
     }
 
     public static function owner()

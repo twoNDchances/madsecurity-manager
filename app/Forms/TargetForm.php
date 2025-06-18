@@ -102,7 +102,6 @@ class TargetForm
             'wordlist_id',
             'Wordlist',
             self::$validator::wordlist(),
-            [],
         )
         ->required($condition)
         ->visible($condition)
@@ -231,10 +230,10 @@ class TargetForm
             null,
             self::$validator::phase(),
             self::$validator::$phases,
+            $colors,
         )
         ->required()
         ->reactive()
-        ->colors($colors)
         ->default(1);
     }
 
@@ -295,7 +294,6 @@ class TargetForm
             'target_id',
             'Referer',
             self::$validator::superior(),
-            [],
         )
         ->required($condition)
         ->visible($condition)

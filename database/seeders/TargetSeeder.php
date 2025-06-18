@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Tag;
 use App\Models\Target;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -102,11 +103,12 @@ class TargetSeeder extends Seeder
             ],
         ];
         $user = User::where('email', env('MANAGER_USER_MAIL', 'root@madsecurity.com'))->first();
-        foreach ($targets as $phase => $target)
+        $ids = [];
+        foreach ($targets as $phase => $raw)
         {
-            foreach ($target as $value)
+            foreach ($raw as $value)
             {
-                Target::createOrFirst(
+                $target = Target::createOrFirst(
                     [
                         'alias' => $value['alias'],
                         'type' => $value["type"],
@@ -120,7 +122,9 @@ class TargetSeeder extends Seeder
                         'user_id' => $user?->id,
                     ]
                 );
+                $ids[] = $target->id;
             }
         }
+        Tag::where('name', 'default assets')->first()->targets()->sync($ids);
     }
 }
