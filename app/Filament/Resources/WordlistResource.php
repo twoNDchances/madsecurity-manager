@@ -2,17 +2,13 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TagResource\Pages\CreateTag;
 use App\Filament\Resources\WordlistResource\Pages;
+use App\Forms\WordlistForm;
 use App\Models\Wordlist;
-use App\Services\FilamentTableService;
-use App\Services\FilamentFormService;
-use App\Services\TagFieldService;
+use App\Tables\WordlistTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Support\Colors\Color;
-use Filament\Tables;
 use Filament\Tables\Table;
 
 class WordlistResource extends Resource
@@ -22,6 +18,10 @@ class WordlistResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-bars-arrow-down';
 
     protected static ?string $navigationGroup = 'Managements';
+
+    private static $form = WordlistForm::class;
+
+    private static $table = WordlistTable::class;
 
     public static function form(Form $form): Form
     {
@@ -44,10 +44,10 @@ class WordlistResource extends Resource
     {
         return Forms\Components\Section::make('Wordlist Information')
         ->schema([
-            self::setName(),
-            self::setAlias(),
-            self::setTags()->columnSpanFull(),
-            self::setDescription()->columnSpanFull(),
+            self::$form::name(),
+            self::$form::alias(),
+            self::$form::tags()->columnSpanFull(),
+            self::$form::description()->columnSpanFull(),
         ]);
     }
 
@@ -55,119 +55,29 @@ class WordlistResource extends Resource
     {
         return Forms\Components\Section::make('Wordlist Definition')
         ->schema([
-            self::setContent(),
+            self::$form::content(),
         ]);
-    }
-
-    private static function setName()
-    {
-        $rules = [
-            'required',
-            'max:255',
-            'string',
-        ];
-        return FilamentFormService::textInput(
-            'name',
-            null,
-            'Wordlist Name',
-            $rules,
-        )
-        ->required();
-    }
-
-    private static function setAlias()
-    {
-        $rules = [
-            'required',
-            'max:255',
-            'string',
-            'alpha_dash',
-        ];
-        return FilamentFormService::textInput(
-            'alias',
-            null,
-            'Wordlist Alias',
-            $rules,
-        )
-        ->alphaDash()
-        ->required()
-        ->unique(ignoreRecord: true);
-    }
-
-    private static function setTags()
-    {
-        return TagFieldService::setTags();
-    }
-
-    private static function setDescription()
-    {
-        return FilamentFormService::textarea(
-            'description',
-            null,
-            'Some description for this Wordlist'
-        );
-    }
-
-    private static function setContent()
-    {
-        $state = function ($record, $set)
-        {
-            if ($record) {
-                $set('content', $record->words()->pluck('content')->implode("\n"));
-            }
-        };
-        return FilamentFormService::textarea(
-            'content',
-            null,
-            'End a word with a new line'
-        )
-        ->afterStateHydrated($state);
     }
 
     public static function table(Table $table): Table
     {
         return $table
         ->columns([
-            self::getName(),
-            self::getAlias(),
-            self::getCounter(),
-            self::getTags(),
-            self::getOwner(),
+            self::$table::name(),
+            self::$table::alias(),
+            self::$table::counter(),
+            self::$table::tags(),
+            self::$table::owner(),
         ])
         ->filters([
             //
         ])
         ->actions([
-            FilamentTableService::actionGroup(),
+            self::$table::actionGroup(),
         ])
         ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
+            self::$table::deleteBulkAction(),
         ]);
-    }
-
-    private static function getName()
-    {
-        return FilamentTableService::text('name');
-    }
-
-    private static function getAlias()
-    {
-        return FilamentTableService::text('alias');
-    }
-
-    private static function getCounter()
-    {
-        return FilamentTableService::text('words_count')->counts('words');
-    }
-
-    private static function getTags()
-    {
-        return TagFieldService::getTags();
-    }
-
-    private static function getOwner()
-    {
-        return FilamentTableService::text('getOwner.email', 'Created by');
     }
 
     public static function getRelations(): array

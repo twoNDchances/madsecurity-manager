@@ -3,17 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermissionResource\Pages;
+use App\Forms\PermissionForm;
 use App\Models\Permission;
-use App\Services\FilamentTableService;
-use App\Services\FilamentFormService;
-use App\Services\TagFieldService;
+use App\Tables\PermissionTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
 
 class PermissionResource extends Resource
 {
@@ -22,6 +18,10 @@ class PermissionResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-key';
 
     protected static ?string $navigationGroup = 'Privileges';
+
+    private static $form = PermissionForm::class;
+
+    private static $table = PermissionTable::class;
 
     public static function form(Form $form): Form
     {
@@ -44,10 +44,10 @@ class PermissionResource extends Resource
     {
         return Forms\Components\Section::make('Permission Information')
         ->schema([
-            self::setName(),
-            self::setAction(),
-            self::setTags()->columnSpanFull(),
-            self::setDescription()->columnSpanFull(),
+            self::$form::name(),
+            self::$form::action(),
+            self::$form::tags()->columnSpanFull(),
+            self::$form::description()->columnSpanFull(),
         ]);
     }
 
@@ -55,132 +55,30 @@ class PermissionResource extends Resource
     {
         return Forms\Components\Section::make('Permission Scope')
         ->schema([
-            self::setPolicies(),
+            self::$form::policies(),
         ]);
-    }
-
-    private static function setName()
-    {
-        $rules = [
-            'required',
-            'string',
-            'max:255',
-        ];
-        return FilamentFormService::textInput(
-            'name',
-            null,
-            'Permission Name',
-            $rules
-        )
-        ->required()
-        ->unique(ignoreRecord: true);
-    }
-
-    private static function setAction()
-    {
-        $options = Permission::getAvailablePermissions();
-        $rules = [
-            'required',
-            Rule::in(array_keys($options)),
-        ];
-        return FilamentFormService::select(
-            'action',
-            null,
-            $rules,
-            $options,
-        )
-        ->required()
-        ->searchable();
-    }
-
-    private static function setTags()
-    {
-        return TagFieldService::setTags();
-    }
-
-    private static function setDescription()
-    {
-        return FilamentFormService::textarea(
-            'description',
-            null,
-            'Description for this Permission'
-        );
-    }
-
-    private static function setPolicies()
-    {
-        $rules = [
-            'nullable',
-            Rule::exists('policies', 'id'),
-        ];
-        return FilamentFormService::select(
-            'policies',
-            'Policies',
-            $rules,
-            null,
-        )
-        ->relationship('policies', 'name')
-        ->multiple()
-        ->searchable()
-        ->preload();
     }
 
     public static function table(Table $table): Table
     {
         return $table
         ->columns([
-            self::getName(),
-            self::getResource(),
-            self::getAction(),
-            self::getPolicies(),
-            self::getTags(),
-            self::getOwner(),
+            self::$table::name(),
+            self::$table::resource(),
+            self::$table::action(),
+            self::$table::policies(),
+            self::$table::tags(),
+            self::$table::owner(),
         ])
         ->filters([
             //
         ])
         ->actions([
-            FilamentTableService::actionGroup(),
+            self::$table::actionGroup(),
         ])
         ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
+            self::$table::deleteBulkAction(),
         ]);
-    }
-
-    private static function getName()
-    {
-        return FilamentTableService::text('name');
-    }
-
-    private static function getResource()
-    {
-        $state = fn($record) => Str::title(explode('.', $record->action)[0]);
-        return FilamentTableService::text('resource')->getStateUsing($state);
-    }
-
-    private static function getAction()
-    {
-        $state = fn($record) => Str::headline(explode('.', $record->action)[1]);
-        return FilamentTableService::text('action')->getStateUsing($state);
-    }
-
-    private static function getPolicies()
-    {
-        return FilamentTableService::text('policies.name', 'Policies')
-        ->listWithLineBreaks()
-        ->bulleted()
-        ->limitList(5)
-        ->expandableLimitedList();
-    }
-
-    private static function getTags()
-    {
-        return TagFieldService::getTags();
-    }
-
-    private static function getOwner()
-    {
-        return FilamentTableService::text('getOwner.email', 'Created by');
     }
 
     public static function getRelations(): array

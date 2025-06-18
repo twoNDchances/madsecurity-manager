@@ -3,13 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
+use App\Forms\TagForm;
 use App\Models\Tag;
-use App\Services\FilamentTableService;
-use App\Services\FilamentFormService;
+use App\Tables\TagTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 
 class TagResource extends Resource
@@ -19,6 +18,10 @@ class TagResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-hashtag';
 
     protected static ?string $navigationGroup = 'Extensions';
+
+    private static $form = TagForm::class;
+
+    private static $table = TagTable::class;
 
     public static function form(Form $form): Form
     {
@@ -42,69 +45,35 @@ class TagResource extends Resource
         ->schema([
             Forms\Components\Grid::make(1)
             ->schema([
-                self::setName(),
-                self::setColor(),
+                self::$form::name(),
+                self::$form::color(),
             ])
             ->columnSpan(1),
-            self::setDescription()->columnSpan(1),
+            self::$form::description()->columnSpan(1),
         ]);
-    }
-
-    private static function setName()
-    {
-        $rules = [
-            'required',
-            'max:255',
-            'string',
-        ];
-        return FilamentFormService::textInput(
-            'name',
-            null,
-            'Tag Name',
-            $rules
-        )
-        ->required()
-        ->unique(ignoreRecord: true);
-    }
-
-    private static function setColor()
-    {
-        return FilamentFormService::colorPicker(
-            'color',
-            null,
-        )
-        ->required();
-    }
-
-    private static function setDescription()
-    {
-        return FilamentFormService::textarea(
-            'description',
-            null,
-            'Some description for this Tag'
-        );
     }
 
     public static function table(Table $table): Table
     {
         return $table
         ->columns([
-            self::getName(),
-            self::getColor(),
-            self::getTypes('permissions.name'),
-            self::getTypes('policies.name'),
-            self::getTypes('users.email'),
-            self::getTypes('wordlists.alias'),
-            self::getOwner(),
+            self::$table::name(),
+            self::$table::color(),
+            self::$table::types('permissions.name'),
+            self::$table::types('policies.name'),
+            self::$table::types('targets.alias'),
+            self::$table::types('users.email'),
+            self::$table::types('wordlists.alias'),
+            self::$table::owner(),
         ])
         ->filters([
             //
         ])
         ->actions([
-            FilamentTableService::actionGroup(),
+            self::$table::actionGroup(),
         ])
         ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
+            self::$table::deleteBulkAction(),
         ]);
     }
 
@@ -113,33 +82,6 @@ class TagResource extends Resource
         return [
             //
         ];
-    }
-
-    private static function getName()
-    {
-        $description = fn($record) => $record->description;
-        return FilamentTableService::text('name')
-        ->description($description)
-        ->wrap();
-    }
-
-    private static function getColor()
-    {
-        return FilamentTableService::color('color');
-    }
-
-    private static function getTypes($name)
-    {
-        return FilamentTableService::text($name)
-        ->listWithLineBreaks()
-        ->limitList(3)
-        ->expandableLimitedList()
-        ->wrap();
-    }
-
-    private static function getOwner()
-    {
-        return FilamentTableService::text('getOwner.email', 'Created by');
     }
 
     public static function getPages(): array

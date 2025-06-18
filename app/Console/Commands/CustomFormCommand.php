@@ -46,7 +46,13 @@ use App\Services\TagFieldService;
 class $name
 {
     private static \$validator = null;
+
     //
+
+    public static function tags()
+    {
+        return TagFieldService::setTags();
+    }
 }
 
 PHP;
