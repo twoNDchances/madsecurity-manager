@@ -2,6 +2,8 @@
 
 namespace App\Validators;
 
+use Illuminate\Validation\Rule;
+
 class PolicyValidator
 {
     public static function name()
@@ -10,6 +12,14 @@ class PolicyValidator
             'required',
             'string',
             'max:255',
+            function($record)
+            {
+                if ($record)
+                {
+                    return Rule::unique('policies', 'name')->ignore($record->id);
+                }
+                return 'unique:policies,name';
+            },
         ];
     }
 
@@ -17,6 +27,7 @@ class PolicyValidator
     {
         return [
             'nullable',
+            'array',
             'exists:permissions,id',
         ];
     }
@@ -33,6 +44,7 @@ class PolicyValidator
     {
         return [
             'nullable',
+            'array',
             'exists:users,id',
         ];
     }

@@ -2,6 +2,8 @@
 
 namespace App\Forms;
 
+use App\Filament\Resources\GroupResource;
+use App\Filament\Resources\GroupResource\Pages\CreateGroup;
 use App\Filament\Resources\TargetResource;
 use App\Filament\Resources\TargetResource\Pages\CreateTarget;
 use App\Filament\Resources\WordlistResource;
@@ -434,9 +436,28 @@ class RuleForm
         ->placeholder('Level');;
     }
 
-    public static function groups()
+    public static function groups($form = true)
     {
-        return null;
+        $groupField = FilamentFormService::select(
+            'groups',
+            null,
+            self::$validator::groups(),
+        )
+        ->relationship('groups', 'name')
+        ->searchable()
+        ->multiple()
+        ->preload();
+        if ($form)
+        {
+            $former = [
+                GroupResource::main(false)->columns(6),
+            ];
+            $creator = fn($data) => CreateGroup::callByStatic($data)->id;
+            $groupField = $groupField
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
+        }
+        return $groupField;
     }
 
     public static function tags()

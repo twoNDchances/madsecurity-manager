@@ -68,6 +68,13 @@ class Rule extends Model
     {
         return $this->morphToMany(Tag::class,'taggable');
     }
+
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'rules_groups')
+        ->withPivot('position')
+        ->orderBy('position');
+    }
     
     // Businesses
 }

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('alias')->unique()->index();
             $table->string('type');
             $table->string('name')->index();
-            // $table->string('real_name')->unique()->index();
             $table->string('engine')->nullable();
             $table->string('engine_configuration')->nullable();
             $table->integer('phase');

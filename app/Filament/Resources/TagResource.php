@@ -59,6 +59,7 @@ class TagResource extends Resource
         ->columns([
             self::$table::name(),
             self::$table::color(),
+            self::$table::types('groups.name'),
             self::$table::types('permissions.name'),
             self::$table::types('policies.name'),
             self::$table::types('rules.alias'),

@@ -2,6 +2,8 @@
 
 namespace App\Forms;
 
+use App\Filament\Resources\PolicyResource;
+use App\Filament\Resources\PolicyResource\Pages\CreatePolicy;
 use App\Models\Permission;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
@@ -46,14 +48,14 @@ class PermissionForm
         return FilamentFormService::textarea(
             'description',
             null,
-            'Description for this Permission'
+            'Some Description about this Permission'
         )
         ->rules(self::$validator::description());
     }
 
-    public static function policies()
+    public static function policies($form = true)
     {
-        return FilamentFormService::select(
+        $policyField = FilamentFormService::select(
             'policies',
             'Policies',
             self::$validator::policies(),
@@ -62,5 +64,16 @@ class PermissionForm
         ->multiple()
         ->searchable()
         ->preload();
+        if ($form)
+        {
+            $former = [
+                PolicyResource::main(false, false),
+            ];
+            $creator = fn($data) => CreatePolicy::callByStatic($data)->id;
+            $policyField = $policyField
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
+        }
+        return $policyField;
     }
 }

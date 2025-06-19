@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Group extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'status',
+        'execution_order',
+        'level',
+        'description',
+        'user_id',
+    ];
+
+    protected $casts = [
+        'status' => 'boolean'
+    ];
+
+    // Belongs
+    public function getOwner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // Relationships
+    public function tags()
+    {
+        return $this->morphToMany(Tag::class,'taggable');
+    }
+
+    public function rules()
+    {
+        return $this->belongsToMany(Rule::class, 'rules_groups')
+        ->withPivot('position')
+        ->orderBy('position');
+    }
+
+    // Businesses
+}

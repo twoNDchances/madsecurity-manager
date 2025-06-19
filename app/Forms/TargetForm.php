@@ -212,7 +212,7 @@ class TargetForm
         return FilamentFormService::textarea(
             'description',
             null,
-            'Some description for this Target',
+            'Some Description about this Target',
         )
         ->rules(self::$validator::description());
     }

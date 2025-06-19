@@ -3,6 +3,7 @@
 namespace App\Validators;
 
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Validation\Rule;
 
 class UserValidator
 {
@@ -22,6 +23,14 @@ class UserValidator
             'string',
             'email',
             'max:255',
+            function($record)
+            {
+                if ($record)
+                {
+                    return Rule::unique('users', 'email')->ignore($record->id);
+                }
+                return 'unique:users,email';
+            },
         ];
     }
 
@@ -56,6 +65,7 @@ class UserValidator
     {
         return [
             'nullable',
+            'array',
             'exists:policies,id',
         ];
     }

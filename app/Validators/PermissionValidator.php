@@ -3,6 +3,7 @@
 namespace App\Validators;
 
 use App\Models\Permission;
+use Illuminate\Validation\Rule;
 
 class PermissionValidator
 {
@@ -12,6 +13,14 @@ class PermissionValidator
             'required',
             'string',
             'max:255',
+            function($record)
+            {
+                if ($record)
+                {
+                    return Rule::unique('permissions', 'name')->ignore($record->id);
+                }
+                return 'unique:permissions,name';
+            },
         ];
     }
 
@@ -36,6 +45,7 @@ class PermissionValidator
     {
         return [
             'nullable',
+            'array',
             'exists:policies,id',
         ];
     }

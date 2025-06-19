@@ -31,31 +31,31 @@ class PolicyResource extends Resource
         ]);
     }
 
-    public static function main()
+    public static function main($permission = true, $user = true)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::information()->columns(2)->columnSpan(2),
-            self::scope()->columnSpan(1),
+            self::information($permission)->columns(2)->columnSpan(2),
+            self::scope($user)->columnSpan(1),
         ]);
     }
 
-    private static function information()
+    private static function information($permission = true)
     {
         return Forms\Components\Section::make('Policy Information')
         ->schema([
             self::$form::name(),
-            self::$form::permissions(),
+            self::$form::permissions($permission),
             self::$form::tags()->columnSpanFull(),
             self::$form::description()->columnSpanFull(),
         ]);
     }
     
-    private static function scope()
+    private static function scope($user = true)
     {
         return Forms\Components\Section::make('Policy Scope')
         ->schema([
-            self::$form::users(),
+            self::$form::users($user),
         ]);
     }
 

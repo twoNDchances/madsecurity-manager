@@ -241,7 +241,7 @@ class RuleValidator
     {
         return [
             'nullable',
-            'integer',
+            'array',
             'exists:groups,id',
         ];
     }

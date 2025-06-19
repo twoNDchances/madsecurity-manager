@@ -44,7 +44,7 @@ class WordlistForm
         return FilamentFormService::textarea(
             'description',
             null,
-            'Some description for this Wordlist',
+            'Some Description about this Wordlist',
         )
         ->rules(self::$validator::description());
     }

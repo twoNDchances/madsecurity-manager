@@ -31,16 +31,16 @@ class RuleResource extends Resource
         ]);
     }
 
-    public static function main()
+    public static function main($group = true)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::core()->columns(2)->columnSpan(2),
+            self::core($group)->columns(2)->columnSpan(2),
             self::logistic()->columns(2)->columnSpan(1),
         ]);
     }
 
-    public static function core()
+    public static function core($group = true)
     {
         return Forms\Components\Wizard::make([
             Forms\Components\Wizard\Step::make('Information')
@@ -69,6 +69,7 @@ class RuleResource extends Resource
 
             Forms\Components\Wizard\Step::make('Completion')
             ->schema([
+                self::$form::groups($group)->columnSpan(1),
                 self::$form::tags()->columnSpan(1),
                 self::$form::description()->columnSpanFull(),
             ]),

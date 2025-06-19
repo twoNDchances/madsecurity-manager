@@ -26,13 +26,9 @@ class PolicyForm
         ->unique(ignoreRecord: true);
     }
 
-    public static function permissions()
+    public static function permissions($form = true)
     {
-        $former = [
-            PermissionResource::main(),
-        ];
-        $creator = fn($data) => CreatePermission::callByStatic($data);
-        return FilamentFormService::select(
+        $permissionField = FilamentFormService::select(
             'permissions',
             'Permissions',
             self::$validator::permissions(),
@@ -40,9 +36,18 @@ class PolicyForm
         ->relationship('permissions', 'name')
         ->multiple()
         ->searchable()
-        ->preload()
-        ->createOptionForm($former)
-        ->createOptionUsing($creator);
+        ->preload();
+        if ($form)
+        {
+            $former = [
+                PermissionResource::main(false),
+            ];
+            $creator = fn($data) => CreatePermission::callByStatic($data);
+            $permissionField = $permissionField
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
+        }
+        return $permissionField;
     }
 
     public static function tags()
@@ -55,18 +60,14 @@ class PolicyForm
         return FilamentFormService::textarea(
             'description',
             null,
-            'Description for this Policy'
+            'Some Description about this Policy'
         )
         ->rules(self::$validator::description());
     }
 
-    public static function users()
+    public static function users($form = true)
     {
-        $former = [
-            UserResource::main(),
-        ];
-        $creator = fn($data) => CreateUser::callByStatic($data);
-        return FilamentFormService::select(
+        $userField = FilamentFormService::select(
             'users',
             'Users',
             self::$validator::users(),
@@ -74,8 +75,17 @@ class PolicyForm
         ->relationship('users', 'name')
         ->multiple()
         ->searchable()
-        ->preload()
-        ->createOptionForm($former)
-        ->createOptionUsing($creator);
+        ->preload();
+        if ($form)
+        {
+            $former = [
+                UserResource::main(false),
+            ];
+            $creator = fn($data) => CreateUser::callByStatic($data);
+            $userField = $userField
+                ->createOptionForm($former)
+            ->createOptionUsing($creator);
+        }
+        return $userField;
     }
 }

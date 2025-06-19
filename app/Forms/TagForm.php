@@ -36,7 +36,7 @@ class TagForm
         return FilamentFormService::textarea(
             'description',
             null,
-            'Some description for this Tag'
+            'Some Description about this Tag'
         )
         ->rules(self::$validator::description());
     }

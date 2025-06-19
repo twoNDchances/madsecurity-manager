@@ -2,6 +2,8 @@
 
 namespace App\Forms;
 
+use App\Filament\Resources\PolicyResource;
+use App\Filament\Resources\PolicyResource\Pages\CreatePolicy;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\UserValidator;
@@ -82,9 +84,9 @@ class UserForm
         ->visible($condition);
     }
 
-    public static function policies()
+    public static function policies($form = true)
     {
-        return FilamentFormService::select(
+        $policyField = FilamentFormService::select(
             'policies',
             'Policies',
             self::$validator::policies(),
@@ -93,6 +95,17 @@ class UserForm
         ->multiple()
         ->searchable()
         ->preload();
+        if ($form)
+        {
+            $former = [
+                PolicyResource::main(false, false),
+            ];
+            $creator = fn($data) => CreatePolicy::callByStatic($data)->id;
+            $policyField = $policyField
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
+        }
+        return $policyField;
     }
 
     public static function activation()

@@ -13,7 +13,6 @@ class Target extends Model
         'alias',
         'type',
         'name',
-        // 'real_name',
         'phase',
         'datatype',
         'final_datatype',

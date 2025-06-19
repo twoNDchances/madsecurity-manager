@@ -31,12 +31,12 @@ class UserResource extends Resource
         ]);
     }
 
-    public static function main()
+    public static function main($policy = true)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
             self::information()->columns(2)->columnSpan(2),
-            self::scope()->columnSpan(1),
+            self::scope($policy)->columnSpan(1),
         ]);
     }
 
@@ -52,11 +52,11 @@ class UserResource extends Resource
         ]);
     }
 
-    private static function scope()
+    private static function scope($policy = true)
     {
         return Forms\Components\Section::make('User Scope')
         ->schema([
-            self::$form::policies(),
+            self::$form::policies($policy),
             self::$form::activation(),
             self::$form::important(),
         ]);

@@ -103,7 +103,7 @@ class TargetValidator
     public static function wordlist()
     {
         return [
-            'nullable',
+            'required_if:datatype,array',
             'integer',
             'exists:wordlists,id',
         ];

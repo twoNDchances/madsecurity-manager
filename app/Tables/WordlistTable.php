@@ -23,6 +23,15 @@ class WordlistTable
         return FilamentTableService::text('words_count')->counts('words');
     }
 
+    public static function used($name, $label)
+    {
+        return FilamentTableService::text($name, $label)
+        ->bulleted()
+        ->limitList(3)
+        ->expandableLimitedList()
+        ->listWithLineBreaks();
+    }
+
     public static function tags()
     {
         return TagFieldService::getTags();

@@ -23,6 +23,7 @@ class TagTable
     public static function types($name)
     {
         return FilamentTableService::text($name)
+        ->bulleted()
         ->listWithLineBreaks()
         ->limitList(3)
         ->expandableLimitedList()

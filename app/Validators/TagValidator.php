@@ -2,6 +2,8 @@
 
 namespace App\Validators;
 
+use Illuminate\Validation\Rule;
+
 class TagValidator
 {
     public static function name()
@@ -10,6 +12,14 @@ class TagValidator
             'required',
             'string',
             'max:255',
+            function($record)
+            {
+                if ($record)
+                {
+                    return Rule::unique('tags', 'name')->ignore($record->id);
+                }
+                return 'unique:tags,name';
+            },
         ];
     }
 
