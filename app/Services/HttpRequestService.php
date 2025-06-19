@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 
@@ -16,7 +17,7 @@ class HttpRequestService
         'delete',
     ];
 
-    public static function perform(string $method, string $url, array|null $body = null, bool $notify = true)
+    public static function perform($method, $url, $body = null, $notify = true, $username = null, $password = null): null|Response|string
     {
         if (!self::methodExists($method))
         {
@@ -29,6 +30,9 @@ class HttpRequestService
             return null;
         }
         $request = Http::agent()->withHeader('Content-Type', 'application/json');
+        if ($username && $password) {
+            $request = $request->withBasicAuth($username, $password);
+        }
         $response = null;
         try
         {
@@ -47,17 +51,19 @@ class HttpRequestService
                 return $response;
             }
             self::notify($notify, 'success', 'Success', $description);
+            return $response;
         }
         catch (Exception $exception)
         {
+            $body = 'Status Code: 500 | Body: ' . $exception->getMessage();
             self::notify(
                 $notify,
                 'warning',
                 'Warning',
-                'Status Code: 500 | Body: ' . $exception->getMessage(),
+                $body,
             );
+            return $body;
         }
-        return $response;
     }
 
     private static function methodExists(string $method)

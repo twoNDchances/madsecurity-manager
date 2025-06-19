@@ -95,4 +95,9 @@ class PolicyResource extends Resource
             'edit' => Pages\EditPolicy::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 }

@@ -5,21 +5,34 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Group extends Model
+class Defender extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
+        'url',
         'status',
-        'execution_order',
-        'level',
+        'current',
+        'health',
+        'list',
+        'update',
+        'delete',
+        'output',
         'description',
+        'protection',
+        'username',
+        'password',
         'user_id',
     ];
 
     protected $casts = [
-        'status' => 'boolean'
+        'status' => 'boolean',
+        'output'=> 'array',
+    ];
+
+    protected $hidden = [
+        'password',
     ];
 
     // Belongs
@@ -34,17 +47,8 @@ class Group extends Model
         return $this->morphToMany(Tag::class,'taggable');
     }
 
-    public function rules()
+    public function groups()
     {
-        return $this->belongsToMany(Rule::class, 'rules_groups')
-        ->withPivot('position')
-        ->orderBy('position');
+        return $this->belongsToMany(Group::class, 'defenders_groups');
     }
-
-    public function defenders()
-    {
-        return $this->belongsToMany(Defender::class, 'defenders_groups');
-    }
-
-    // Businesses
 }

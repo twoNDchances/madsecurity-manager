@@ -3,14 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\GroupResource\Pages;
-use App\Filament\Resources\GroupResource\RelationManagers\RuleRelationManager;
+use App\Filament\Resources\GroupResource\RelationManagers\RulesRelationManager;
 use App\Forms\GroupForm;
 use App\Models\Group;
 use App\Tables\GroupTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 
 class GroupResource extends Resource
@@ -74,7 +73,7 @@ class GroupResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RuleRelationManager::class,
+            RulesRelationManager::class,
         ];
     }
 
@@ -85,5 +84,10 @@ class GroupResource extends Resource
             'create' => Pages\CreateGroup::route('/create'),
             'edit' => Pages\EditGroup::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
     }
 }

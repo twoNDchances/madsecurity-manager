@@ -14,7 +14,7 @@ use Filament\Forms\Components\ToggleButtons;
 
 class FilamentFormService
 {
-    public static function textInput($name, $label = null, $placeholder = null, $rules = null)
+    public static function textInput($name, $label = null, $placeholder = null, $rules = [])
     {
         return TextInput::make($name)
         ->label($label)

@@ -118,4 +118,9 @@ class TargetResource extends Resource
             'edit' => Pages\EditTarget::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 }

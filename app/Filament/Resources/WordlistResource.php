@@ -97,4 +97,9 @@ class WordlistResource extends Resource
             'edit' => Pages\EditWordlist::route('/{record}/edit'),
         ];
     }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 }
