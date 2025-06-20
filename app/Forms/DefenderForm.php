@@ -2,11 +2,12 @@
 
 namespace App\Forms;
 
+use App\Filament\Resources\GroupResource;
+use App\Filament\Resources\GroupResource\Pages\CreateGroup;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\DefenderValidator;
 use Filament\Forms\Components\Actions\Action;
-use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 
 class DefenderForm
@@ -36,6 +37,30 @@ class DefenderForm
         ->unique(ignoreRecord: true)
         ->url()
         ->prefixIcon('heroicon-o-globe-alt');
+    }
+
+    public static function groups($form = true)
+    {
+        $groupField = FilamentFormService::select(
+            'groups',
+            null,
+            self::$validator::groups(),
+        )
+        ->relationship('groups', 'name')
+        ->searchable()
+        ->multiple()
+        ->preload();
+        if ($form)
+        {
+            $former = [
+                GroupResource::main(false)->columns(6),
+            ];
+            $creator = fn($data) => CreateGroup::callByStatic($data)->id;
+            $groupField = $groupField
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
+        }
+        return $groupField;
     }
 
     public static function path($path)
@@ -105,7 +130,9 @@ class DefenderForm
         )
         ->minLength(8)
         ->required($conditon)
-        ->visible($conditon);
+        ->visible($conditon)
+        ->password()
+        ->revealable();
     }
 
     public static function status()
@@ -149,7 +176,7 @@ class DefenderForm
             'output',
             null,
         )
-        ->disabled()
+        ->readOnly()
         ->afterStateHydrated($state);
     }
 

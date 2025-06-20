@@ -33,42 +33,28 @@ class DefenderResource extends Resource
         ]);
     }
 
-    public static function main()
+    public static function main($group = true)
     {
-        return Forms\Components\Tabs::make()
-        ->contained(false)
+        return Forms\Components\Grid::make(3)
         ->schema([
-            Forms\Components\Tabs\Tab::make('Definition')
+            self::information($group)->columns(2)->columnSpan(2),
+            Forms\Components\Grid::make(1)
             ->schema([
-                self::information()->columns(2)->columnSpan(2),
-                self::status()->columnSpan(1),
-            ]),
-
-            Forms\Components\Tabs\Tab::make('Terminal')
-            ->schema([
-                self::console()->columnSpanFull()
-            ]),
+                self::status(),
+                self::authentication(),
+            ])
+            ->columns(1)
+            ->columnSpan(1),
+            self::console()->columnSpanFull(),
         ]);
     }
 
-    private static function information()
+    private static function information($group = true)
     {
         return Forms\Components\Section::make('Defender Information')
         ->schema([
-            Forms\Components\Grid::make(1)
-            ->schema([
-                self::$form::name(),
-                self::$form::protection(),
-                Forms\Components\Fieldset::make('Credential')
-                ->schema([
-                    self::$form::noCredential(),
-                    self::$form::username(),
-                    self::$form::password(),
-                ])
-                ->columns(1),
-            ])
-            ->columnSpan(1),
-
+            self::$form::name(),
+            self::$form::groups($group),
             Forms\Components\Fieldset::make('Location')
             ->schema([
                 self::$form::url()->columnSpanFull(),
@@ -77,8 +63,10 @@ class DefenderResource extends Resource
                 self::$form::path('update'),
                 self::$form::path('delete'),
             ])
-            ->columns(2)
-            ->columnSpan(1),
+            ->columns(4)
+            ->columnSpanFull(),
+            self::$form::tags()->columnSpan(1),
+            self::$form::description()->columnSpan(1),
         ]);
     }
 
@@ -88,6 +76,21 @@ class DefenderResource extends Resource
         ->schema([
             self::$form::status(),
             self::$form::current(),
+        ]);
+    }
+
+    private static function authentication()
+    {
+        return Forms\Components\Section::make('Defender Authentication')
+        ->schema([
+            self::$form::protection(),
+            Forms\Components\Fieldset::make('Credential')
+            ->schema([
+                self::$form::noCredential(),
+                self::$form::username(),
+                self::$form::password(),
+            ])
+            ->columns(1),
         ]);
     }
 

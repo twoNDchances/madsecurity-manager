@@ -83,6 +83,15 @@ class DefenderValidator
         ];
     }
 
+    public static function groups()
+    {
+        return [
+            'nullable',
+            'array',
+            'exists:groups,id',
+        ];
+    }
+
     public static function path()
     {
         return [
