@@ -4,10 +4,12 @@ namespace App\Tables;
 
 use App\Services\FilamentTableService;
 use App\Services\TagFieldService;
-use Filament\Tables\Actions\DeleteBulkAction;
+use App\Tables\Actions\WordlistAction;
 
 class WordlistTable
 {
+    private static $action = WordlistAction::class;
+
     public static function name()
     {
         return FilamentTableService::text('name');
@@ -44,11 +46,11 @@ class WordlistTable
 
     public static function actionGroup()
     {
-        return FilamentTableService::actionGroup();
+        return self::$action::actionGroup();
     }
 
     public static function deleteBulkAction()
     {
-        return DeleteBulkAction::make();
+        return self::$action::deleteBulkAction();
     }
 }

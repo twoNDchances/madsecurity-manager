@@ -3,13 +3,14 @@
 namespace App\Tables;
 
 use App\Services\FilamentTableService;
-use App\Services\NotificationService;
 use App\Services\TagFieldService;
-use Filament\Tables\Actions\DeleteBulkAction;
+use App\Tables\Actions\TargetAction;
 use Illuminate\Support\Str;
 
 class TargetTable
 {
+    private static $action = TargetAction::class;
+
     private static array $datatypeColors = [
         'warning' => 'array',
         'success' => 'number',
@@ -53,11 +54,7 @@ class TargetTable
 
     public static function wordlist()
     {
-        return FilamentTableService::text('getWordlist.alias', 'Wordlist')
-        ->bulleted()
-        ->limitList(3)
-        ->expandableLimitedList()
-        ->listWithLineBreaks();
+        return FilamentTableService::text('getWordlist.alias', 'Wordlist');
     }
 
     public static function datatype()
@@ -116,27 +113,11 @@ class TargetTable
 
     public static function actionGroup()
     {
-        return FilamentTableService::actionGroup();
+        return self::$action::actionGroup();
     }
 
     public static function deleteBulkAction()
     {
-        $action = function ($records)
-        {
-            $counter = 0;
-            foreach ($records as $record)
-            {
-                if ($record->immutable) continue;
-                $record->delete();
-                $counter++;
-            }
-            if ($counter == 0)
-            {
-                NotificationService::notify('failure', 'Fail','No records can be deleted');
-                return;
-            }
-            NotificationService::notify('success','Deleted successfully', "Deleted $counter records");
-        };
-        return DeleteBulkAction::make()->action($action);
+        return self::$action::deleteBulkAction();
     }
 }

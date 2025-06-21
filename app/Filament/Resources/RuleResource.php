@@ -31,13 +31,18 @@ class RuleResource extends Resource
         ]);
     }
 
-    public static function main($group = true)
+    public static function main($group = true, $owner = false)
     {
-        return Forms\Components\Grid::make(3)
-        ->schema([
+        $form = [
             self::core($group)->columns(2)->columnSpan(2),
             self::logistic()->columns(2)->columnSpan(1),
-        ]);
+        ];
+        if ($owner)
+        {
+            $form[] = self::$form::owner();
+        }
+        return Forms\Components\Grid::make(3)
+        ->schema($form);
     }
 
     public static function core($group = true)
@@ -103,6 +108,7 @@ class RuleResource extends Resource
             self::$table::wordlist(),
             self::$table::action(),
             self::$table::severity(),
+            self::$table::groups(),
             self::$table::tags(),
             self::$table::owner(),
         ])

@@ -3,10 +3,12 @@
 namespace App\Tables;
 
 use App\Services\FilamentTableService;
-use Filament\Tables\Actions\DeleteBulkAction;
+use App\Tables\Actions\TagAction;
 
 class TagTable
 {
+    private static $action = TagAction::class;
+
     public static function name()
     {
         $description = fn($record) => $record->description;
@@ -37,11 +39,11 @@ class TagTable
 
     public static function actionGroup()
     {
-        return FilamentTableService::actionGroup();
+        return self::$action::actionGroup();
     }
 
     public static function deleteBulkAction()
     {
-        return DeleteBulkAction::make();
+        return self::$action::deleteBulkAction();
     }
 }

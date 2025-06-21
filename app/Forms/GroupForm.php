@@ -2,17 +2,19 @@
 
 namespace App\Forms;
 
+use App\Filament\Resources\DefenderResource;
 use App\Filament\Resources\RuleResource;
-use App\Filament\Resources\RuleResource\Pages\CreateRule;
+use App\Forms\Actions\GroupAction;
 use App\Models\Group;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\GroupValidator;
-use Filament\Forms\Components\Actions\Action;
 
 class GroupForm
 {
     private static $validator = GroupValidator::class;
+
+    private static $action = GroupAction::class;
 
     public static function name()
     {
@@ -24,18 +26,7 @@ class GroupForm
         )
         ->required()
         ->unique(ignoreRecord: true)
-        ->suffixAction(self::generateName());
-    }
-
-    public static function generateName()
-    {
-        $action = function($set)
-        {
-            $set('name', 'group-' . now()->timestamp);
-        };
-        return Action::make('generate_name')
-        ->icon('heroicon-o-arrow-path')
-        ->action($action);
+        ->suffixAction(self::$action::generateName());
     }
 
     public static function executionOrder()
@@ -81,14 +72,34 @@ class GroupForm
         if ($form)
         {
             $former = [
-                RuleResource::main(false),
+                RuleResource::main(false, true),
             ];
-            $creator = fn($data) => CreateRule::callByStatic($data)->id;
             $ruleField = $ruleField
-            ->createOptionForm($former)
-            ->createOptionUsing($creator);
+            ->createOptionForm($former);
         }
         return $ruleField;
+    }
+
+    public static function defenders($form = true)
+    {
+        $defenderField = FilamentFormService::select(
+            'defenders',
+            null,
+            self::$validator::defenders(),
+        )
+        ->relationship('defenders', 'url')
+        ->multiple()
+        ->searchable()
+        ->preload();
+        if ($form)
+        {
+            $former = [
+                DefenderResource::main(false, true),
+            ];
+            $defenderField = $defenderField
+            ->createOptionForm($former);
+        }
+        return $defenderField;
     }
 
     public static function tags()
@@ -104,5 +115,10 @@ class GroupForm
             'Some Description about this Group'
         )
         ->rules(self::$validator::description());
+    }
+
+    public static function owner()
+    {
+        return FilamentFormService::owner();
     }
 }

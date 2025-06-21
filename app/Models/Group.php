@@ -11,15 +11,10 @@ class Group extends Model
 
     protected $fillable = [
         'name',
-        'status',
         'execution_order',
         'level',
         'description',
         'user_id',
-    ];
-
-    protected $casts = [
-        'status' => 'boolean'
     ];
 
     // Belongs

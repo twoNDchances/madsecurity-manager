@@ -32,19 +32,25 @@ class GroupResource extends Resource
         ]);
     }
 
-    public static function main($rule = true)
+    public static function main($rule = true, $defender = true, $owner = false)
     {
-        return Forms\Components\Section::make('Group Information')
-        ->aside()
-        ->description('Interact with Defender to Apply and Revoke Rules, matching AND logic by grouping multiple Rules together')
-        ->schema([
+        $form = [
             self::$form::name()->columnSpan(2),
             self::$form::executionOrder()->columnSpan(2),
             self::$form::level()->columnSpan(2),
-            self::$form::rules($rule)->columnSpanFull(),
+            self::$form::defenders($defender)->columnSpan(3),
+            self::$form::rules($rule)->columnSpan(3),
             self::$form::tags()->columnSpan(3),
             self::$form::description()->columnSpan(3),
-        ]);
+        ];
+        if ($owner)
+        {
+            $form[] = self::$form::owner();
+        }
+        return Forms\Components\Section::make('Group Information')
+        ->aside()
+        ->description('Interact with Defender to Apply and Revoke Rules, matching AND logic by grouping multiple Rules together')
+        ->schema($form);
     }
 
     public static function table(Table $table): Table
@@ -54,7 +60,7 @@ class GroupResource extends Resource
             self::$table::executionOrder(),
             self::$table::level(),
             self::$table::name(),
-            self::$table::status(),
+            self::$table::defenders(),
             self::$table::rules(),
             self::$table::tags(),
             self::$table::owner(),

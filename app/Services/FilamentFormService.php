@@ -5,6 +5,7 @@ namespace App\Services;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -80,5 +81,12 @@ class FilamentFormService
     {
         return Placeholder::make($name)
         ->helperText($heperText);
+    }
+
+    public static function owner()
+    {
+        $user = AuthenticationService::get();
+        return Hidden::make('user_id')
+        ->default($user->id);
     }
 }

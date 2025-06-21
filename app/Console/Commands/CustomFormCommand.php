@@ -22,30 +22,43 @@ class CustomFormCommand extends Command
     protected $description = 'Create a FilamentPHP Form class';
 
     /**
+     * The namespace of class.
+     * 
+     * @var string
+     */
+    private $namespace = 'App\Forms';
+
+    /**
      * Execute the console command.
      */
     public function handle()
     {
         $name = $this->argument('name');
-        $path = app_path("Forms/{$name}.php");
+        $this->createForm($name);
+        $this->createAction($name);
+    }
 
+    private function createForm($name)
+    {
+        $path = app_path("Forms/{$name}Form.php");
         if (File::exists($path)) {
             $this->error("Form '{$name}' already exist!");
             return;
         }
-
-        $namespace = 'App\Forms';
         $content = <<<PHP
 <?php
 
-namespace $namespace;
+namespace $this->namespace;
 
+use {$this->namespace}\Actions\\{$name}Action;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 
-class $name
+class {$name}Form
 {
     private static \$validator = null;
+
+    private static \$action = {$name}Action::class;
 
     //
 
@@ -53,12 +66,41 @@ class $name
     {
         return TagFieldService::setTags();
     }
+
+    public static function owner()
+    {
+        return FilamentFormService::owner();
+    }
 }
 
 PHP;
         File::ensureDirectoryExists(app_path('Forms'));
         File::put($path, $content);
-
         $this->info("Form '{$name}' created at {$path}");
+    }
+
+    private function createAction($name)
+    {
+        $path = app_path("Forms/Actions/{$name}Action.php");
+        if (File::exists($path)) {
+            $this->error("Action '{$name}' already exist!");
+            return;
+        }
+        $content = <<<PHP
+<?php
+
+namespace {$this->namespace}\Actions;
+
+use Filament\Forms\Components\Actions\Action;
+
+class {$name}Action
+{
+    //
+}
+
+PHP;
+        File::ensureDirectoryExists(app_path('Forms/Actions'));
+        File::put($path, $content);
+        $this->info("Action '{$name}' created at {$path}");
     }
 }

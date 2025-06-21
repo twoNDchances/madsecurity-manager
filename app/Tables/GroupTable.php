@@ -5,11 +5,13 @@ namespace App\Tables;
 use App\Services\AuthenticationService;
 use App\Services\FilamentTableService;
 use App\Services\TagFieldService;
+use App\Tables\Actions\GroupAction;
 use App\Validators\GroupValidator;
-use Filament\Tables\Actions\DeleteBulkAction;
 
 class GroupTable
 {
+    private static $action = GroupAction::class;
+
     private static $user = AuthenticationService::class;
 
     private static $validator = GroupValidator::class;
@@ -48,10 +50,13 @@ class GroupTable
         return FilamentTableService::text('name');
     }
 
-    public static function status()
+    public static function defenders()
     {
-        return FilamentTableService::icon('status')
-        ->boolean();
+        return FilamentTableService::text('defenders.name')
+        ->bulleted()
+        ->limitList(3)
+        ->expandableLimitedList()
+        ->listWithLineBreaks();
     }
 
     public static function rules()
@@ -75,11 +80,11 @@ class GroupTable
 
     public static function actionGroup()
     {
-        return FilamentTableService::actionGroup();
+        return self::$action::actionGroup();
     }
 
     public static function deleteBulkAction()
     {
-        return DeleteBulkAction::make();
+        return self::$action::deleteBulkAction();
     }
 }

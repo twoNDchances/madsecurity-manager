@@ -44,7 +44,7 @@ class WordlistValidator
     public static function content()
     {
         return [
-            'required',
+            'nullable',
             'string',
         ];
     }

@@ -5,7 +5,6 @@ namespace App\Filament\Resources\DefenderResource\Pages;
 use App\Filament\Resources\DefenderResource;
 use App\Services\AuthenticationService;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Database\Eloquent\Model;
 
 class CreateDefender extends CreateRecord
 {
@@ -17,12 +16,6 @@ class CreateDefender extends CreateRecord
         return $data;
     }
 
-    public static function callByStatic(array $data): Model
-    {
-        $mutater = (new static())->mutateFormDataBeforeCreate($data);
-        return (new static())->handleRecordCreation($mutater);
-    }
- 
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

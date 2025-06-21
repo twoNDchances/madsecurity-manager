@@ -50,6 +50,15 @@ class GroupValidator
         ];
     }
 
+    public static function defenders()
+    {
+        return [
+            'nullable',
+            'array',
+            'exists:defenders,id',
+        ];
+    }
+
     public static function description()
     {
         return [

@@ -3,16 +3,17 @@
 namespace App\Forms;
 
 use App\Filament\Resources\GroupResource;
-use App\Filament\Resources\GroupResource\Pages\CreateGroup;
+use App\Forms\Actions\DefenderAction;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\DefenderValidator;
-use Filament\Forms\Components\Actions\Action;
 use Illuminate\Support\Str;
 
 class DefenderForm
 {
     private static $validator = DefenderValidator::class;
+
+    private static $action = DefenderAction::class;
 
     public static function name()
     {
@@ -36,7 +37,8 @@ class DefenderForm
         ->required()
         ->unique(ignoreRecord: true)
         ->url()
-        ->prefixIcon('heroicon-o-globe-alt');
+        ->prefixIcon('heroicon-o-globe-alt')
+        ->suffixAction(self::$action::checkHealth());
     }
 
     public static function groups($form = true)
@@ -53,12 +55,10 @@ class DefenderForm
         if ($form)
         {
             $former = [
-                GroupResource::main(false)->columns(6),
+                GroupResource::main(false, false, true)->columns(6),
             ];
-            $creator = fn($data) => CreateGroup::callByStatic($data)->id;
             $groupField = $groupField
-            ->createOptionForm($former)
-            ->createOptionUsing($creator);
+            ->createOptionForm($former);
         }
         return $groupField;
     }
@@ -135,40 +135,22 @@ class DefenderForm
         ->revealable();
     }
 
-    public static function status()
+    public static function periodic()
     {
-        return FilamentFormService::toggleButton(
-            'status',
+        return FilamentFormService::toggle(
+            'periodic',
             null,
-            [],
-            [
-                true => 'Healthy',
-                false => 'Unhealthy',
-            ],
-            [
-                true => 'success',
-                false => 'danger',
-            ],
+            self::$validator::periodic(),
         )
-        ->disabled();
-    }
-
-    public static function current()
-    {
-        return FilamentFormService::textInput(
-            'current',
-            'Applied Count',
-        )
-        ->integer()
-        ->disabled()
-        ->prefixIcon('heroicon-o-rectangle-stack');
+        ->required()
+        ->helperText('Automatic periodic Health check');
     }
 
     public static function output()
     {
         $state = function ($record, $set)
         {
-            if ($record) {
+            if ($record && $record->output) {
                 $set('output', implode("\n", $record->output));
             }
         };
@@ -182,14 +164,16 @@ class DefenderForm
 
     public static function clearOutput()
     {
-        return Action::make('clear_output')
-        ->label('Clear Output')
-        ->action(null)
-        ->icon('heroicon-o-backspace');
+        return self::$action::clearOutput();
     }
 
     public static function tags()
     {
         return TagFieldService::setTags();
+    }
+
+    public static function owner()
+    {
+        return FilamentFormService::owner();
     }
 }

@@ -4,10 +4,12 @@ namespace App\Tables;
 
 use App\Services\FilamentTableService;
 use App\Services\TagFieldService;
-use Filament\Tables\Actions\DeleteBulkAction;
+use App\Tables\Actions\PolicyAction;
 
 class PolicyTable
 {
+    private static $action = PolicyAction::class;
+
     public static function name()
     {
         return FilamentTableService::text('name');
@@ -43,11 +45,11 @@ class PolicyTable
 
     public static function actionGroup()
     {
-        return FilamentTableService::actionGroup();
+        return self::$action::actionGroup();
     }
 
     public static function deleteBulkAction()
     {
-        return DeleteBulkAction::make();
+        return self::$action::deleteBulkAction();
     }
 }

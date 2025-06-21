@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique()->index();
-            $table->boolean('status')->default(false);
             $table->unsignedBigInteger('execution_order')->nullable();
             $table->integer('level')->nullable();
             $table->longText('description')->nullable();

@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name')->index();
             $table->longText('url')->unique()->index();
-            $table->boolean('status')->default(true)->nullable();
-            $table->unsignedBigInteger('current')->default(0)->nullable();
+            $table->boolean('periodic')->default(false);
+            $table->boolean('last_status')->default(false);
             $table->text('health');
-            $table->text('list');
-            $table->text('update');
-            $table->text('delete');
+            $table->text('sync');
+            $table->text('apply');
+            $table->text('revoke');
             $table->json('output')->nullable();
             $table->longText('description')->nullable();
             $table->boolean('protection')->default(false);

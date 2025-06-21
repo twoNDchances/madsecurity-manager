@@ -3,7 +3,6 @@
 namespace App\Forms;
 
 use App\Filament\Resources\PolicyResource;
-use App\Filament\Resources\PolicyResource\Pages\CreatePolicy;
 use App\Models\Permission;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
@@ -67,13 +66,16 @@ class PermissionForm
         if ($form)
         {
             $former = [
-                PolicyResource::main(false, false),
+                PolicyResource::main(false, false, true),
             ];
-            $creator = fn($data) => CreatePolicy::callByStatic($data)->id;
             $policyField = $policyField
-            ->createOptionForm($former)
-            ->createOptionUsing($creator);
+            ->createOptionForm($former);
         }
         return $policyField;
+    }
+
+    public static function owner()
+    {
+        return FilamentFormService::owner();
     }
 }

@@ -8,19 +8,19 @@ use App\Filament\Resources\TargetResource;
 use App\Filament\Resources\TargetResource\Pages\CreateTarget;
 use App\Filament\Resources\WordlistResource;
 use App\Filament\Resources\WordlistResource\Pages\CreateWordlist;
+use App\Forms\Actions\RuleAction;
 use App\Models\Target;
 use App\Services\FilamentFormService;
-use App\Services\HttpRequestService;
-use App\Services\NotificationService;
 use App\Services\TagFieldService;
 use App\Validators\RuleValidator;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
 use Illuminate\Support\Str;
 
 class RuleForm
 {
     private static $validator = RuleValidator::class;
+
+    private static $action = RuleAction::class;
 
     public static function name()
     {
@@ -85,7 +85,7 @@ class RuleForm
         $former = [
             TargetResource::main(),
         ];
-        $creator = fn($data) => CreateTarget::callByStatic($data);
+        $creator = fn($data) => CreateTarget::callByStatic($data)->id;
         $state = function($state, $set)
         {
             if (!$state)
@@ -383,27 +383,7 @@ class RuleForm
         ->required($condition)
         ->visible($condition)
         ->url()
-        ->suffixAction(self::checkConnection());
-    }
-
-    private static function checkConnection()
-    {
-        $action = function($state, $get)
-        {
-            if (!$state)
-            {
-                NotificationService::notify('info', 'Info', 'Please enter a valid URL');
-                return;
-            }
-            $body = [
-                'errors' => [],
-                'data' => ['message' => 'connected']
-            ];
-            HttpRequestService::perform($get('request_method'), $state, $body);
-        };
-        return Action::make('check_connection')
-        ->icon('heroicon-o-check')
-        ->action($action);
+        ->suffixAction(self::$action::checkConnection());
     }
 
     private static function score()
@@ -450,12 +430,10 @@ class RuleForm
         if ($form)
         {
             $former = [
-                GroupResource::main(false)->columns(6),
+                GroupResource::main(false, false, true)->columns(6),
             ];
-            $creator = fn($data) => CreateGroup::callByStatic($data)->id;
             $groupField = $groupField
-            ->createOptionForm($former)
-            ->createOptionUsing($creator);
+            ->createOptionForm($former);
         }
         return $groupField;
     }
@@ -498,5 +476,10 @@ class RuleForm
         ->required()
         ->default(true)
         ->disabled($condition);
+    }
+
+    public static function owner()
+    {
+        return FilamentFormService::owner();
     }
 }

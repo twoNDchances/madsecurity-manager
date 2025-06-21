@@ -3,17 +3,17 @@
 namespace App\Forms;
 
 use App\Filament\Resources\PolicyResource;
-use App\Filament\Resources\PolicyResource\Pages\CreatePolicy;
+use App\Forms\Actions\UserAction;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\UserValidator;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Str;
 
 class UserForm
 {
     private static $validator = UserValidator::class;
+
+    private static $action = UserAction::class;
     
     public static function name()
     {
@@ -53,18 +53,7 @@ class UserForm
         ->minLength($length)
         ->password()
         ->revealable()
-        ->suffixAction(self::generatePassword());
-    }
-
-    public static function generatePassword()
-    {
-        $action = function($set)
-        {
-            $set('password', Str::random(12));
-        };
-        return Action::make('password_creation')
-        ->icon('heroicon-o-arrow-path')
-        ->action($action);
+        ->suffixAction(self::$action::generatePassword());
     }
 
     public static function tags()
@@ -98,12 +87,10 @@ class UserForm
         if ($form)
         {
             $former = [
-                PolicyResource::main(false, false),
+                PolicyResource::main(false, false, true),
             ];
-            $creator = fn($data) => CreatePolicy::callByStatic($data)->id;
             $policyField = $policyField
-            ->createOptionForm($former)
-            ->createOptionUsing($creator);
+            ->createOptionForm($former);
         }
         return $policyField;
     }

@@ -2,11 +2,9 @@
 
 namespace App\Filament\Resources\DefenderResource\RelationManagers;
 
-use App\Filament\Resources\GroupResource;
 use App\Tables\GroupTable;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
 use Filament\Tables\Table;
 
 class GroupsRelationManager extends RelationManager
@@ -19,7 +17,7 @@ class GroupsRelationManager extends RelationManager
     {
         return $form
         ->schema([
-            GroupResource::main(),
+            //
         ]);
     }
 
@@ -30,7 +28,6 @@ class GroupsRelationManager extends RelationManager
             self::$tableRelationship::executionOrder(),
             self::$tableRelationship::level(),
             self::$tableRelationship::name(),
-            self::$tableRelationship::status(),
             self::$tableRelationship::rules(),
             self::$tableRelationship::tags(),
             self::$tableRelationship::owner(),
@@ -39,7 +36,7 @@ class GroupsRelationManager extends RelationManager
             //
         ])
         ->headerActions([
-            Tables\Actions\CreateAction::make(),
+            //
         ])
         ->actions([
             self::$tableRelationship::actionGroup(),

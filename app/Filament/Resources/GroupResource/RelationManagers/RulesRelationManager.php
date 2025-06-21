@@ -2,11 +2,9 @@
 
 namespace App\Filament\Resources\GroupResource\RelationManagers;
 
-use App\Filament\Resources\RuleResource;
 use App\Tables\RuleTable;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables;
 use Filament\Tables\Table;
 
 class RulesRelationManager extends RelationManager
@@ -19,7 +17,7 @@ class RulesRelationManager extends RelationManager
     {
         return $form
         ->schema([
-            RuleResource::main(),
+            //
         ]);
     }
 
@@ -43,7 +41,7 @@ class RulesRelationManager extends RelationManager
             //
         ])
         ->headerActions([
-            Tables\Actions\CreateAction::make()->icon('heroicon-o-plus'),
+            //
         ])
         ->actions([
             self::$tableRelationship::actionGroup(),

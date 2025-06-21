@@ -3,7 +3,6 @@
 namespace App\Forms;
 
 use App\Filament\Resources\PermissionResource;
-use App\Filament\Resources\PermissionResource\Pages\CreatePermission;
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Services\FilamentFormService;
@@ -40,12 +39,10 @@ class PolicyForm
         if ($form)
         {
             $former = [
-                PermissionResource::main(false),
+                PermissionResource::main(false, true),
             ];
-            $creator = fn($data) => CreatePermission::callByStatic($data);
             $permissionField = $permissionField
-            ->createOptionForm($former)
-            ->createOptionUsing($creator);
+            ->createOptionForm($former);
         }
         return $permissionField;
     }
@@ -81,11 +78,16 @@ class PolicyForm
             $former = [
                 UserResource::main(false),
             ];
-            $creator = fn($data) => CreateUser::callByStatic($data);
+            $creator = fn($data) => CreateUser::callByStatic($data)->id;
             $userField = $userField
-                ->createOptionForm($former)
+            ->createOptionForm($former)
             ->createOptionUsing($creator);
         }
         return $userField;
+    }
+
+    public static function owner()
+    {
+        return FilamentFormService::owner();
     }
 }

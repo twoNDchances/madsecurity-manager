@@ -2,19 +2,20 @@
 
 namespace App\Tables;
 
+use App\Tables\Actions\RuleAction;
 use App\Services\AuthenticationService;
-use App\Services\FilamentFormService;
 use App\Services\FilamentTableService;
 use App\Services\TagFieldService;
-use Filament\Tables\Actions\DeleteBulkAction;
 use Illuminate\Support\Str;
 
 class RuleTable
 {
+    private static $action = RuleAction::class;
+
     public static function representation()
     {
         $description = fn($record) => $record->alias;
-        return FilamentTableService::text('name', 'Name/Alias')
+        return FilamentTableService::text('name', 'Representation')
         ->description($description)
         ->wrap();
     }
@@ -100,6 +101,15 @@ class RuleTable
         ->formatStateUsing($format);
     }
 
+    public static function groups()
+    {
+        return FilamentTableService::text('groups.name','Groups')
+        ->listWithLineBreaks()
+        ->bulleted()
+        ->limitList(3)
+        ->expandableLimitedList();
+    }
+
     public static function tags()
     {
         return TagFieldService::getTags();
@@ -107,23 +117,16 @@ class RuleTable
 
     public static function owner()
     {
-        $colors = fn($state) => match ($state)
-        {
-            config('manager.account.email') => 'alternative',
-            default => 'primary',
-        };
-        return FilamentTableService::text('getOwner.email', 'Created by')
-        ->badge()
-        ->color($colors);
+        return FilamentTableService::text('getOwner.email', 'Created by');
     }
 
     public static function actionGroup()
     {
-        return FilamentTableService::actionGroup();
+        return self::$action::actionGroup();
     }
 
     public static function deleteBulkAction()
     {
-        return DeleteBulkAction::make();
+        return self::$action::deleteBulkAction();
     }
 }

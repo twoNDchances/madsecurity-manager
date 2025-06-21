@@ -10,7 +10,6 @@ use App\Tables\DefenderTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 
 class DefenderResource extends Resource
@@ -33,20 +32,25 @@ class DefenderResource extends Resource
         ]);
     }
 
-    public static function main($group = true)
+    public static function main($group = true, $owner = false)
     {
-        return Forms\Components\Grid::make(3)
-        ->schema([
+        $form = [
             self::information($group)->columns(2)->columnSpan(2),
             Forms\Components\Grid::make(1)
             ->schema([
-                self::status(),
+                self::inspection(),
                 self::authentication(),
             ])
             ->columns(1)
             ->columnSpan(1),
             self::console()->columnSpanFull(),
-        ]);
+        ];
+        if ($owner)
+        {
+            $form[] = self::$form::owner();
+        }
+        return Forms\Components\Grid::make(3)
+        ->schema($form);
     }
 
     private static function information($group = true)
@@ -59,9 +63,9 @@ class DefenderResource extends Resource
             ->schema([
                 self::$form::url()->columnSpanFull(),
                 self::$form::path('health'),
-                self::$form::path('list'),
-                self::$form::path('update'),
-                self::$form::path('delete'),
+                self::$form::path('sync'),
+                self::$form::path('apply'),
+                self::$form::path('revoke'),
             ])
             ->columns(4)
             ->columnSpanFull(),
@@ -70,12 +74,11 @@ class DefenderResource extends Resource
         ]);
     }
 
-    private static function status()
+    private static function inspection()
     {
-        return Forms\Components\Section::make('Defender Status')
+        return Forms\Components\Section::make('Defender Inspection')
         ->schema([
-            self::$form::status(),
-            self::$form::current(),
+            self::$form::periodic(),
         ]);
     }
 
@@ -107,7 +110,17 @@ class DefenderResource extends Resource
     {
         return $table
         ->columns([
-            //
+            self::$table::representation(),
+            self::$table::periodic(),
+            self::$table::lastStatus(),
+            self::$table::groups(),
+            self::$table::health(),
+            self::$table::sync(),
+            self::$table::apply(),
+            self::$table::revoke(),
+            self::$table::protection(),
+            self::$table::tags(),
+            self::$table::owner(),
         ])
         ->filters([
             //
