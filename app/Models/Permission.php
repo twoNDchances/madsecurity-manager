@@ -42,6 +42,10 @@ class Permission extends Model
         'update' => 'Update',
         'delete' => 'Delete',
         'deleteAny' => 'Multi-Delete',
+        'health' => 'Health-Check',
+        'sync' => 'Sync-Data',
+        'apply' => 'Apply-Data',
+        'revoke' => 'Revoke-Data',
     ];
 
     private static array $exclusionList = [

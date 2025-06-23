@@ -23,7 +23,7 @@ class DefenderAction
                     'get',
                     $state . $get('health'),
                     null,
-                    null,
+                    true,
                     $get('username'),
                     $get('password'),
                 );

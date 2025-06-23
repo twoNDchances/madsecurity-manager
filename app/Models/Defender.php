@@ -12,6 +12,7 @@ class Defender extends Model
     protected $fillable = [
         'name',
         'url',
+        'important',
         'periodic',
         'last_status',
         'health',
@@ -27,12 +28,10 @@ class Defender extends Model
     ];
 
     protected $casts = [
-        'status' => 'boolean',
-        'output'=> 'array',
-    ];
-
-    protected $hidden = [
-        'password',
+        'important' => 'boolean',
+        'periodic' => 'boolean',
+        'last_status' => 'boolean',
+        'output' => 'array',
     ];
 
     // Belongs
@@ -44,7 +43,7 @@ class Defender extends Model
     // Relationships
     public function tags()
     {
-        return $this->morphToMany(Tag::class,'taggable');
+        return $this->morphToMany(Tag::class, 'taggable');
     }
 
     public function groups()

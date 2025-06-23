@@ -78,6 +78,7 @@ class DefenderResource extends Resource
     {
         return Forms\Components\Section::make('Defender Inspection')
         ->schema([
+            self::$form::important(),
             self::$form::periodic(),
         ]);
     }

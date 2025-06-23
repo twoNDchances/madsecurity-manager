@@ -22,7 +22,6 @@ class AuthenticationService
         {
             return true;
         }
-        // dd($user->hasPermission("$resource.all"));
         return $user->hasPermission("$resource.$action");
     }
 

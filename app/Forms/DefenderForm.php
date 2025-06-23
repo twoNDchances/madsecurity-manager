@@ -26,21 +26,6 @@ class DefenderForm
         ->required();
     }
 
-    public static function url()
-    {
-        return FilamentFormService::textInput(
-            'url',
-            'URL',
-            'Defender URL',
-            self::$validator::url(),
-        )
-        ->required()
-        ->unique(ignoreRecord: true)
-        ->url()
-        ->prefixIcon('heroicon-o-globe-alt')
-        ->suffixAction(self::$action::checkHealth());
-    }
-
     public static function groups($form = true)
     {
         $groupField = FilamentFormService::select(
@@ -63,6 +48,21 @@ class DefenderForm
         return $groupField;
     }
 
+    public static function url()
+    {
+        return FilamentFormService::textInput(
+            'url',
+            'URL',
+            'Defender URL',
+            self::$validator::url(),
+        )
+        ->required()
+        ->unique(ignoreRecord: true)
+        ->url()
+        ->prefixIcon('heroicon-o-globe-alt')
+        ->suffixAction(self::$action::checkHealth());
+    }
+
     public static function path($path)
     {
         return FilamentFormService::textInput(
@@ -75,6 +75,11 @@ class DefenderForm
         ->default("/$path");
     }
 
+    public static function tags()
+    {
+        return TagFieldService::setTags();
+    }
+
     public static function description()
     {
         return FilamentFormService::textarea(
@@ -83,6 +88,28 @@ class DefenderForm
             'Some Description for this Defender',
         )
         ->rules(self::$validator::description());
+    }
+
+    public static function important()
+    {
+        return FilamentFormService::toggle(
+            'important',
+            null,
+            self::$validator::important(),
+        )
+        ->required()
+        ->helperText('Ensure only Important Users can operate');
+    }
+
+    public static function periodic()
+    {
+        return FilamentFormService::toggle(
+            'periodic',
+            null,
+            self::$validator::periodic(),
+        )
+        ->required()
+        ->helperText('Automatic periodic Health check');
     }
 
     public static function protection()
@@ -135,17 +162,6 @@ class DefenderForm
         ->revealable();
     }
 
-    public static function periodic()
-    {
-        return FilamentFormService::toggle(
-            'periodic',
-            null,
-            self::$validator::periodic(),
-        )
-        ->required()
-        ->helperText('Automatic periodic Health check');
-    }
-
     public static function output()
     {
         $state = function ($record, $set)
@@ -165,11 +181,6 @@ class DefenderForm
     public static function clearOutput()
     {
         return self::$action::clearOutput();
-    }
-
-    public static function tags()
-    {
-        return TagFieldService::setTags();
     }
 
     public static function owner()

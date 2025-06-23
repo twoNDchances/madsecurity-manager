@@ -70,6 +70,38 @@ class DefenderPolicy
     }
 
     /**
+     * Determine whether the user can health check the Defender.
+     */
+    public function health(User $user, Defender $defender): bool
+    {
+        return $this->getResource($user, 'health');
+    }
+
+    /**
+     * Determine whether the user can sync data from the Defender.
+     */
+    public function sync(User $user, Defender $defender): bool
+    {
+        return $this->getResource($user, 'sync');
+    }
+
+    /**
+     * Determine whether the user can apply data from the Defender.
+     */
+    public function apply(User $user, Defender $defender): bool
+    {
+        return $this->getResource($user, 'apply');
+    }
+
+    /**
+     * Determine whether the user can revoke data from the Defender.
+     */
+    public function revoke(User $user, Defender $defender): bool
+    {
+        return $this->getResource($user, 'revoke');
+    }
+
+    /**
      * Determine whether the user can restore the model.
      */
     public function restore(User $user, Defender $defender): bool

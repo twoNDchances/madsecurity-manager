@@ -48,6 +48,14 @@ class DefenderValidator
         ];
     }
 
+    public static function important()
+    {
+        return [
+            'required',
+            'boolean',
+        ];
+    }
+
     public static function periodic()
     {
         return [

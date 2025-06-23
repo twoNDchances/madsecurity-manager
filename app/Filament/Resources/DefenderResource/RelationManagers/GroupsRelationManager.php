@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\DefenderResource\RelationManagers;
 
+use App\Filament\Resources\GroupResource;
 use App\Tables\GroupTable;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -17,7 +18,7 @@ class GroupsRelationManager extends RelationManager
     {
         return $form
         ->schema([
-            //
+            GroupResource::main()->columns(6),
         ]);
     }
 

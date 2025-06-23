@@ -17,17 +17,18 @@ class HttpRequestService
         'delete',
     ];
 
-    public static function perform($method, $url, $body = null, $notify = true, $username = null, $password = null): null|Response|string
+    public static function perform($method, $url, $body = null, $notify = true, $username = null, $password = null): Response|string
     {
         if (!self::methodExists($method))
         {
+            $body = Str::upper($method) . ' method does not exist';
             self::notify(
                 $notify,
                 'info',
                 'Method not supported',
-                Str::upper($method) . ' method does not exist'
+                $body,
             );
-            return null;
+            return $body;
         }
         $request = Http::agent()->withHeader('Content-Type', 'application/json');
         if ($username && $password) {

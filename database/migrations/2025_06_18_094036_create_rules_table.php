@@ -25,7 +25,7 @@ return new class extends Migration
             $table->string('action')->nullable();
             $table->longText('action_configuration')->nullable();
 
-            $table->enum('severity', ['notice', 'warning', 'error', 'critical'])->nullable()->default('notice');
+            $table->enum('severity', ['notice', 'warning', 'error', 'critical'])->nullable();
 
             $table->boolean('log')->default(true);
             $table->boolean('time')->default(true);

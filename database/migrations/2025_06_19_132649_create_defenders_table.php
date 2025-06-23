@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->index();
             $table->longText('url')->unique()->index();
+            $table->boolean('important')->default(false);
             $table->boolean('periodic')->default(false);
             $table->boolean('last_status')->default(false);
             $table->text('health');
