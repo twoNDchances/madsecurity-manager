@@ -6,6 +6,7 @@ use App\Filament\Resources\DefenderResource\Pages;
 use App\Filament\Resources\DefenderResource\RelationManagers\GroupsRelationManager;
 use App\Forms\DefenderForm;
 use App\Models\Defender;
+use App\Services\AuthenticationService;
 use App\Tables\DefenderTable;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -32,7 +33,26 @@ class DefenderResource extends Resource
         ]);
     }
 
-    public static function main($group = true, $owner = false)
+    private static function main($group = true, $owner = false)
+    {
+        return Forms\Components\Tabs::make()
+        ->schema([
+            Forms\Components\Tabs\Tab::make('Definition')
+            ->icon('heroicon-o-server')
+            ->schema([
+                self::definition($group, $owner),
+            ]),
+
+            Forms\Components\Tabs\Tab::make('Console')
+            ->icon('heroicon-o-command-line')
+            ->schema([
+                self::console()->columns(4)->columnSpanFull(),
+            ]),
+        ])
+        ->contained(false);
+    }
+
+    public static function definition($group = true, $owner = false)
     {
         $form = [
             self::information($group)->columns(2)->columnSpan(2),
@@ -43,7 +63,6 @@ class DefenderResource extends Resource
             ])
             ->columns(1)
             ->columnSpan(1),
-            self::console()->columnSpanFull(),
         ];
         if ($owner)
         {
@@ -102,14 +121,29 @@ class DefenderResource extends Resource
     {
         return Forms\Components\Section::make('Defender Console')
         ->schema([
-            self::$form::output(),
+            Forms\Components\Fieldset::make('Status')
+            ->schema([
+                self::$form::totalGroups(),
+                self::$form::currentApplied(),
+            ])
+            ->columns(1)
+            ->columnSpan(1),
+            self::$form::output()
+            ->columnSpan(3),
         ])
         ->headerActions([self::$form::clearOutput()]);
     }
 
     public static function table(Table $table): Table
     {
+        $query = Defender::query();
+        $user = AuthenticationService::get();
+        if (!$user->important)
+        {
+            $query->where('important',false);
+        }
         return $table
+        ->query($query)
         ->columns([
             self::$table::representation(),
             self::$table::periodic(),
@@ -152,6 +186,8 @@ class DefenderResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        $user = AuthenticationService::get();
+        $model = static::getModel();
+        return !$user->important ? $model::where('important', false)->count() : $model::count();
     }
 }

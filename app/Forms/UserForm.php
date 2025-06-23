@@ -4,6 +4,7 @@ namespace App\Forms;
 
 use App\Filament\Resources\PolicyResource;
 use App\Forms\Actions\UserAction;
+use App\Services\AuthenticationService;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\UserValidator;
@@ -108,11 +109,21 @@ class UserForm
 
     public static function important()
     {
+        $condition = fn() => !AuthenticationService::get()->important;
+        $helperText = function() use ($condition)
+        {
+            if ($condition)
+            {
+                return 'This feature can not use now.';
+            }
+            return 'This account will be on par with the root account.';
+        };
         return FilamentFormService::toggle(
             'important',
             'Important account',
             self::$validator::important(),
         )
-        ->helperText('This account will be on par with the root account.');
+        ->helperText($helperText)
+        ->disabled($condition);
     }
 }

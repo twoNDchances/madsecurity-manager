@@ -21,8 +21,15 @@ class EditDefender extends EditRecord
         ];
     }
 
-    protected function getRedirectUrl(): string
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        return $this->getResource()::getUrl('index');
+        if ($data['output'])
+        {
+            $data['output'] = array_values(array_filter(array_map(
+                'trim',
+                explode("\n", $data['output'])
+            )));
+        }
+        return $data;
     }
 }

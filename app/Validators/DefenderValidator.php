@@ -90,4 +90,22 @@ class DefenderValidator
             'max:255',
         ];
     }
+
+    public static function totalGroups()
+    {
+        return [
+            'nullable',
+            'integer',
+            'min:0',
+        ];
+    }
+
+    public static function currentApplied()
+    {
+        return [
+            'nullable',
+            'integer',
+            'min:0',
+        ];
+    }
 }

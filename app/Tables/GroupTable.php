@@ -87,4 +87,9 @@ class GroupTable
     {
         return self::$action::deleteBulkAction();
     }
+
+    public static function operationActionGroup()
+    {
+        return self::$action::operationActionGroup();
+    }
 }

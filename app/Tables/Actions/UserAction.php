@@ -52,10 +52,10 @@ class UserAction
             }
             if ($counter == 0)
             {
-                NotificationService::notify('failure', 'Fail', 'No records can be deleted');
+                NotificationService::notify('failure', 'Failed', 'No records can be deleted');
                 return;
             }
-            NotificationService::notify('success', 'Deleted successfully', "Deleted $counter records");
+            NotificationService::notify('success', 'Deleted', "Deleted $counter records");
         };
         return DeleteBulkAction::make()->action($action);
     }

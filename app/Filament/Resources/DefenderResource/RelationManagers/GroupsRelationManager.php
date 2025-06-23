@@ -40,7 +40,7 @@ class GroupsRelationManager extends RelationManager
             //
         ])
         ->actions([
-            self::$tableRelationship::actionGroup(),
+            self::$tableRelationship::operationActionGroup(),
         ])
         ->bulkActions([
             self::$tableRelationship::deleteBulkAction(),

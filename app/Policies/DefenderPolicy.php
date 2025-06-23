@@ -21,6 +21,15 @@ class DefenderPolicy
         return $this->getResource($user, 'all');
     }
 
+    private function operate(User $user, Defender $defender, string $action): bool
+    {
+        if ($defender->important && !$user->important)
+        {
+            return false;
+        }
+        return $this->getResource($user, $action);
+    }
+
     /**
      * Determine whether the user can view any models.
      */
@@ -34,7 +43,7 @@ class DefenderPolicy
      */
     public function view(User $user, Defender $defender): bool
     {
-        return $this->getResource($user, 'view');
+        return $this->operate($user, $defender,'view');
     }
 
     /**
@@ -50,7 +59,7 @@ class DefenderPolicy
      */
     public function update(User $user, Defender $defender): bool
     {
-        return $this->getResource($user, 'update');
+        return $this->operate($user, $defender,'update');
     }
 
     /**
@@ -66,7 +75,7 @@ class DefenderPolicy
      */
     public function delete(User $user, Defender $defender): bool
     {
-        return $this->getResource($user, 'delete');
+        return $this->operate($user, $defender,'delete');
     }
 
     /**
@@ -74,7 +83,7 @@ class DefenderPolicy
      */
     public function health(User $user, Defender $defender): bool
     {
-        return $this->getResource($user, 'health');
+        return $this->operate($user, $defender,'health');
     }
 
     /**
@@ -82,7 +91,7 @@ class DefenderPolicy
      */
     public function sync(User $user, Defender $defender): bool
     {
-        return $this->getResource($user, 'sync');
+        return $this->operate($user, $defender,'sync');
     }
 
     /**
@@ -90,7 +99,7 @@ class DefenderPolicy
      */
     public function apply(User $user, Defender $defender): bool
     {
-        return $this->getResource($user, 'apply');
+        return $this->operate($user, $defender,'apply');
     }
 
     /**
@@ -98,7 +107,7 @@ class DefenderPolicy
      */
     public function revoke(User $user, Defender $defender): bool
     {
-        return $this->getResource($user, 'revoke');
+        return $this->operate($user, $defender,'revoke');
     }
 
     /**

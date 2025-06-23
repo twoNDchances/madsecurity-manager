@@ -20,6 +20,8 @@ class Defender extends Model
         'apply',
         'revoke',
         'output',
+        'total_groups',
+        'current_applied',
         'description',
         'protection',
         'username',
@@ -32,6 +34,7 @@ class Defender extends Model
         'periodic' => 'boolean',
         'last_status' => 'boolean',
         'output' => 'array',
+        'protection' => 'boolean',
     ];
 
     // Belongs

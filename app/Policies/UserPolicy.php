@@ -20,6 +20,15 @@ class UserPolicy
         return $this->getResource($user, 'all');
     }
 
+    private function operate(User $user, User $model, string $action): bool
+    {
+        if ($model->important && !$user->important)
+        {
+            return false;
+        }
+        return $this->getResource($user, $action);
+    }
+
     /**
      * Determine whether the user can view any models.
      */
@@ -33,14 +42,7 @@ class UserPolicy
      */
     public function view(User $user, User $model): bool
     {
-        if (!$user->important)
-        {
-            if ($model->important)
-            {
-                return false;
-            }
-        }
-        return $this->getResource($user, 'view');
+        return $this->operate($user, $model,'view');
     }
 
     /**
@@ -56,14 +58,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        if (!$user->important)
-        {
-            if ($model->important)
-            {
-                return false;
-            }
-        }
-        return $this->getResource($user, 'update');
+        return $this->operate($user, $model,'update');
     }
 
     /**
@@ -79,14 +74,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        if (!$user->important)
-        {
-            if ($model->important)
-            {
-                return false;
-            }
-        }
-        return $this->getResource($user, 'delete');
+        return $this->operate($user, $model,'delete');
     }
 
     /**

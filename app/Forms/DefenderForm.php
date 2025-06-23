@@ -28,6 +28,10 @@ class DefenderForm
 
     public static function groups($form = true)
     {
+        $state = function($state, $set)
+        {
+            $set('total_groups', count($state));
+        };
         $groupField = FilamentFormService::select(
             'groups',
             null,
@@ -36,7 +40,8 @@ class DefenderForm
         ->relationship('groups', 'name')
         ->searchable()
         ->multiple()
-        ->preload();
+        ->preload()
+        ->afterStateUpdated($state);
         if ($form)
         {
             $former = [
@@ -160,6 +165,28 @@ class DefenderForm
         ->visible($conditon)
         ->password()
         ->revealable();
+    }
+
+    public static function totalGroups()
+    {
+        return FilamentFormService::textInput(
+            'total_groups',
+            'Total Groups',
+            'Total Groups in Defender',
+            self::$validator::totalGroups(),
+        )
+        ->readOnly();
+    }
+
+    public static function currentApplied()
+    {
+        return FilamentFormService::textInput(
+            'current_applied',
+            'Current Applied',
+            'Current Applied in Defender',
+            self::$validator::currentApplied(),
+        )
+        ->readOnly();
     }
 
     public static function output()
