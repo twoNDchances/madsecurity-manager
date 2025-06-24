@@ -3,7 +3,8 @@
 namespace App\Actions;
 
 use App\Services\AuthenticationService;
-use App\Services\DefenderActionService;
+use App\Services\DefenderHealthService;
+use App\Services\DefenderSyncService;
 use Filament\Actions\Action;
 
 class DefenderAction
@@ -18,7 +19,7 @@ class DefenderAction
     {
         $action = function($livewire, $record)
         {
-            $record = DefenderActionService::health($record);
+            $record = DefenderHealthService::perform($record);
             $livewire->form->fill($record->toArray());
         };
         return Action::make('check_health')
@@ -33,7 +34,7 @@ class DefenderAction
     {
         $action = function($record)
         {
-            $record = DefenderActionService::sync($record);
+            $record = DefenderSyncService::perform($record);
         };
         return Action::make('sync')
         ->icon('heroicon-o-arrow-down-on-square-stack')

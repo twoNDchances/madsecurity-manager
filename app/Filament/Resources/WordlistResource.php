@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class WordlistResource extends Resource
 {
@@ -101,5 +102,29 @@ class WordlistResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'name',
+            'alias',
+            'description',
+            'getOwner.name',
+            'getOwner.email',
+            'tags.name',
+        ];
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->name;
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Alias' => $record->alias,
+        ];
     }
 }

@@ -10,6 +10,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class RuleResource extends Resource
 {
@@ -142,5 +143,46 @@ class RuleResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'name',
+            'alias',
+            'phase',
+            'getTarget.name',
+            'getTarget.alias',
+            'comparator',
+            'inverse',
+            'value',
+            'action',
+            'action_configuration',
+            'log',
+            'time',
+            'status',
+            'user_agent',
+            'client_ip',
+            'method',
+            'path',
+            'severity',
+            'description',
+            'getOwner.name',
+            'getOwner.email',
+            'tags.name',
+        ];
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->alias;
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Name' => $record->name,
+            'Phase' => $record->phase,
+        ];
     }
 }

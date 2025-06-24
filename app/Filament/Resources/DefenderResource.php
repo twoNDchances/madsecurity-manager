@@ -12,6 +12,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class DefenderResource extends Resource
 {
@@ -33,7 +34,7 @@ class DefenderResource extends Resource
         ]);
     }
 
-    private static function main($group = true, $owner = false)
+    public static function main($group = true, $owner = false)
     {
         return Forms\Components\Tabs::make()
         ->schema([
@@ -90,7 +91,8 @@ class DefenderResource extends Resource
             ->columnSpanFull(),
             self::$form::tags()->columnSpan(1),
             self::$form::description()->columnSpan(1),
-        ]);
+        ])
+        ->collapsible();
     }
 
     private static function inspection()
@@ -99,7 +101,8 @@ class DefenderResource extends Resource
         ->schema([
             self::$form::important(),
             self::$form::periodic(),
-        ]);
+        ])
+        ->collapsible();
     }
 
     private static function authentication()
@@ -114,7 +117,8 @@ class DefenderResource extends Resource
                 self::$form::password(),
             ])
             ->columns(1),
-        ]);
+        ])
+        ->collapsible();
     }
 
     private static function console()
@@ -131,7 +135,8 @@ class DefenderResource extends Resource
             self::$form::output()
             ->columnSpan(3),
         ])
-        ->headerActions([self::$form::clearOutput()]);
+        ->headerActions([self::$form::clearOutput()])
+        ->collapsible();
     }
 
     public static function table(Table $table): Table
@@ -189,5 +194,44 @@ class DefenderResource extends Resource
         $user = AuthenticationService::get();
         $model = static::getModel();
         return !$user->important ? $model::where('important', false)->count() : $model::count();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'name',
+            'url',
+            'important',
+            'periodic',
+            'last_status',
+            'health',
+            'sync',
+            'apply',
+            'revoke',
+            'output',
+            'total_groups',
+            'current_applied',
+            'description',
+            'protection',
+            'username',
+            'getOwner.name',
+            'getOwner.email',
+            'tags.name',
+            'groups.name'
+        ];
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->name;
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'URL' => $record->url,
+            'Total Groups' => $record->total_groups,
+            'Current Applied' => $record->current_applied,
+        ];
     }
 }

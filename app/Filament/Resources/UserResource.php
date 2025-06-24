@@ -11,6 +11,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class UserResource extends Resource
 {
@@ -114,5 +115,31 @@ class UserResource extends Resource
         $user = AuthenticationService::get();
         $model = static::getModel();
         return !$user->important ? $model::where('important', false)->count() : $model::count();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'name',
+            'email',
+            'active',
+            'important',
+            'getSuperior.name',
+            'getSuperior.email',
+            'tags.name',
+        ];
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->email;
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Name' => $record->name,
+            'Active' => $record->active ? 'Yes' : 'No',
+        ];
     }
 }

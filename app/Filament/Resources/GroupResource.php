@@ -11,6 +11,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class GroupResource extends Resource
 {
@@ -95,5 +96,31 @@ class GroupResource extends Resource
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'name',
+            'execution_order',
+            'level',
+            'description',
+            'getOwner.name',
+            'getOwner.email',
+            'tags.name',
+        ];
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->name;
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Execution Order' => $record->execution_order,
+            'Level' => $record->level,
+        ];
     }
 }

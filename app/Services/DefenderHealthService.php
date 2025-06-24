@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Models\Defender;
 
-class DefenderActionService
+class DefenderHealthService
 {
-    public static function health(Defender $record): Defender
+    public static function perform(Defender $record): Defender
     {
         $response = match ($record->protection)
         {
@@ -51,20 +51,5 @@ class DefenderActionService
         ]);
         NotificationService::announce(null, 'Health checked', $output);
         return $record;
-    }
-
-    public static function sync(Defender $defender): Defender
-    {
-        return $defender;
-    }
-
-    public static function apply(Defender $defender): Defender
-    {
-        return $defender;
-    }
-
-    public static function revoke(Defender $defender): Defender
-    {
-        return $defender;
     }
 }

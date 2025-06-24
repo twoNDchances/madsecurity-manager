@@ -3,6 +3,8 @@
 namespace App\Tables\Actions;
 
 use App\Services\AuthenticationService;
+use App\Services\DefenderApplyService;
+use App\Services\DefenderRevokeService;
 use App\Services\FilamentTableService;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -42,7 +44,7 @@ class GroupAction
     {
         $action = function ($record)
         {
-            
+            $record = DefenderApplyService::perform($record);
         };
         return Action::make('apply')
         ->icon('heroicon-o-arrow-up-on-square-stack')
@@ -55,7 +57,7 @@ class GroupAction
     {
         $action = function ($record)
         {
-            
+            $record = DefenderRevokeService::perform($record);
         };
         return Action::make('revoke')
         ->icon('heroicon-o-arrow-uturn-left')
