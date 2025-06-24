@@ -2,40 +2,61 @@
 
 namespace App\Services;
 
+use App\Models\Defender;
 use Carbon\Carbon;
 
 class DefenderConsoleService
 {
-    private static array $severity = [
-        'notice'   => 'NOTICE',
-        'warning'  => 'WARNING',
-        'danger'   => 'DANGER',
-        'critical' => 'CRITICAL',
+    private static array $severities = [
+        'notice'    => 'NOTICE',
+        'warning'   => 'WARNING',
+        'danger'    => 'DANGER',
+        'emergency' => 'EMERGENCY',
     ];
 
-    private static function build($severity, $message): string
+    private static array $actions = [
+        'health' => 'HEALTH',
+        'sync'   => 'SYNC',
+        'apply'  => 'APPLY',
+        'revoke' => 'REVOKE',
+    ];
+
+    private static function build($severity, $action, $message): string
     {
         $time = Carbon::now()->format('d/m/Y - H:i:s');
-        return $time . ' ' . str_pad("[$severity]", 10) . " : $message";
+        $user = AuthenticationService::get();
+        return "$time [$severity] [$action] : [$user->email] : $message";
     }
 
-    public static function notice(string $message): string
+    public static function notice($action, $message): string
     {
-        return self::build(self::$severity['notice'], $message);
+        return self::build(self::$severities['notice'], self::$actions[$action], $message);
     }
 
-    public static function warning(string $message): string
+    public static function warning($action, $message): string
     {
-        return self::build(self::$severity['warning'], $message);
+        return self::build(self::$severities['warning'], self::$actions[$action], $message);
     }
 
-    public static function danger(string $message): string
+    public static function danger($action, $message): string
     {
-        return self::build(self::$severity['danger'], $message);
+        return self::build(self::$severities['danger'], self::$actions[$action], $message);
     }
 
-    public static function critical(string $message): string
+    public static function emergency($action, $message): string
     {
-        return self::build(self::$severity['critical'], $message);
+        return self::build(self::$severities['emergency'], self::$actions[$action], $message);
+    }
+
+    public static function updateOutput(Defender $defender, string $output, array $more = []): void
+    {
+        $newOutput = $defender->output;
+        $newOutput[] = $output;
+        $updated = ['output' => $newOutput];
+        if (count($more) > 0)
+        {
+            $updated = array_merge($updated, $more);
+        }
+        $defender->update($updated);
     }
 }

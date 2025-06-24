@@ -4,6 +4,7 @@ namespace App\Filament\Resources\DefenderResource\Pages;
 
 use App\Actions\DefenderAction;
 use App\Filament\Resources\DefenderResource;
+use App\Models\Defender;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -11,12 +12,16 @@ class EditDefender extends EditRecord
 {
     protected static string $resource = DefenderResource::class;
 
+    protected $listeners = ['refreshDefenderForm' => 'reloadForm'];
+
     protected function getHeaderActions(): array
     {
         $action = DefenderAction::class;
         return [
             $action::checkHealth(),
             $action::sync(),
+            $action::apply(),
+            $action::revoke(),
             Actions\DeleteAction::make()->icon('heroicon-o-trash'),
         ];
     }
@@ -31,5 +36,17 @@ class EditDefender extends EditRecord
             )));
         }
         return $data;
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $defender = Defender::find($data['id']);
+        $data['total_groups'] = $defender->groups->count();
+        return $data;
+    }
+
+    public function reloadForm(): void
+    {
+        $this->fillForm();
     }
 }

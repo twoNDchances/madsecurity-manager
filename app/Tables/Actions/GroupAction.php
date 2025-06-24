@@ -6,6 +6,7 @@ use App\Services\AuthenticationService;
 use App\Services\DefenderApplyService;
 use App\Services\DefenderRevokeService;
 use App\Services\FilamentTableService;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteBulkAction;
 
@@ -42,9 +43,10 @@ class GroupAction
 
     public static function apply()
     {
-        $action = function ($record)
+        $action = function ($record, RelationManager $livewire)
         {
-            $record = DefenderApplyService::perform($record);
+            DefenderApplyService::performEach($record, $livewire->getOwnerRecord());
+            $livewire->dispatch('refreshDefenderForm');
         };
         return Action::make('apply')
         ->icon('heroicon-o-arrow-up-on-square-stack')
@@ -55,9 +57,9 @@ class GroupAction
 
     public static function revoke()
     {
-        $action = function ($record)
+        $action = function ($livewire)
         {
-            $record = DefenderRevokeService::perform($record);
+            DefenderRevokeService::performEach($livewire->getOwnerRecord());
         };
         return Action::make('revoke')
         ->icon('heroicon-o-arrow-uturn-left')

@@ -3,7 +3,6 @@
 namespace App\Forms;
 
 use App\Filament\Resources\GroupResource;
-use App\Filament\Resources\GroupResource\Pages\CreateGroup;
 use App\Filament\Resources\TargetResource;
 use App\Filament\Resources\TargetResource\Pages\CreateTarget;
 use App\Filament\Resources\WordlistResource;

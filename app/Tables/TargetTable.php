@@ -81,6 +81,18 @@ class TargetTable
         ->colors(self::$datatypeColors);
     }
 
+    public static function rules()
+    {
+        return FilamentTableService::text(
+            'rules.alias',
+            'Rule Aliases',
+        )
+        ->bulleted()
+        ->listWithLineBreaks()
+        ->limitList(3)
+        ->expandableLimitedList();
+    }
+
     public static function superior()
     {
         $tooltip = function ($column)

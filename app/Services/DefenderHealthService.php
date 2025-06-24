@@ -28,28 +28,32 @@ class DefenderHealthService
         $output = null;
         if (is_string($response))
         {
-            $output = DefenderConsoleService::warning($response);
+            $output = DefenderConsoleService::warning('health', $response);
         }
         else
         {
             $body = 'Status Code: ' . $response->status() . ' | Body: ' . $response->body();
             if ($response->successful())
             {
-                $output = DefenderConsoleService::notice($body);
+                $output = DefenderConsoleService::notice('health', $body);
                 $lastStatus = true;
             }
             else
             {
-                $output = DefenderConsoleService::warning($body);
+                $output = DefenderConsoleService::warning('health', $body);
             }
         }
-        $newOutput = $record->output;
-        $newOutput[] = $output;
-        $record->update([
-            'lastStatus' => $lastStatus,
-            'output' => $newOutput,
-        ]);
-        NotificationService::announce(null, 'Health checked', $output);
+        DefenderConsoleService::updateOutput(
+            $record,
+            $output,
+            ['last_status' => $lastStatus],
+        );
+        $status = null;
+        if (!$lastStatus)
+        {
+            $status = 'failure';
+        }
+        NotificationService::announce($status, 'Health checked', $output);
         return $record;
     }
 }

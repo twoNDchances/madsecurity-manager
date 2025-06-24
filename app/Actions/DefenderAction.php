@@ -3,7 +3,9 @@
 namespace App\Actions;
 
 use App\Services\AuthenticationService;
+use App\Services\DefenderApplyService;
 use App\Services\DefenderHealthService;
+use App\Services\DefenderRevokeService;
 use App\Services\DefenderSyncService;
 use Filament\Actions\Action;
 
@@ -39,6 +41,37 @@ class DefenderAction
         return Action::make('sync')
         ->icon('heroicon-o-arrow-down-on-square-stack')
         ->color('teal')
-        ->action($action);
+        ->action($action)
+        ->authorize(self::can('sync'));
+    }
+
+    public static function apply()
+    {
+        $action = function($record)
+        {
+            $record = DefenderApplyService::performAll($record);
+        };
+        return Action::make('apply_all')
+        ->label('Apply')
+        ->icon('heroicon-o-arrow-up-on-square-stack')
+        ->color('sky')
+        ->action($action)
+        ->authorize(self::can('apply'));
+    }
+
+    public static function revoke()
+    {
+        $action = function($record)
+        {
+            $record = DefenderRevokeService::performAll($record);
+        };
+        return Action::make('revoke_all')
+        ->label('Revoke')
+        ->icon('heroicon-o-arrow-uturn-left')
+        ->color('pink')
+        ->action($action)
+        ->requiresConfirmation()
+        ->modalHeading('Revoke All')
+        ->authorize(self::can('revoke'));
     }
 }

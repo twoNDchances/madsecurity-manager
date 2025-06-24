@@ -44,7 +44,7 @@ class DefenderResource extends Resource
                 self::definition($group, $owner),
             ]),
 
-            Forms\Components\Tabs\Tab::make('Console')
+            Forms\Components\Tabs\Tab::make('Terminal')
             ->icon('heroicon-o-command-line')
             ->schema([
                 self::console()->columns(4)->columnSpanFull(),
