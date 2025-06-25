@@ -56,7 +56,7 @@ class HttpRequestService
         }
         catch (Exception $exception)
         {
-            $body = 'Status Code: 500 | Body: ' . $exception->getMessage();
+            $body = 'Status: 500 | Body: ' . $exception->getMessage();
             self::notify(
                 $notify,
                 'warning',

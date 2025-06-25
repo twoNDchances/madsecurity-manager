@@ -16,39 +16,24 @@ class DefenderApplyService extends DefenderPreActionService
         'words' => [],
     ];
 
-    private static string $actionType = 'apply';
+    protected static ?string $actionType = 'apply';
 
-    private static string $actionName = 'Data Application';
-
-    private static function detail($severity, $message, Defender $defender, $status)
-    {
-        $output = self::log($severity, self::$actionType, $message, $defender);
-        NotificationService::announce($status, self::$actionName, $output);
-    }
+    protected static ?string $actionName = 'Data Application';
 
     public static function performAll(Defender $defender): Defender
     {
         $rules = self::getGroupsAndReturnRules($defender->groups, $defender);
         $targets = self::getRulesAndReturnTargets($rules, $defender);
         self::getTargetsAndReturnPoint($targets, $defender);
-        // dd(self::$requestApiForm);
+        dd(self::$requestApiForm);
         return $defender;
     }
 
     public static function performEach($group, Defender $defender)
     {
         $rules = self::getGroupsAndReturnRules([$group], $defender);
-        $condition = true;
-        if (empty($rules))
-        {
-            $condition = false;
-        }
         $targets = self::getRulesAndReturnTargets($rules, $defender);
-        if (empty($targets))
-        {
-            $condition = false;
-        }
-        if (!$condition)
+        if (empty($rules) || empty($targets))
         {
             $message = "Group [$group->id][$group->name] not applicable because no qualifying Rule exists";
             self::detail('warning', $message, $defender, 'warning');
@@ -161,5 +146,52 @@ class DefenderApplyService extends DefenderPreActionService
             self::$requestApiForm['words'][] = self::clean($word);
         }
         self::$requestApiForm['wordlists'][] = self::clean($wordlist->toArray());
+    }
+
+    private static function send(Defender $defender)
+    {
+        $batchSize = 1000;
+        $batches = array_map(
+            fn($items) => array_chunk($items, $batchSize),
+            self::$requestApiForm,
+        );
+        $result = [];
+        $maxBatchCount = max(array_map('count', $batches));
+        for ($i = 0; $i < $maxBatchCount; $i++) {
+            $apiBatch = [
+                'groups' => $batches['groups'][$i] ?? [],
+                'rules' => $batches['rules'][$i] ?? [],
+                'targets' => $batches['targets'][$i] ?? [],
+                'wordlists' => $batches['wordlists'][$i] ?? [],
+                'words' => $batches['words'][$i] ?? [],
+            ];
+            $response = HttpRequestService::perform(
+                'patch',
+                "$defender->url$defender->apply",
+                $apiBatch,
+                false
+            );
+            if (!is_string($response))
+            {
+                $message = implode(' | ', [
+                    "Batch: $i",
+                    'Status: ' . $response->status(),
+                    'Body: ' . $response->body(),
+                ]);
+                $result[] = $message;
+                self::detail('success', $message, $defender, 'success');
+            }
+            else
+            {
+                $message = implode(' | ', [
+                    "Batch: $i",
+                    explode(' | ', $response)[0],
+                    explode(' | ', $response)[1],
+                ]);
+                $result[] = $message;
+                self::detail('danger', $message, $defender, 'failure');
+            }
+        }
+        NotificationService::notify(null, );
     }
 }

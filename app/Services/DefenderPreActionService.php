@@ -6,6 +6,10 @@ use App\Models\Defender;
 
 class DefenderPreActionService
 {
+    protected static ?string $actionType;
+
+    protected static ?string $actionName;
+
     protected static function clean($data, $more = [])
     {
         $unnecessaries = [
@@ -36,5 +40,11 @@ class DefenderPreActionService
         };
         DefenderConsoleService::updateOutput($defender, $output);
         return $output;
+    }
+
+    protected static function detail($severity, $message, Defender $defender, $status): void
+    {
+        $output = self::log($severity, static::$actionType, $message, $defender);
+        NotificationService::announce($status, static::$actionName, $output);
     }
 }
