@@ -80,6 +80,19 @@ class DefenderForm
         ->default("/$path");
     }
 
+    public static function method($for, $default)
+    {
+        return FilamentFormService::select(
+            $for . '_method',
+            Str::title($for) . ' Method',
+            self::$validator::method(),
+            self::$validator::$methods,
+        )
+        ->required()
+        ->default($default)
+        ->selectablePlaceholder(false);
+    }
+
     public static function tags()
     {
         return TagFieldService::setTags();

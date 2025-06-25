@@ -23,31 +23,38 @@ class DefenderApplyService extends DefenderPreActionService
     public static function performAll(Defender $defender): Defender
     {
         $rules = self::getGroupsAndReturnRules($defender->groups, $defender);
-        $targets = self::getRulesAndReturnTargets($rules, $defender);
-        self::getTargetsAndReturnPoint($targets, $defender);
-        dd(self::$requestApiForm);
+        self::generalAction('Defender', $defender->id, $defender->name, $rules, $defender);
         return $defender;
     }
 
     public static function performEach($group, Defender $defender)
     {
         $rules = self::getGroupsAndReturnRules([$group], $defender);
+        self::generalAction('Group', $group->id, $group->name, $rules, $defender);
+    }
+
+    private static function generalAction($type, $id, $name, $rules, $defender)
+    {
         $targets = self::getRulesAndReturnTargets($rules, $defender);
         if (empty($rules) || empty($targets))
         {
-            $message = "Group [$group->id][$group->name] not applicable because no qualifying Rule exists";
+            $message = "$type [$id][$name] not applicable because no qualifying Rule exists";
             self::detail('warning', $message, $defender, 'warning');
             return;
         }
         $point = self::getTargetsAndReturnPoint($targets, $defender);
         if ($point == 0)
         {
-            $message = "Group [$group->id][$group->name] not applicable because no qualifying Target exists";
+            $message = "$type [$id][$name] not applicable because no qualifying Target exists";
             self::detail('warning', $message, $defender, 'warning');
             return;
         }
-        $message = "Group [$group->id][$group->name] has been applied";
-        self::detail('notice', $message, $defender, null);
+        $result = self::send($defender);
+        if ($result)
+        {
+            $message = "$type [$id][$name] has been applied";
+            self::detail('notice', $message, $defender, null);
+        }
     }
 
     private static function getGroupsAndReturnRules($groups, $defender): array
@@ -148,15 +155,26 @@ class DefenderApplyService extends DefenderPreActionService
         self::$requestApiForm['wordlists'][] = self::clean($wordlist->toArray());
     }
 
-    private static function send(Defender $defender)
+    private static function send(Defender $defender): bool
     {
-        $batchSize = 1000;
+        $batchMinSize = 10000;
+        $batchMaxSize = 100000;
+        foreach (self::$requestApiForm as $_ => $items) {
+            if (count($items) > $batchMaxSize) {
+                $batchMinSize = $batchMaxSize;
+                break;
+            }
+        }
         $batches = array_map(
-            fn($items) => array_chunk($items, $batchSize),
+            fn($items) => array_chunk($items, $batchMinSize),
             self::$requestApiForm,
         );
         $result = [];
         $maxBatchCount = max(array_map('count', $batches));
+        $status = [
+            'pass' => 0,
+            'fall' => 0,
+        ];
         for ($i = 0; $i < $maxBatchCount; $i++) {
             $apiBatch = [
                 'groups' => $batches['groups'][$i] ?? [],
@@ -166,10 +184,12 @@ class DefenderApplyService extends DefenderPreActionService
                 'words' => $batches['words'][$i] ?? [],
             ];
             $response = HttpRequestService::perform(
-                'patch',
+                $defender->apply_method,
                 "$defender->url$defender->apply",
                 $apiBatch,
-                false
+                false,
+                $defender->protection ? $defender->username : null,
+                $defender->protection ? $defender->password : null,
             );
             if (!is_string($response))
             {
@@ -179,7 +199,16 @@ class DefenderApplyService extends DefenderPreActionService
                     'Body: ' . $response->body(),
                 ]);
                 $result[] = $message;
-                self::detail('success', $message, $defender, 'success');
+                if (!$response->successful())
+                {
+                    self::detail('danger', $message, $defender, 'failure');
+                    $status['fall']++;
+                }
+                else
+                {
+                    self::detail('notice', $message, $defender, 'success');
+                    $status['pass']++;
+                }
             }
             else
             {
@@ -190,8 +219,14 @@ class DefenderApplyService extends DefenderPreActionService
                 ]);
                 $result[] = $message;
                 self::detail('danger', $message, $defender, 'failure');
+                $status['fall']++;
             }
         }
-        NotificationService::notify(null, );
+        NotificationService::notify(null, self::$actionName, implode("\n", $result));
+        return match ($status['pass'] > 0)
+        {
+            true => true,
+            false => false,
+        };
     }
 }

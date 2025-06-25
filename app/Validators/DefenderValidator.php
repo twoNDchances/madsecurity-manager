@@ -4,6 +4,13 @@ namespace App\Validators;
 
 class DefenderValidator
 {
+    public static array $methods = [
+        'post' => 'POST',
+        'put' => 'PUT',
+        'patch' => 'PATCH',
+        'delete' => 'DELETE',
+    ];
+
     public static function name()
     {
         return [
@@ -37,6 +44,15 @@ class DefenderValidator
             'required',
             'string',
             'starts_with:/'
+        ];
+    }
+
+    public static function method()
+    {
+        return [
+            'required',
+            'string',
+            'in:' . implode(',', array_keys(self::$methods)),
         ];
     }
 

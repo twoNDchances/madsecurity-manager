@@ -21,7 +21,9 @@ return new class extends Migration
             $table->text('health');
             $table->text('sync');
             $table->text('apply');
+            $table->string('apply_method')->default('patch');
             $table->text('revoke');
+            $table->string('revoke_method')->default('delete');
             $table->unsignedBigInteger('total_groups')->nullable()->default(0);
             $table->unsignedBigInteger('current_applied')->nullable()->default(0);
             $table->json('output')->nullable();

@@ -21,7 +21,7 @@ class DefenderAction
     {
         $action = function($livewire, $record)
         {
-            $record = DefenderHealthService::perform($record);
+            DefenderHealthService::perform($record);
             $livewire->form->fill($record->toArray());
         };
         return Action::make('check_health')
@@ -47,9 +47,11 @@ class DefenderAction
 
     public static function apply()
     {
-        $action = function($record)
+        $action = function($livewire, $record)
         {
             $record = DefenderApplyService::performAll($record);
+            // dd($record->toArray());
+            $livewire->form->fill($record->toArray());
         };
         return Action::make('apply_all')
         ->label('Apply')

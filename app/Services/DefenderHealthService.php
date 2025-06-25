@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Defender;
 
-class DefenderHealthService
+class DefenderHealthService extends DefenderPreActionService
 {
     public static function perform(Defender $record): Defender
     {

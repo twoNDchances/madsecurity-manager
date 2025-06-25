@@ -83,11 +83,13 @@ class DefenderResource extends Resource
             ->schema([
                 self::$form::url()->columnSpanFull(),
                 self::$form::path('health'),
-                self::$form::path('sync'),
                 self::$form::path('apply'),
+                self::$form::method('apply', 'patch'),
+                self::$form::path('sync'),
                 self::$form::path('revoke'),
+                self::$form::method('revoke', 'delete'),
             ])
-            ->columns(4)
+            ->columns(3)
             ->columnSpanFull(),
             self::$form::tags()->columnSpan(1),
             self::$form::description()->columnSpan(1),
