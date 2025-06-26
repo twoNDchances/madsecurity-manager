@@ -50,6 +50,7 @@ class DefenderAction
         return Action::make('clear_output')
         ->label('Clear')
         ->action($action)
+        ->color('danger')
         ->icon('heroicon-o-backspace');
     }
 }

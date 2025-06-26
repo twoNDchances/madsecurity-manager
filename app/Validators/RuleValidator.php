@@ -145,7 +145,7 @@ class RuleValidator
     public static function value()
     {
         return [
-            'required_unless:comparator,@check,@checkRegex,@inRange',
+            'required_unless:comparator,@similar,@check,@checkRegex,@inRange',
             'string',
         ];
     }
@@ -169,7 +169,7 @@ class RuleValidator
     public static function wordlist()
     {
         return [
-            'required_if:comparator,@check,@checkRegex',
+            'required_if:comparator,@similar,@check,@checkRegex',
             'integer',
             'exists:wordlists,id',
         ];

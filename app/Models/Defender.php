@@ -35,7 +35,6 @@ class Defender extends Model
         'important' => 'boolean',
         'periodic' => 'boolean',
         'last_status' => 'boolean',
-        'output' => 'array',
         'protection' => 'boolean',
     ];
 

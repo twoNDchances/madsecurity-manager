@@ -57,9 +57,10 @@ class GroupAction
 
     public static function revoke()
     {
-        $action = function ($livewire)
+        $action = function ($record, RelationManager $livewire)
         {
-            DefenderRevokeService::performEach($livewire->getOwnerRecord());
+            DefenderRevokeService::performEach($record, $livewire->getOwnerRecord());
+            $livewire->dispatch('refreshDefenderForm');
         };
         return Action::make('revoke')
         ->icon('heroicon-o-arrow-uturn-left')

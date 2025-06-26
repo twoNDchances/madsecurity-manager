@@ -3,12 +3,13 @@
 namespace App\Services;
 
 use App\Models\Defender;
+use App\Models\Group;
 use App\Models\Target;
 use App\Models\Wordlist;
 
 class DefenderApplyService extends DefenderPreActionService
 {
-    private static array $requestApiForm = [
+    protected static array $requestApiForm = [
         'groups' => [],
         'rules' => [],
         'targets' => [],
@@ -27,7 +28,7 @@ class DefenderApplyService extends DefenderPreActionService
         return $defender;
     }
 
-    public static function performEach($group, Defender $defender)
+    public static function performEach(Group $group, Defender $defender)
     {
         $rules = self::getGroupsAndReturnRules([$group], $defender);
         self::generalAction('Group', $group->id, $group->name, $rules, $defender);
@@ -49,7 +50,7 @@ class DefenderApplyService extends DefenderPreActionService
             self::detail('warning', $message, $defender, 'warning');
             return;
         }
-        $result = self::send($defender);
+        $result = self::send($defender, $defender->apply_method, "$defender->url$defender->apply");
         if ($result)
         {
             $message = "$type [$id][$name] has been applied";
@@ -153,80 +154,5 @@ class DefenderApplyService extends DefenderPreActionService
             self::$requestApiForm['words'][] = self::clean($word);
         }
         self::$requestApiForm['wordlists'][] = self::clean($wordlist->toArray());
-    }
-
-    private static function send(Defender $defender): bool
-    {
-        $batchMinSize = 10000;
-        $batchMaxSize = 100000;
-        foreach (self::$requestApiForm as $_ => $items) {
-            if (count($items) > $batchMaxSize) {
-                $batchMinSize = $batchMaxSize;
-                break;
-            }
-        }
-        $batches = array_map(
-            fn($items) => array_chunk($items, $batchMinSize),
-            self::$requestApiForm,
-        );
-        $result = [];
-        $maxBatchCount = max(array_map('count', $batches));
-        $status = [
-            'pass' => 0,
-            'fall' => 0,
-        ];
-        for ($i = 0; $i < $maxBatchCount; $i++) {
-            $apiBatch = [
-                'groups' => $batches['groups'][$i] ?? [],
-                'rules' => $batches['rules'][$i] ?? [],
-                'targets' => $batches['targets'][$i] ?? [],
-                'wordlists' => $batches['wordlists'][$i] ?? [],
-                'words' => $batches['words'][$i] ?? [],
-            ];
-            $response = HttpRequestService::perform(
-                $defender->apply_method,
-                "$defender->url$defender->apply",
-                $apiBatch,
-                false,
-                $defender->protection ? $defender->username : null,
-                $defender->protection ? $defender->password : null,
-            );
-            if (!is_string($response))
-            {
-                $message = implode(' | ', [
-                    "Batch: $i",
-                    'Status: ' . $response->status(),
-                    'Body: ' . $response->body(),
-                ]);
-                $result[] = $message;
-                if (!$response->successful())
-                {
-                    self::detail('danger', $message, $defender, 'failure');
-                    $status['fall']++;
-                }
-                else
-                {
-                    self::detail('notice', $message, $defender, 'success');
-                    $status['pass']++;
-                }
-            }
-            else
-            {
-                $message = implode(' | ', [
-                    "Batch: $i",
-                    explode(' | ', $response)[0],
-                    explode(' | ', $response)[1],
-                ]);
-                $result[] = $message;
-                self::detail('danger', $message, $defender, 'failure');
-                $status['fall']++;
-            }
-        }
-        NotificationService::notify(null, self::$actionName, implode("\n", $result));
-        return match ($status['pass'] > 0)
-        {
-            true => true,
-            false => false,
-        };
     }
 }

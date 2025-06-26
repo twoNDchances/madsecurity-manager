@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('revoke_method')->default('delete');
             $table->unsignedBigInteger('total_groups')->nullable()->default(0);
             $table->unsignedBigInteger('current_applied')->nullable()->default(0);
-            $table->json('output')->nullable();
+            $table->longText('output')->nullable();
             $table->longText('description')->nullable();
             $table->boolean('protection')->default(false);
             $table->string('username')->nullable();

@@ -50,8 +50,8 @@ class DefenderConsoleService
 
     public static function updateOutput(Defender $defender, string $output, array $more = []): void
     {
-        $newOutput = $defender->output;
-        $newOutput[] = $output;
+        $newOutput = $defender->output ?? '';
+        $newOutput .= "\n$output";
         $updated = ['output' => $newOutput];
         if (count($more) > 0)
         {

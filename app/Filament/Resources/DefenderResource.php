@@ -10,6 +10,7 @@ use App\Services\AuthenticationService;
 use App\Tables\DefenderTable;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -36,6 +37,7 @@ class DefenderResource extends Resource
 
     public static function main($group = true, $owner = false)
     {
+        $condition = fn($livewire) => !$livewire instanceof CreateRecord;
         return Forms\Components\Tabs::make()
         ->schema([
             Forms\Components\Tabs\Tab::make('Definition')
@@ -48,7 +50,8 @@ class DefenderResource extends Resource
             ->icon('heroicon-o-command-line')
             ->schema([
                 self::console()->columns(4)->columnSpanFull(),
-            ]),
+            ])
+            ->visible($condition),
         ])
         ->contained(false);
     }

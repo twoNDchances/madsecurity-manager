@@ -204,18 +204,11 @@ class DefenderForm
 
     public static function output()
     {
-        $state = function ($record, $set)
-        {
-            if ($record && $record->output) {
-                $set('output', implode("\n", $record->output));
-            }
-        };
         return FilamentFormService::textarea(
             'output',
             null,
         )
-        ->readOnly()
-        ->afterStateHydrated($state);
+        ->readOnly();
     }
 
     public static function clearOutput()

@@ -126,7 +126,7 @@ class RuleForm
         };
         $helperText = fn($state) => match ($state)
         {
-            '@similar' => 'Target: [Array] @ Value: [Array, SubArray]',
+            '@similar' => 'Target: [Array] @ Value: [WordlistAlias]',
             '@mirror',
             '@regex',
             '@startsWith',
@@ -190,6 +190,7 @@ class RuleForm
             $get('comparator'),
             array_merge(
                 [
+                    '@similar',
                     '@check',
                     '@checkRegex',
                     '@inRange',
@@ -254,7 +255,14 @@ class RuleForm
 
     public static function wordlist()
     {
-        $condition = fn($get) => in_array($get('comparator'), ['@check', '@checkRegex']);
+        $condition = fn($get) => in_array(
+            $get('comparator'),
+            [
+                '@similar',
+                '@check',
+                '@checkRegex',
+            ],
+        );
         $former = [
             WordlistResource::main(),
         ];
