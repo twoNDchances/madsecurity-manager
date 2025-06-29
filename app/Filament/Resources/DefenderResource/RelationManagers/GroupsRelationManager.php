@@ -14,6 +14,8 @@ class GroupsRelationManager extends RelationManager
 
     private static $tableRelationship = GroupTable::class;
 
+    protected $listeners = ['refreshGroupTable' => '$refresh'];
+
     public function form(Form $form): Form
     {
         return $form
@@ -29,6 +31,7 @@ class GroupsRelationManager extends RelationManager
             self::$tableRelationship::executionOrder(),
             self::$tableRelationship::level(),
             self::$tableRelationship::name(),
+            self::$tableRelationship::status(),
             self::$tableRelationship::rules(),
             self::$tableRelationship::tags(),
             self::$tableRelationship::owner(),

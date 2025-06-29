@@ -19,13 +19,13 @@ return new class extends Migration
             $table->boolean('periodic')->default(false);
             $table->boolean('last_status')->default(false);
             $table->text('health');
+            $table->string('health_method')->default('get');
             $table->text('sync');
+            $table->string('sync_method')->default('get');
             $table->text('apply');
             $table->string('apply_method')->default('patch');
             $table->text('revoke');
             $table->string('revoke_method')->default('delete');
-            $table->unsignedBigInteger('total_groups')->nullable()->default(0);
-            $table->unsignedBigInteger('current_applied')->nullable()->default(0);
             $table->longText('output')->nullable();
             $table->longText('description')->nullable();
             $table->boolean('protection')->default(false);

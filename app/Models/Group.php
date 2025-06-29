@@ -38,7 +38,8 @@ class Group extends Model
 
     public function defenders()
     {
-        return $this->belongsToMany(Defender::class, 'defenders_groups');
+        return $this->belongsToMany(Defender::class, 'defenders_groups')
+        ->withPivot('status');
     }
 
     // Businesses

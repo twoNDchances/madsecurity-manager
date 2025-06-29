@@ -71,10 +71,13 @@ class FilamentFormService
         ->options($options);
     }
 
-    public static function fileUpload($name, $label = null)
+    public static function fileUpload($name, $label = null, $rules = [])
     {
         return FileUpload::make($name)
-        ->label($label);
+        ->label($label)
+        ->visibility('private')
+        ->disk('local')
+        ->rules($rules);
     }
 
     public static function placeholder($name, $heperText = null)

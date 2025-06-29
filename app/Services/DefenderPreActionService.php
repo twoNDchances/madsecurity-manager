@@ -56,7 +56,7 @@ class DefenderPreActionService
         NotificationService::announce($status, static::$actionName, $output);
     }
 
-    protected static function send(Defender $defender, $method, $url): bool
+    protected static function send(Defender $defender, $method, $url): array
     {
         $batchMinSize = 10000;
         $batchMaxSize = 100000;
@@ -76,7 +76,9 @@ class DefenderPreActionService
             'pass' => 0,
             'fall' => 0,
         ];
-        for ($i = 0; $i < $maxBatchCount; $i++) {
+        $successGroupsIds = [];
+        for ($i = 0; $i < $maxBatchCount; $i++)
+        {
             $apiBatch = [
                 'groups' => $batches['groups'][$i] ?? [],
                 'rules' => $batches['rules'][$i] ?? [],
@@ -108,6 +110,10 @@ class DefenderPreActionService
                 else
                 {
                     self::detail('notice', $message, $defender, 'success');
+                    $successGroupsIds = array_merge(
+                        $successGroupsIds,
+                        array_map(fn($item) => $item['id'] ?? $item, $apiBatch['groups']),
+                    );
                     $status['pass']++;
                 }
             }
@@ -124,10 +130,17 @@ class DefenderPreActionService
             }
         }
         NotificationService::notify(null, static::$actionName, implode("\n", $result));
+        // dd($successGroupsIds);
         return match ($status['pass'] > 0)
         {
-            true => true,
-            false => false,
+            true => [
+                'status' => true,
+                'groupIds' => $successGroupsIds,
+            ],
+            false => [
+                'status' => false,
+                'groupIds' => $successGroupsIds,
+            ],
         };
     }
 }

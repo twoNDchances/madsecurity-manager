@@ -5,6 +5,7 @@ namespace App\Forms\Actions;
 use App\Services\HttpRequestService;
 use App\Services\NotificationService;
 use Filament\Forms\Components\Actions\Action;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class DefenderAction
 {
@@ -20,7 +21,7 @@ class DefenderAction
             if ($get('protection'))
             {
                 HttpRequestService::perform(
-                    'get',
+                    $get('health_method'),
                     $state . $get('health'),
                     null,
                     true,
@@ -29,7 +30,14 @@ class DefenderAction
                 );
                 return;
             }
-            HttpRequestService::perform('get', $state . $get('health'));
+            HttpRequestService::perform(
+                $get('health_method'),
+                $state . $get('health'),
+                null,
+                true,
+                null,
+                null,
+            );
         };
         return Action::make('check_health')
         ->icon('heroicon-o-check')

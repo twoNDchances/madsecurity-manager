@@ -38,6 +38,7 @@ class GroupValidator
             'required',
             'integer',
             'min:1',
+            'max:999999999',
         ];
     }
 

@@ -16,14 +16,14 @@ class Defender extends Model
         'periodic',
         'last_status',
         'health',
+        'health_method',
         'sync',
+        'sync_method',
         'apply',
         'apply_method',
         'revoke',
         'revoke_method',
         'output',
-        'total_groups',
-        'current_applied',
         'description',
         'protection',
         'username',
@@ -52,6 +52,7 @@ class Defender extends Model
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class, 'defenders_groups');
+        return $this->belongsToMany(Group::class, 'defenders_groups')
+        ->withPivot('status');
     }
 }

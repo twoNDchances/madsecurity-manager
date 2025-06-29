@@ -50,6 +50,12 @@ class GroupTable
         return FilamentTableService::text('name');
     }
 
+    public static function status()
+    {
+        return FilamentTableService::icon('pivot.status', 'Status')
+        ->boolean();
+    }
+
     public static function defenders()
     {
         return FilamentTableService::text('defenders.name')

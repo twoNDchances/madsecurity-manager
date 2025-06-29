@@ -11,6 +11,7 @@ use App\Tables\DefenderTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -38,6 +39,10 @@ class DefenderResource extends Resource
     public static function main($group = true, $owner = false)
     {
         $condition = fn($livewire) => !$livewire instanceof CreateRecord;
+        $active = function($livewire) use ($condition)
+        {
+            return $condition($livewire) ? 2 : 1;
+        };
         return Forms\Components\Tabs::make()
         ->schema([
             Forms\Components\Tabs\Tab::make('Definition')
@@ -53,7 +58,8 @@ class DefenderResource extends Resource
             ])
             ->visible($condition),
         ])
-        ->contained(false);
+        ->contained(false)
+        ->activeTab($active);
     }
 
     public static function definition($group = true, $owner = false)
@@ -78,6 +84,7 @@ class DefenderResource extends Resource
 
     private static function information($group = true)
     {
+        $condition = fn($livewire) => $livewire instanceof EditRecord;
         return Forms\Components\Section::make('Defender Information')
         ->schema([
             self::$form::name(),
@@ -86,32 +93,38 @@ class DefenderResource extends Resource
             ->schema([
                 self::$form::url()->columnSpanFull(),
                 self::$form::path('health'),
-                self::$form::path('apply'),
-                self::$form::method('apply', 'patch'),
                 self::$form::path('sync'),
+                self::$form::path('apply'),
                 self::$form::path('revoke'),
+                self::$form::method('health', 'post'),
+                self::$form::method('sync', 'post'),
+                self::$form::method('apply', 'patch'),
                 self::$form::method('revoke', 'delete'),
             ])
-            ->columns(3)
+            ->columns(4)
             ->columnSpanFull(),
             self::$form::tags()->columnSpan(1),
             self::$form::description()->columnSpan(1),
         ])
-        ->collapsible();
+        ->collapsible()
+        ->collapsed($condition);
     }
 
     private static function inspection()
     {
+        $condition = fn($livewire) => $livewire instanceof EditRecord;
         return Forms\Components\Section::make('Defender Inspection')
         ->schema([
             self::$form::important(),
             self::$form::periodic(),
         ])
-        ->collapsible();
+        ->collapsible()
+        ->collapsed($condition);
     }
 
     private static function authentication()
     {
+        $condition = fn($livewire) => $livewire instanceof EditRecord;
         return Forms\Components\Section::make('Defender Authentication')
         ->schema([
             self::$form::protection(),
@@ -123,7 +136,8 @@ class DefenderResource extends Resource
             ])
             ->columns(1),
         ])
-        ->collapsible();
+        ->collapsible()
+        ->collapsed($condition);
     }
 
     private static function console()
@@ -214,8 +228,6 @@ class DefenderResource extends Resource
             'apply',
             'revoke',
             'output',
-            'total_groups',
-            'current_applied',
             'description',
             'protection',
             'username',
@@ -235,8 +247,8 @@ class DefenderResource extends Resource
     {
         return [
             'URL' => $record->url,
-            'Total Groups' => $record->total_groups,
-            'Current Applied' => $record->current_applied,
+            'Total Groups' => $record->groups()->count(),
+            'Current Applied' => $record->groups()->wherePivot('status', true)->count(),
         ];
     }
 }

@@ -17,19 +17,12 @@ class DefenderAction
         return AuthenticationService::can($user, 'defender', $action);
     }
 
-    private static function generalPostAction($record, $livewire)
-    {
-        $record = $record->toArray();
-        unset($record['groups'], $record['tags']);
-        $livewire->form->fill($record);
-    }
-
     public static function checkHealth()
     {
         $action = function($record, $livewire)
         {
             DefenderHealthService::perform($record);
-            self::generalPostAction($record, $livewire);
+            $livewire->dispatch('refreshDefenderForm');
         };
         return Action::make('check_health')
         ->icon('heroicon-o-question-mark-circle')
@@ -44,7 +37,7 @@ class DefenderAction
         $action = function($record, $livewire)
         {
             $record = DefenderSyncService::perform($record);
-            self::generalPostAction($record, $livewire);
+            $livewire->dispatch('refreshDefenderForm');
         };
         return Action::make('sync')
         ->icon('heroicon-o-arrow-down-on-square-stack')
@@ -60,7 +53,8 @@ class DefenderAction
         $action = function($record, $livewire)
         {
             $record = DefenderApplyService::performAll($record);
-            self::generalPostAction($record, $livewire);
+            $livewire->dispatch('refreshDefenderForm');
+            $livewire->dispatch('refreshGroupTable');
         };
         return Action::make('apply_all')
         ->label('Apply')
@@ -77,7 +71,8 @@ class DefenderAction
         $action = function($record, $livewire)
         {
             $record = DefenderRevokeService::performAll($record);
-            self::generalPostAction($record, $livewire);
+            $livewire->dispatch('refreshDefenderForm');
+            $livewire->dispatch('refreshGroupTable');
         };
         return Action::make('revoke_all')
         ->label('Revoke')

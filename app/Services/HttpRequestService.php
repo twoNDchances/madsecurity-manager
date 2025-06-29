@@ -30,8 +30,9 @@ class HttpRequestService
             );
             return $body;
         }
-        $request = Http::agent()->withHeader('Content-Type', 'application/json');
-        if ($username && $password) {
+        $request = Http::managerSetUp()->withHeader('Content-Type', 'application/json');
+        if ($username && $password)
+        {
             $request = $request->withBasicAuth($username, $password);
         }
         $response = null;

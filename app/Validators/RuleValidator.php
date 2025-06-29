@@ -225,6 +225,8 @@ class RuleValidator
         return [
             'required_if:action,setScore',
             'integer',
+            'min:-999999999',
+            'max:999999999',
         ];
     }
 
@@ -234,6 +236,7 @@ class RuleValidator
             'required_if:action,setScore',
             'integer',
             'min:1',
+            'max:999999999',
         ];
     }
 

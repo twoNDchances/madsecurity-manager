@@ -42,11 +42,13 @@ class EditDefender extends EditRecord
     {
         $defender = Defender::find($data['id']);
         $data['total_groups'] = $defender->groups->count();
+        $data['current_applied'] = $defender->groups()->wherePivot('status', true)->count();
         return $data;
     }
 
     public function reloadForm(): void
     {
+        $this->mutateFormDataBeforeFill($this->data);
         $this->fillForm();
     }
 }

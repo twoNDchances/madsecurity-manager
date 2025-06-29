@@ -24,17 +24,29 @@ class DefenderApplyService extends DefenderPreActionService
     public static function performAll(Defender $defender): Defender
     {
         $rules = self::getGroupsAndReturnRules($defender->groups, $defender);
-        self::generalAction('Defender', $defender->id, $defender->name, $rules, $defender);
+        self::generalAction(
+            'Defender',
+            $defender->id,
+            $defender->name,
+            $defender,
+            $rules,
+        );
         return $defender;
     }
 
     public static function performEach(Group $group, Defender $defender)
     {
         $rules = self::getGroupsAndReturnRules([$group], $defender);
-        self::generalAction('Group', $group->id, $group->name, $rules, $defender);
+        self::generalAction(
+            'Group',
+            $group->id,
+            $group->name,
+            $defender,
+            $rules,
+        );
     }
 
-    private static function generalAction($type, $id, $name, $rules, $defender)
+    private static function generalAction($type, $id, $name, $defender, $rules)
     {
         $targets = self::getRulesAndReturnTargets($rules, $defender);
         if (empty($rules) || empty($targets))
@@ -51,10 +63,14 @@ class DefenderApplyService extends DefenderPreActionService
             return;
         }
         $result = self::send($defender, $defender->apply_method, "$defender->url$defender->apply");
-        if ($result)
+        if ($result['status'])
         {
             $message = "$type [$id][$name] has been applied";
             self::detail('notice', $message, $defender, null);
+            foreach ($result['groupIds'] as $groupId)
+            {
+                $defender->groups()->updateExistingPivot($groupId, ['status' => true]);
+            }
         }
     }
 
