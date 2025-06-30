@@ -132,6 +132,23 @@ class DefenderApplyService extends DefenderPreActionService
         return $targets;
     }
 
+    private static function getAllToRoot($targetId, &$visited = []): array
+    {
+        if (in_array($targetId, $visited)) {
+            return [];
+        }
+        $target = Target::find($targetId);
+        if (!$target) {
+            return [];
+        }
+        $visited[] = $targetId;
+        $chain = [$target];
+        if ($target->target_id) {
+            $chain = array_merge($chain, self::getAllToRoot($target->target_id, $visited));
+        }
+        return $chain;
+    }
+
     private static function getTargetsAndReturnPoint($targets, Defender $defender): int
     {
         $point = 0;
@@ -144,6 +161,7 @@ class DefenderApplyService extends DefenderPreActionService
                 self::detail('emergency', $message, $defender, 'failure');
                 continue;
             }
+            $targetReferers = self::getAllToRoot($target['id']);
             if ($target['wordlist_id'])
             {
                 self::getWordlistAndItsWords($target['wordlist_id'], $defender);
@@ -153,6 +171,28 @@ class DefenderApplyService extends DefenderPreActionService
                 ['immutable'],
             );
             $point++;
+        }
+        if (count($targetReferers) > 0)
+        {
+            foreach ($targetReferers as $targetReferer)
+            {
+                $target = $targetReferer->toArray();
+                if ($target['datatype'] == 'array' && !$target['wordlist_id'] && $target['type'] != 'target' && !$target['immutable'])
+                {
+                    $message = "Target [" . $target['id'] . "][". $target['alias'] . "] missing Wordlist";
+                    self::detail('emergency', $message, $defender, 'failure');
+                    continue;
+                }
+                if ($target['wordlist_id'])
+                {
+                    self::getWordlistAndItsWords($target['wordlist_id'], $defender);
+                }
+                self::$requestApiForm['targets'][] = self::clean(
+                    $target,
+                    ['immutable'],
+                );
+                $point++;
+            }
         }
         return $point;
     }

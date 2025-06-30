@@ -131,9 +131,27 @@ class DefenderRevokeService extends DefenderPreActionService
         return $targets;
     }
 
+    private static function getAllToRoot($targetId, &$visited = []): array
+    {
+        if (in_array($targetId, $visited)) {
+            return [];
+        }
+        $target = Target::find($targetId);
+        if (!$target) {
+            return [];
+        }
+        $visited[] = $targetId;
+        $chain = [$target];
+        if ($target->target_id) {
+            $chain = array_merge($chain, self::getAllToRoot($target->target_id, $visited));
+        }
+        return $chain;
+    }
+
     private static function getTargetsAndReturnPoint(array $targets, Defender $defender): int
     {
         $point = 0;
+        $targetReferers = [];
         foreach ($targets as $target)
         {
             $context = "Target [" . $target['id'] . "][". $target['alias'] . "]";
@@ -143,6 +161,7 @@ class DefenderRevokeService extends DefenderPreActionService
                 self::detail('emergency', $message, $defender, 'failure');
                 continue;
             }
+            $targetReferers = self::getAllToRoot($target['id']);
             if ($target['wordlist_id'])
             {
                 $success = self::getWordlistWithItsWordsAndReturnBoolean(
@@ -157,6 +176,34 @@ class DefenderRevokeService extends DefenderPreActionService
             }
             self::$requestApiForm['targets'][] = $target['id'];
             $point++;
+        }
+        if (count($targetReferers) > 0)
+        {
+            foreach ($targetReferers as $targetReferer)
+            {
+                $target = $targetReferer->toArray();
+                $context = "Target [" . $target['id'] . "][". $target['alias'] . "]";
+                if ($target['datatype'] == 'array' && !$target['wordlist_id'] && $target['type'] != 'target' && !$target['immutable'])
+                {
+                    $message = "$context missing Wordlist";
+                    self::detail('emergency', $message, $defender, 'failure');
+                    continue;
+                }
+                if ($target['wordlist_id'])
+                {
+                    $success = self::getWordlistWithItsWordsAndReturnBoolean(
+                        $context,
+                        $target['wordlist_id'],
+                        $defender
+                    );
+                    if (!$success)
+                    {
+                        continue;
+                    }
+                }
+                self::$requestApiForm['targets'][] = $target['id'];
+                $point++;
+            }
         }
         return $point;
     }
