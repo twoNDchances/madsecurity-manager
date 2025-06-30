@@ -135,6 +135,7 @@ class DefenderApplyService extends DefenderPreActionService
     private static function getTargetsAndReturnPoint($targets, Defender $defender): int
     {
         $point = 0;
+        $targetReferers = [];
         foreach ($targets as $target)
         {
             if ($target['datatype'] == 'array' && !$target['wordlist_id'] && $target['type'] != 'target' && !$target['immutable'])
