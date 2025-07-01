@@ -166,10 +166,7 @@ class DefenderApplyService extends DefenderPreActionService
             {
                 self::getWordlistAndItsWords($target['wordlist_id'], $defender);
             }
-            self::$requestApiForm['targets'][] = self::clean(
-                $target,
-                ['immutable'],
-            );
+            self::$requestApiForm['targets'][] = self::clean($target);
             $point++;
         }
         if (count($targetReferers) > 0)
@@ -187,10 +184,7 @@ class DefenderApplyService extends DefenderPreActionService
                 {
                     self::getWordlistAndItsWords($target['wordlist_id'], $defender);
                 }
-                self::$requestApiForm['targets'][] = self::clean(
-                    $target,
-                    ['immutable'],
-                );
+                self::$requestApiForm['targets'][] = self::clean($target);
                 $point++;
             }
         }
