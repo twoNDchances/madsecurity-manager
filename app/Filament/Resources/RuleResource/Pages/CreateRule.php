@@ -13,6 +13,10 @@ class CreateRule extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = AuthenticationService::get()?->id;
+        if ($data['comparator'] == '@inRange')
+        {
+            $data['value'] = implode(',', [$data['from'], $data['to']]);
+        }
         return $data;
     }
 

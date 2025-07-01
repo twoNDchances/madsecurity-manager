@@ -17,6 +17,15 @@ class EditRule extends EditRecord
         ];
     }
 
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if ($data['comparator'] == '@inRange')
+        {
+            $data['value'] = implode(',', [$data['from'], $data['to']]);
+        }
+        return $data;
+    }
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
