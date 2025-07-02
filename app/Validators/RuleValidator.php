@@ -50,7 +50,6 @@ class RuleValidator
     ];
 
     public static array $requestMethods = [
-        'get' => 'GET',
         'post' => 'POST',
         'patch' => 'PATCH',
         'put' => 'PUT',
