@@ -29,11 +29,13 @@ return new class extends Migration
 
             $table->boolean('log')->default(true);
             $table->boolean('time')->default(true);
-            $table->boolean('status')->default(true);
             $table->boolean('user_agent')->default(true);
             $table->boolean('client_ip')->default(true);
             $table->boolean('method')->default(true);
             $table->boolean('path')->default(true);
+            $table->boolean('output')->default(true);
+            $table->boolean('target')->default(true);
+            $table->boolean('rule')->default(true);
 
             $table->foreignId('user_id')->nullable()->index()->constrained('users')->nullOnDelete();
             $table->foreignId('wordlist_id')->nullable()->index()->constrained('wordlists')->nullOnDelete();

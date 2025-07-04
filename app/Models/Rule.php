@@ -23,11 +23,13 @@ class Rule extends Model
 
         'log',
         'time',
-        'status',
         'user_agent',
         'client_ip',
         'method',
         'path',
+        'output',
+        'target',
+        'rule',
 
         'severity',
         'description',
@@ -40,11 +42,13 @@ class Rule extends Model
         'inverse' => 'boolean',
         'log' => 'boolean',
         'time' => 'boolean',
-        'status' => 'boolean',
         'user_agent' => 'boolean',
         'client_ip' => 'boolean',
         'method' => 'boolean',
         'path' => 'boolean',
+        'output' => 'boolean',
+        'target' => 'boolean',
+        'rule' => 'boolean',
     ];
 
     // Belongs
