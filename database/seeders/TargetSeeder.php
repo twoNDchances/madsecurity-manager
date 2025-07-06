@@ -101,6 +101,76 @@ class TargetSeeder extends Seeder
                     'datatype' => 'string',
                 ],
             ],
+            2 => [
+                [
+                    'alias' => 'body-keys',
+                    'type' => 'body',
+                    'name' => 'keys',
+                    'datatype' => 'array',
+                ],
+                [
+                    'alias' => 'file-keys',
+                    'type' => 'file',
+                    'name' => 'keys',
+                    'datatype' => 'array',
+                ],
+                [
+                    'alias' => 'body-values',
+                    'type' => 'body',
+                    'name' => 'values',
+                    'datatype' => 'array',
+                ],
+                [
+                    'alias' => 'file-values',
+                    'type' => 'file',
+                    'name' => 'values',
+                    'datatype' => 'array',
+                ],
+                [
+                    'alias' => 'file-names',
+                    'type' => 'file',
+                    'name' => 'names',
+                    'datatype' => 'array',
+                ],
+                [
+                    'alias' => 'file-extensions',
+                    'type' => 'file',
+                    'name' => 'extensions',
+                    'datatype' => 'array',
+                ],
+                // ========================= //
+                [
+                    'alias' => 'body-size',
+                    'type' => 'body',
+                    'name' => 'size',
+                    'datatype' => 'number',
+                ],
+                [
+                    'alias' => 'file-size',
+                    'type' => 'file',
+                    'name' => 'size',
+                    'datatype' => 'number',
+                ],
+                [
+                    'alias' => 'body-length',
+                    'type' => 'body',
+                    'name' => 'length',
+                    'datatype' => 'number',
+                ],
+                [
+                    'alias' => 'file-length',
+                    'type' => 'file',
+                    'name' => 'length',
+                    'datatype' => 'number',
+                ],
+                // ========================= //
+                [
+                    'alias' => 'body-full',
+                    'type' => 'full',
+                    'name' => 'raw',
+                    'datatype' => 'string',
+                ],
+            ],
         ];
         $user = User::where('email', env('MANAGER_USER_MAIL', 'root@madsecurity.com'))->first();
         $ids = [];

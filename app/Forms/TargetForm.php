@@ -251,6 +251,8 @@ class TargetForm
             'target' => 'purple',
             'header' => 'info',
             'url.args' => 'warning',
+            'body' => 'sky',
+            'file' => 'teal',
         ];
         $state = function ($state, $set)
         {

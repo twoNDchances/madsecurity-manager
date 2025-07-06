@@ -21,7 +21,11 @@ class TargetValidator
             'header' => 'Header',
             'url.args' => 'URL Arguments',
         ],
-        2 => [],
+        2 => [
+            'target' => 'Target',
+            'body' => 'Body',
+            'file' => 'File',
+        ],
         3 => [],
         4 => [],
     ];

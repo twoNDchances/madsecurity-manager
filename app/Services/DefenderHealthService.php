@@ -11,7 +11,7 @@ class DefenderHealthService extends DefenderPreActionService
         $response = match ($record->protection)
         {
             true => HttpRequestService::perform(
-                'get',
+                $record->health_method,
                 "$record->url$record->health",
                 null,
                 true,
@@ -19,7 +19,7 @@ class DefenderHealthService extends DefenderPreActionService
                 $record->password,
             ),
             false => HttpRequestService::perform(
-                'get',
+                $record->health_method,
                 "$record->url$record->health"
             ),
         };

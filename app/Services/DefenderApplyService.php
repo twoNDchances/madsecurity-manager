@@ -6,6 +6,7 @@ use App\Models\Defender;
 use App\Models\Group;
 use App\Models\Target;
 use App\Models\Wordlist;
+use Carbon\Carbon;
 
 class DefenderApplyService extends DefenderPreActionService
 {
@@ -69,7 +70,7 @@ class DefenderApplyService extends DefenderPreActionService
             self::detail('notice', $message, $defender, null);
             foreach ($result['groupIds'] as $groupId)
             {
-                $defender->groups()->updateExistingPivot($groupId, ['status' => true]);
+                $defender->groups()->updateExistingPivot($groupId, ['status' => true, 'updated_at' => Carbon::now()]);
             }
         }
     }

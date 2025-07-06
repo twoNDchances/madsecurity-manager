@@ -6,6 +6,7 @@ use App\Models\Defender;
 use App\Models\Group;
 use App\Models\Target;
 use App\Models\Wordlist;
+use Carbon\Carbon;
 
 class DefenderRevokeService extends DefenderPreActionService
 {
@@ -69,7 +70,7 @@ class DefenderRevokeService extends DefenderPreActionService
             self::detail('notice', $message, $defender, null);
             foreach ($result['groupIds'] as $groupId)
             {
-                $defender->groups()->updateExistingPivot($groupId, ['status' => false]);
+                $defender->groups()->updateExistingPivot($groupId, ['status' => false, 'updated_at' => Carbon::now()]);
             }
         }
     }
