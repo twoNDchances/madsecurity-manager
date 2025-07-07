@@ -18,11 +18,13 @@ class TargetValidator
     public static array $types = [
         1 => [
             'target' => 'Target',
+            'getter' => 'Getter',
             'header' => 'Header',
             'url.args' => 'URL Arguments',
         ],
         2 => [
             'target' => 'Target',
+            'getter' => 'Getter',
             'body' => 'Body',
             'file' => 'File',
         ],

@@ -75,7 +75,7 @@ class TargetForm
                 $set('hash', null);
             }
         };
-        $condition = fn($get) => $get('target_id') ? true : false;
+        $condition = fn($get) => $get('target_id') || $get('type') == 'getter' ? true : false;
         return FilamentFormService::toggleButton(
             'datatype',
             null,
@@ -249,6 +249,7 @@ class TargetForm
         };
         $colors = [
             'target' => 'purple',
+            'getter' => 'pink',
             'header' => 'info',
             'url.args' => 'warning',
             'body' => 'sky',
@@ -256,10 +257,13 @@ class TargetForm
         ];
         $state = function ($state, $set)
         {
+            if ($state == 'getter')
+            {
+                $set('datatype', 'string');
+            }
             if ($state != 'target')
             {
                 $set('target_id', null);
-                return;
             }
         };
         return FilamentFormService::toggleButton(
