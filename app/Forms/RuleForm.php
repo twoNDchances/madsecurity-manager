@@ -292,6 +292,7 @@ class RuleForm
             'setScore' => 'Reset total Score',
             'setLevel' => 'Reset default Rule enforcement Level',
             'report' => 'Send violation details to Manager and continue investigation',
+            'setVariable' => 'Assigns a value to a variable and can be called back by Target until the end of the request\'s lifecycle',
             default => 'No action',
         };
         return FilamentFormService::select(
@@ -314,6 +315,8 @@ class RuleForm
             self::requestURL(),
             self::score(),
             self::level(),
+            self::keyVariable(),
+            self::valueVariable(),
         ]);
     }
 
@@ -326,6 +329,7 @@ class RuleForm
                 'request',
                 'setScore',
                 'setLevel',
+                'setVariable',
             ],
         );
         $content = function($get)
@@ -419,8 +423,34 @@ class RuleForm
         ->required($condition)
         ->visible($condition)
         ->integer()
-        ->minValue(1)
-        ->placeholder('Level');;
+        ->minValue(1);
+    }
+
+    private static function keyVariable()
+    {
+        $condition = fn($get) => $get('action') == 'setVariable';
+        return FilamentFormService::textInput(
+            'key_variable',
+            'Set Key',
+            'Variable Key',
+            self::$validator::keyVariable(),
+        )
+        ->required($condition)
+        ->visible($condition)
+        ->alphaDash();
+    }
+
+    private static function valueVariable()
+    {
+        $condition = fn($get) => $get('action') == 'setVariable';
+        return FilamentFormService::textInput(
+            'value_variable',
+            'Set Value',
+            'Variable Value',
+            self::$validator::valueVariable(),
+        )
+        ->required($condition)
+        ->visible($condition);
     }
 
     public static function groups($form = true)
@@ -430,7 +460,7 @@ class RuleForm
             null,
             self::$validator::groups(),
         )
-        ->relationship('groups', 'name')
+        ->relationship('groups', 'name', )
         ->searchable()
         ->multiple()
         ->preload();

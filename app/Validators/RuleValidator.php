@@ -47,6 +47,7 @@ class RuleValidator
         'setScore' => 'Set Score',
         'setLevel' => 'Set Level',
         'report' => 'Report',
+        'setVariable' => 'Set Variable',
     ];
 
     public static array $requestMethods = [
@@ -236,6 +237,25 @@ class RuleValidator
             'integer',
             'min:1',
             'max:999999999',
+        ];
+    }
+
+    public static function keyVariable()
+    {
+        return [
+            'required_if:action,setVariable',
+            'string',
+            'max:255',
+            'alpha_dash',
+        ];
+    }
+
+    public static function valueVariable()
+    {
+        return [
+            'required_if:action,setVariable',
+            'string',
+            'max:255',
         ];
     }
 

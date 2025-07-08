@@ -17,6 +17,10 @@ class CreateRule extends CreateRecord
         {
             $data['value'] = implode(',', [$data['from'], $data['to']]);
         }
+        if ($data['comparator'] == '@setVariable')
+        {
+            $data['value'] = implode(',', [$data['key_variable'], $data['value_variable']]);
+        }
         return $data;
     }
 
