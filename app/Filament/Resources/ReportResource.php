@@ -152,6 +152,11 @@ class ReportResource extends Resource
         return static::getModel()::count();
     }
 
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return static::getModel()::count() > 0 ? 'danger' : 'primary';
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return [
