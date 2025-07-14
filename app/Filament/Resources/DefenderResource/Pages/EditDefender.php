@@ -35,6 +35,10 @@ class EditDefender extends EditRecord
                 explode("\n", $data['output'])
             )));
         }
+        if (!$data['protection'])
+        {
+            $data['username'] = $data['password'] = null;
+        }
         return $data;
     }
 

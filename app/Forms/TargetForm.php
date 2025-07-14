@@ -91,6 +91,22 @@ class TargetForm
         ->dehydrated();
     }
 
+    public static function finalDatatype()
+    {
+        $colors = [
+            'array' => 'warning',
+            'number' => 'success',
+            'string' => 'info',
+        ];
+        return FilamentFormService::toggleButton(
+            'final_datatype',
+            'Final Datatype',
+            self::$validator::datatype(),
+            self::$validator::$datatypes,
+        )
+        ->colors($colors);
+    }
+
     public static function wordlist()
     {
         $condition = fn($get) => $get('datatype') == 'array' && !$get('target_id');

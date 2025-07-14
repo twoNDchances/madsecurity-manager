@@ -162,7 +162,6 @@ class RuleResource extends Resource
             'action_configuration',
             'log',
             'time',
-            'status',
             'user_agent',
             'client_ip',
             'method',

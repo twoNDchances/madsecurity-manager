@@ -7,6 +7,7 @@ use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -84,6 +85,12 @@ class FilamentFormService
     {
         return Placeholder::make($name)
         ->helperText($heperText);
+    }
+
+    public static function repeater($name, $schema)
+    {
+        return Repeater::make($name)
+        ->schema($schema);
     }
 
     public static function owner()

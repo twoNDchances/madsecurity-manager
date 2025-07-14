@@ -21,5 +21,6 @@ Route::get('/', function () {
 Route::name('manager.')
 ->group(function ()
 {
-    Route::get('/verify/{token}', [UserController::class, 'verify'])->name('verification');
+    $prefix = env('MANAGER_VERIFICATION_ROUTE', 'verify');
+    Route::get("/$prefix/{token}", [UserController::class, 'verify'])->name('verification');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use Filament\Notifications\Notification;
 
 class NotificationService
@@ -24,10 +25,22 @@ class NotificationService
         return self::getBackbone($status, $title, $body)->send();
     }
 
-    public static function announce($status, $title, $body = null, $immediately = false)
+    public static function announce($status, $title, $body = null, $all = false, $immediately = false)
     {
-        $user = AuthenticationService::get();
-        return self::getBackbone($status, $title, $body)
-        ->sendToDatabase($user, $immediately);
+        $backbone = self::getBackbone($status, $title, $body);
+        if ($all)
+        {
+            $users = User::all();
+            foreach ($users as $user)
+            {
+                $backbone->sendToDatabase($user, $immediately);
+            }
+        }
+        else
+        {
+            $user = AuthenticationService::get();
+            $backbone->sendToDatabase($user, $immediately);
+        }
+        return $backbone;
     }
 }

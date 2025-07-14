@@ -39,6 +39,7 @@ class Rule extends Model
     ];
 
     protected $casts = [
+        'phase' => 'integer',
         'inverse' => 'boolean',
         'log' => 'boolean',
         'time' => 'boolean',
@@ -78,6 +79,11 @@ class Rule extends Model
         return $this->belongsToMany(Group::class, 'rules_groups')
         ->withPivot('position')
         ->orderBy('position');
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'rule_id');
     }
     
     // Businesses

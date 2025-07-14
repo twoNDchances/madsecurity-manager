@@ -20,6 +20,8 @@ class RuleValidator
         'array' => [
             '@similar' => 'Similar',
             '@contains' => 'Contains',
+            '@match' => 'Match',
+            '@search' => 'Search',
         ],
         'number' => [
             '@equal' => 'Equal',
@@ -145,7 +147,7 @@ class RuleValidator
     public static function value()
     {
         return [
-            'required_unless:comparator,@similar,@check,@checkRegex,@inRange',
+            'required_unless:comparator,@similar,@search,@check,@checkRegex,@inRange',
             'string',
         ];
     }
@@ -169,7 +171,7 @@ class RuleValidator
     public static function wordlist()
     {
         return [
-            'required_if:comparator,@similar,@check,@checkRegex',
+            'required_if:comparator,@similar,@search,@check,@checkRegex',
             'integer',
             'exists:wordlists,id',
         ];

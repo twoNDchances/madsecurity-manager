@@ -29,29 +29,45 @@ class GroupResource extends Resource
     {
         return $form
         ->schema([
-            self::main()->columns(6),
+            self::main(),
         ]);
     }
 
     public static function main($rule = true, $defender = true, $owner = false)
     {
+        return Forms\Components\Grid::make(3)
+        ->schema([
+            self::information()->columnSpan(1),
+            self::definition($rule, $defender, $owner)->columnSpan(2),
+        ]);
+    }
+
+    private static function information()
+    {
+        return Forms\Components\Section::make('Information')
+        ->schema([
+            self::$form::executionOrder(),
+            self::$form::level(),
+        ])
+        ->columns(1);
+    }
+
+    private static function definition($rule = true, $defender = true, $owner = false)
+    {
         $form = [
-            self::$form::name()->columnSpan(2),
-            self::$form::executionOrder()->columnSpan(2),
-            self::$form::level()->columnSpan(2),
-            self::$form::defenders($defender)->columnSpan(3),
-            self::$form::rules($rule)->columnSpan(3),
-            self::$form::tags()->columnSpan(3),
-            self::$form::description()->columnSpan(3),
+            self::$form::name()->columnSpan(1),
+            self::$form::defenders($defender)->columnSpan(1),
+            self::$form::rules($rule)->columnSpanFull(),
+            self::$form::tags()->columnSpan(1),
+            self::$form::description()->columnSpan(1),
         ];
         if ($owner)
         {
             $form[] = self::$form::owner();
         }
-        return Forms\Components\Section::make('Group Information')
-        ->aside()
-        ->description('Interact with Defender to Apply and Revoke Rules, matching AND logic by grouping multiple Rules together')
-        ->schema($form);
+        return Forms\Components\Section::make('Definition')
+        ->schema($form)
+        ->columns(2);
     }
 
     public static function table(Table $table): Table

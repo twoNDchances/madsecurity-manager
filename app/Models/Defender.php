@@ -55,4 +55,11 @@ class Defender extends Model
         return $this->belongsToMany(Group::class, 'defenders_groups')
         ->withPivot('status');
     }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'defender_id');
+    }
+
+    // Businesses
 }

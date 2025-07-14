@@ -17,6 +17,11 @@ class Group extends Model
         'user_id',
     ];
 
+    protected $casts = [
+        'execution_order' => 'integer',
+        'level' => 'integer',
+    ];
+
     // Belongs
     public function getOwner()
     {

@@ -29,8 +29,28 @@ class EditRule extends EditRecord
             {
                 'request' => implode(',', [$data['request_method'], $data['request_url']]),
                 'setVariable' => implode(',', [$data['key_variable'], $data['value_variable']]),
-                default => $data['action_configuration'],
+                default => $data['action_configuration'] ?? null,
             };
+        }
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if ($data['action_configuration'])
+        {
+            if ($data['action'] == 'request')
+            {
+                $actionConfiguration = explode(',', $data['action_configuration']);
+                $data['request_method'] = $actionConfiguration[0];
+                $data['request_url'] = $actionConfiguration[1];
+            }
+            if ($data['action'] == 'setVariable')
+            {
+                $actionConfiguration = explode(',', $data['action_configuration']);
+                $data['key_variable'] = $actionConfiguration[0];
+                $data['value_variable'] = $actionConfiguration[1];
+            }
         }
         return $data;
     }

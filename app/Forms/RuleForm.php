@@ -126,12 +126,14 @@ class RuleForm
         };
         $helperText = fn($state) => match ($state)
         {
-            '@similar' => 'Target: [Array] @ Value: [WordlistAlias]',
+            '@similar',
+            '@search' => 'Target: [Array] @ Value: [WordlistAlias]',
             '@mirror',
             '@regex',
             '@startsWith',
             '@endsWith' => 'Target: [String] @ Value: [String]',
-            '@contains' => 'Target: [Array] @ Value: [String]',
+            '@contains',
+            '@match' => 'Target: [Array] @ Value: [String]',
             '@in' => 'Target: [String] @ Value: [Array]',
             '@equal',
             '@lessThan',
@@ -191,6 +193,7 @@ class RuleForm
             array_merge(
                 [
                     '@similar',
+                    '@search',
                     '@check',
                     '@checkRegex',
                     '@inRange',
@@ -259,6 +262,7 @@ class RuleForm
             $get('comparator'),
             [
                 '@similar',
+                '@search',
                 '@check',
                 '@checkRegex',
             ],
@@ -378,8 +382,7 @@ class RuleForm
         )
         ->required($condition)
         ->visible($condition)
-        ->default('get')
-        ->selectablePlaceholder(false);
+        ->default('post');
     }
 
     private static function requestURL()
@@ -467,7 +470,7 @@ class RuleForm
         if ($form)
         {
             $former = [
-                GroupResource::main(false, false, true)->columns(6),
+                GroupResource::main(false, false, true),
             ];
             $groupField = $groupField
             ->createOptionForm($former);

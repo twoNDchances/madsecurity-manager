@@ -152,6 +152,12 @@ class TargetSeeder extends Seeder
                     'datatype' => 'number',
                 ],
                 [
+                    'alias' => 'file-name-size',
+                    'type' => 'file',
+                    'name' => 'name-size',
+                    'datatype' => 'number',
+                ],
+                [
                     'alias' => 'body-length',
                     'type' => 'body',
                     'name' => 'length',
@@ -165,7 +171,7 @@ class TargetSeeder extends Seeder
                 ],
                 // ========================= //
                 [
-                    'alias' => 'body-full',
+                    'alias' => 'full-body',
                     'type' => 'full',
                     'name' => 'raw',
                     'datatype' => 'string',

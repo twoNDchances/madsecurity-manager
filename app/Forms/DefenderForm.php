@@ -40,7 +40,7 @@ class DefenderForm
         if ($form)
         {
             $former = [
-                GroupResource::main(false, false, true)->columns(6),
+                GroupResource::main(false, false, true),
             ];
             $groupField = $groupField
             ->createOptionForm($former);

@@ -20,7 +20,7 @@ class GroupsRelationManager extends RelationManager
     {
         return $form
         ->schema([
-            GroupResource::main()->columns(6),
+            GroupResource::main(),
         ]);
     }
 

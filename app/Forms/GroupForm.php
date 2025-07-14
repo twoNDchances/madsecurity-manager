@@ -16,19 +16,6 @@ class GroupForm
 
     private static $action = GroupAction::class;
 
-    public static function name()
-    {
-        return FilamentFormService::textInput(
-            'name',
-            null,
-            'Group Name',
-            self::$validator::name(),
-        )
-        ->required()
-        ->unique(ignoreRecord: true)
-        ->suffixAction(self::$action::generateName());
-    }
-
     public static function executionOrder()
     {
         $default = Group::query()->max('execution_order') + 1;
@@ -58,6 +45,19 @@ class GroupForm
         ->default(1);
     }
 
+    public static function name()
+    {
+        return FilamentFormService::textInput(
+            'name',
+            null,
+            'Group Name',
+            self::$validator::name(),
+        )
+        ->required()
+        ->unique(ignoreRecord: true)
+        ->suffixAction(self::$action::generateName());
+    }
+
     public static function rules($form = true)
     {
         $ruleField = FilamentFormService::select(
@@ -68,7 +68,8 @@ class GroupForm
         ->relationship('rules', 'alias')
         ->multiple()
         ->searchable()
-        ->preload();
+        ->preload()
+        ->helperText('Interact with Defender to Apply and Revoke Rules, matching AND logic by grouping multiple Rules together');
         if ($form)
         {
             $former = [

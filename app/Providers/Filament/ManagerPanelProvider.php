@@ -50,6 +50,7 @@ class ManagerPanelProvider extends PanelProvider
         ->sidebarCollapsibleOnDesktop()
         ->navigationGroups([
             'Managements',
+            'Audit',
             'Utilities',
             'Privileges',
         ])
