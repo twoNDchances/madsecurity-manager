@@ -64,10 +64,21 @@ class GroupValidator
                         $phase = $rule->phase;
                         continue;
                     }
-                    if ($rule->phase != $phase)
+                    if (in_array($phase, [0, 1, 2]))
                     {
-                        $fail("The {$attribute} has 2 different phases");
-                        break;
+                        if (!in_array($rule->phase, [0, 1, 2]))
+                        {
+                            $fail("The {$attribute} has 2 different phases for Request");
+                            break;
+                        }
+                    }
+                    else if (in_array($phase, [3, 4, 5]))
+                    {
+                        if (!in_array($rule->phase, [3, 4, 5]))
+                        {
+                            $fail("The {$attribute} has 2 different phases for Response");
+                            break;
+                        }
                     }
                 }
             },

@@ -44,7 +44,7 @@ class GroupResource extends Resource
 
     private static function information()
     {
-        return Forms\Components\Section::make('Information')
+        return Forms\Components\Section::make('Group Information')
         ->schema([
             self::$form::executionOrder(),
             self::$form::level(),
@@ -65,7 +65,7 @@ class GroupResource extends Resource
         {
             $form[] = self::$form::owner();
         }
-        return Forms\Components\Section::make('Definition')
+        return Forms\Components\Section::make('Group Definition')
         ->schema($form)
         ->columns(2);
     }

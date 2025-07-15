@@ -27,13 +27,13 @@ class TargetSeeder extends Seeder
 
             1 => [
                 [
-                    'alias' => 'header-keys',
+                    'alias' => 'header-keys-request',
                     'type' => 'header',
                     'name' => 'keys',
                     'datatype' => 'array',
                 ],
                 [
-                    'alias' => 'header-values',
+                    'alias' => 'header-values-request',
                     'type' => 'header',
                     'name' => 'values',
                     'datatype' => 'array',
@@ -52,7 +52,7 @@ class TargetSeeder extends Seeder
                 ],
                 // ========================= //
                 [
-                    'alias' => 'header-size',
+                    'alias' => 'header-size-request',
                     'type' => 'header',
                     'name' => 'size',
                     'datatype' => 'number',
@@ -100,78 +100,118 @@ class TargetSeeder extends Seeder
                     'name' => 'host',
                     'datatype' => 'string',
                 ],
+                [
+                    'alias' => 'full-header-request',
+                    'type' => 'full',
+                    'name' => 'raw',
+                    'datatype' => 'string',
+                ],
             ],
             2 => [
                 [
-                    'alias' => 'body-keys',
+                    'alias' => 'body-keys-request',
                     'type' => 'body',
                     'name' => 'keys',
                     'datatype' => 'array',
                 ],
                 [
-                    'alias' => 'file-keys',
+                    'alias' => 'file-keys-request',
                     'type' => 'file',
                     'name' => 'keys',
                     'datatype' => 'array',
                 ],
                 [
-                    'alias' => 'body-values',
+                    'alias' => 'body-values-request',
                     'type' => 'body',
                     'name' => 'values',
                     'datatype' => 'array',
                 ],
                 [
-                    'alias' => 'file-values',
+                    'alias' => 'file-values-request',
                     'type' => 'file',
                     'name' => 'values',
                     'datatype' => 'array',
                 ],
                 [
-                    'alias' => 'file-names',
+                    'alias' => 'file-names-request',
                     'type' => 'file',
                     'name' => 'names',
                     'datatype' => 'array',
                 ],
                 [
-                    'alias' => 'file-extensions',
+                    'alias' => 'file-extensions-request',
                     'type' => 'file',
                     'name' => 'extensions',
                     'datatype' => 'array',
                 ],
                 // ========================= //
                 [
-                    'alias' => 'body-size',
+                    'alias' => 'body-size-request',
                     'type' => 'body',
                     'name' => 'size',
                     'datatype' => 'number',
                 ],
                 [
-                    'alias' => 'file-size',
+                    'alias' => 'file-size-request',
                     'type' => 'file',
                     'name' => 'size',
                     'datatype' => 'number',
                 ],
                 [
-                    'alias' => 'file-name-size',
+                    'alias' => 'file-name-size-request',
                     'type' => 'file',
                     'name' => 'name-size',
                     'datatype' => 'number',
                 ],
                 [
-                    'alias' => 'body-length',
+                    'alias' => 'body-length-request',
                     'type' => 'body',
                     'name' => 'length',
                     'datatype' => 'number',
                 ],
                 [
-                    'alias' => 'file-length',
+                    'alias' => 'file-length-request',
                     'type' => 'file',
                     'name' => 'length',
                     'datatype' => 'number',
                 ],
                 // ========================= //
                 [
-                    'alias' => 'full-body',
+                    'alias' => 'full-body-request',
+                    'type' => 'full',
+                    'name' => 'raw',
+                    'datatype' => 'string',
+                ],
+            ],
+            3 => [
+                [
+                    'alias' => 'header-keys-response',
+                    'type' => 'header',
+                    'name' => 'keys',
+                    'datatype' => 'array',
+                ],
+                [
+                    'alias' => 'header-values-response',
+                    'type' => 'header',
+                    'name' => 'values',
+                    'datatype' => 'array',
+                ],
+                // ========================= //
+                [
+                    'alias' => 'header-size-response',
+                    'type' => 'header',
+                    'name' => 'size',
+                    'datatype' => 'number',
+                ],
+                [
+                    'alias' => 'server-status',
+                    'type' => 'server',
+                    'name' => 'status',
+                    'datatype' => 'number',
+                ],
+                // ========================= //
+                [
+                    'alias' => 'full-header-response',
                     'type' => 'full',
                     'name' => 'raw',
                     'datatype' => 'string',
