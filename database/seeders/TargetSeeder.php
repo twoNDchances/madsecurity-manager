@@ -71,6 +71,12 @@ class TargetSeeder extends Seeder
                 ],
                 // ========================= //
                 [
+                    'alias' => 'client-protocol',
+                    'type' => 'client',
+                    'name' => 'protocol',
+                    'datatype' => 'string',
+                ],
+                [
                     'alias' => 'client-ip',
                     'type' => 'client',
                     'name' => 'ip',
@@ -210,6 +216,12 @@ class TargetSeeder extends Seeder
                     'datatype' => 'number',
                 ],
                 // ========================= //
+                [
+                    'alias' => 'server-protocol',
+                    'type' => 'server',
+                    'name' => 'protocol',
+                    'datatype' => 'string',
+                ],
                 [
                     'alias' => 'full-header-response',
                     'type' => 'full',
