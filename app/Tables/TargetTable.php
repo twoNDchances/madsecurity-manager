@@ -34,7 +34,18 @@ class TargetTable
 
     public static function phase()
     {
-        return FilamentTableService::text('phase');
+        $colors = fn($state) => match ($state)
+        {
+            0 => 'sky',
+            1 => 'indigo',
+            2 => 'primary',
+            3 => 'rose',
+            4 => 'danger',
+            5 => 'pink',
+        };
+        return FilamentTableService::text('phase')
+        ->badge()
+        ->color($colors);
     }
 
     public static function alias()

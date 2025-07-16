@@ -120,6 +120,7 @@ class ReportForm
             $set('targets', $transformed);
         };
         return FilamentFormService::repeater('targets', $schema)
+        ->collapsed()
         ->afterStateHydrated($state);
     }
 

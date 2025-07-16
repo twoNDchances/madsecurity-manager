@@ -28,7 +28,11 @@ class TargetValidator
             'body' => 'Body',
             'file' => 'File',
         ],
-        3 => [],
+        3 => [
+            'target' => 'Target',
+            'getter' => 'Getter',
+            'header' => 'Header',
+        ],
         4 => [],
     ];
 
