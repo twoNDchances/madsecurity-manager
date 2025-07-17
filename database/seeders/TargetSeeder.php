@@ -229,6 +229,48 @@ class TargetSeeder extends Seeder
                     'datatype' => 'string',
                 ],
             ],
+            4 => [
+                [
+                    'alias' => 'body-keys-response',
+                    'type' => 'body',
+                    'name' => 'keys',
+                    'datatype' => 'array',
+                ],
+                [
+                    'alias' => 'body-values-response',
+                    'type' => 'body',
+                    'name' => 'values',
+                    'datatype' => 'array',
+                ],
+                // ========================= //
+                [
+                    'alias' => 'body-size-response',
+                    'type' => 'body',
+                    'name' => 'size',
+                    'datatype' => 'number',
+                ],
+                [
+                    'alias' => 'body-length-response',
+                    'type' => 'body',
+                    'name' => 'length',
+                    'datatype' => 'number',
+                ],
+                // ========================= //
+                [
+                    'alias' => 'full-body-response',
+                    'type' => 'full',
+                    'name' => 'raw',
+                    'datatype' => 'string',
+                ],
+            ],
+            5 => [
+                [
+                    'alias' => 'full-response',
+                    'type' => 'full',
+                    'name' => 'raw',
+                    'datatype' => 'string',
+                ],
+            ],
         ];
         $user = User::where('email', env('MANAGER_USER_MAIL', 'root@madsecurity.com'))->first();
         $ids = [];
