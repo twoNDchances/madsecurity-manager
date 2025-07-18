@@ -50,6 +50,7 @@ class RuleValidator
         'setLevel' => 'Set Level',
         'report' => 'Report',
         'setVariable' => 'Set Variable',
+        'setHeader' => 'Set Header',
     ];
 
     public static array $requestMethods = [
@@ -242,20 +243,20 @@ class RuleValidator
         ];
     }
 
-    public static function keyVariable()
+    public static function setKey($for)
     {
         return [
-            'required_if:action,setVariable',
+            "required_if:action,set$for",
             'string',
             'max:255',
             'alpha_dash',
         ];
     }
 
-    public static function valueVariable()
+    public static function setValue($for)
     {
         return [
-            'required_if:action,setVariable',
+            "required_if:action,set$for",
             'string',
             'max:255',
         ];

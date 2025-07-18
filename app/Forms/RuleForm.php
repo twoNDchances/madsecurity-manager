@@ -297,6 +297,7 @@ class RuleForm
             'setLevel' => 'Reset default Rule enforcement Level',
             'report' => 'Send violation details to Manager and continue investigation',
             'setVariable' => 'Assigns a value to a variable and can be called back by Target until the end of the request\'s lifecycle',
+            'setHeader' => 'Set a Header for Request/Response',
             default => 'No action',
         };
         return FilamentFormService::select(
@@ -319,8 +320,10 @@ class RuleForm
             self::requestURL(),
             self::score(),
             self::level(),
-            self::keyVariable(),
-            self::valueVariable(),
+            self::setKey('variable'),
+            self::setValue('variable'),
+            self::setKey('header'),
+            self::setValue('header'),
         ]);
     }
 
@@ -334,6 +337,7 @@ class RuleForm
                 'setScore',
                 'setLevel',
                 'setVariable',
+                'setHeader',
             ],
         );
         $content = function($get)
@@ -429,28 +433,28 @@ class RuleForm
         ->minValue(1);
     }
 
-    private static function keyVariable()
+    private static function setKey($for)
     {
-        $condition = fn($get) => $get('action') == 'setVariable';
+        $condition = fn($get) => $get('action') == 'set' . Str::title($for);
         return FilamentFormService::textInput(
-            'key_variable',
+            "key_$for",
             'Set Key',
-            'Variable Key',
-            self::$validator::keyVariable(),
+            Str::title($for) . ' Key',
+            self::$validator::setKey(Str::title($for)),
         )
         ->required($condition)
         ->visible($condition)
         ->alphaDash();
     }
 
-    private static function valueVariable()
+    private static function setValue($for)
     {
-        $condition = fn($get) => $get('action') == 'setVariable';
+        $condition = fn($get) => $get('action') == 'set' . Str::title($for);
         return FilamentFormService::textInput(
-            'value_variable',
+            "value_$for",
             'Set Value',
-            'Variable Value',
-            self::$validator::valueVariable(),
+            Str::title($for) . ' Value',
+            self::$validator::setValue(Str::title($for)),
         )
         ->required($condition)
         ->visible($condition);
