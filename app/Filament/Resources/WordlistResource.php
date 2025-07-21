@@ -69,6 +69,7 @@ class WordlistResource extends Resource
             self::$table::counter(),
             self::$table::used('targets.alias', 'Targets'),
             self::$table::used('rules.alias', 'Rules'),
+            self::$table::used('decisions.name', 'Decisions'),
             self::$table::tags(),
             self::$table::owner(),
         ])

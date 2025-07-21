@@ -371,8 +371,7 @@ class RuleForm
             $colors,
         )
         ->required($condition)
-        ->visible($condition)
-        ->inline();
+        ->visible($condition);
     }
 
     private static function requestMethod()

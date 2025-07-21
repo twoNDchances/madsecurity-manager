@@ -10,6 +10,42 @@ class DecisionTable
 {
     private static $action = DecisionAction::class;
 
+    public static function name()
+    {
+        return FilamentTableService::text('name');
+    }
+
+    public static function score()
+    {
+        return FilamentTableService::text('score');
+    }
+
+    public static function phaseType()
+    {
+        $colors = fn($state) => match ($state)
+        {
+            'request' => 'info',
+            'response' => 'danger',
+        };
+        return FilamentTableService::text('phase_type')
+        ->badge()
+        ->color($colors);
+    }
+
+    public static function action()
+    {
+        return FilamentTableService::text('action');
+    }
+
+    public static function defenders()
+    {
+        return FilamentTableService::text('defenders.name')
+        ->bulleted()
+        ->limitList(3)
+        ->expandableLimitedList()
+        ->listWithLineBreaks();
+    }
+
     public static function tags()
     {
         return TagFieldService::getTags();

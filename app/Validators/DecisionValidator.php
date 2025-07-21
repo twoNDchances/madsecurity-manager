@@ -16,6 +16,7 @@ class DecisionValidator
             'deny' => 'Deny',
             'suspect' => 'Suspect',
             'redirect' => 'Redirect',
+            'kill' => 'Kill',
             'tag' => 'Tag',
         ],
         'response' => [
@@ -25,6 +26,33 @@ class DecisionValidator
             'bait' => 'Bait',
         ],
     ];
+
+    public static function score()
+    {
+        return [
+            'required',
+            'integer',
+            'min:-999999999',
+            'max:999999999',
+        ];
+    }
+
+    public static function phaseType()
+    {
+        return [
+            'required',
+            'string',
+            'in:' . implode(',', array_keys(self::$phaseTypes)),
+        ];
+    }
+
+    public static function description()
+    {
+        return [
+            'nullable',
+            'string',
+        ];
+    }
 
     public static function name()
     {
@@ -43,22 +71,12 @@ class DecisionValidator
         ];
     }
 
-    public static function phaseType()
+    public static function defenders()
     {
         return [
-            'required',
-            'string',
-            'in:' . implode(',', array_keys(self::$phaseTypes)),
-        ];
-    }
-
-    public static function score()
-    {
-        return [
-            'required',
-            'integer',
-            'min:-999999999',
-            'max:999999999',
+            'nullable',
+            'array',
+            'exists:defenders,id',
         ];
     }
 
@@ -71,19 +89,21 @@ class DecisionValidator
         ];
     }
 
-    public static function description()
-    {
-        return [
-            'nullable',
-            'string',
-        ];
-    }
-
     public static function redirect()
     {
         return [
             'required_if:action,redirect',
             'string',
+            'url',
+        ];
+    }
+
+    public static function kill()
+    {
+        return [
+            'required_if:action,kill',
+            'string',
+            'max:255',
         ];
     }
 

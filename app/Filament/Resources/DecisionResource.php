@@ -33,12 +33,12 @@ class DecisionResource extends Resource
         ]);
     }
 
-    public static function main()
+    public static function main($defender = true, $owner = false)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
             self::information()->columnSpan(1),
-            self::definition()->columnSpan(2),
+            self::definition($defender, $owner)->columnSpan(2),
         ]);
     }
 
@@ -46,22 +46,38 @@ class DecisionResource extends Resource
     {
         return Forms\Components\Section::make('Decision Information')
         ->schema([
-            // self::$form::phaseType(),
-            // self::$form::score(),
+            self::$form::score(),
+            self::$form::phaseType(),
+            self::$form::tags(),
+            self::$form::description(),
         ])
         ->columns(1);
     }
 
-    private static function definition()
+    private static function definition($defender = true, $owner = false)
     {
+        $form = [
+            self::$form::name()->columnSpan(1),
+            self::$form::defenders($defender)->columnSpan(1),
+            Forms\Components\Fieldset::make('Task')
+            ->schema([
+                self::$form::action()->columnSpan(1),
+                Forms\Components\Fieldset::make('Configuration')
+                ->schema([
+                    self::$form::placeholder(),
+                    self::$form::redirect(),
+                    self::$form::kill(),
+                    self::$form::wordlist(),
+                ])
+                ->columns(1)
+                ->columnSpan(1),
+            ]),
+        ];
+        if ($owner) {
+            $form[] = self::$form::owner();
+        }
         return Forms\Components\Section::make('Decision Definition')
-        ->schema([
-            // self::$form::name()->columnSpan(1),
-            // self::$form::action()->columnSpan(1),
-            // self::$form::actionConfiguration()->columnSpan(1),
-            // self::$form::wordlist()->columnSpan(1),
-            // self::$form::description()->columnSpanFull(),
-        ])
+        ->schema($form)
         ->columns(2);
     }
 
@@ -69,6 +85,11 @@ class DecisionResource extends Resource
     {
         return $table
         ->columns([
+            self::$table::name(),
+            self::$table::score(),
+            self::$table::phaseType(),
+            self::$table::action(),
+            self::$table::defenders(),
             self::$table::tags(),
             self::$table::owner(),
         ])
