@@ -56,6 +56,11 @@ class Defender extends Model
         ->withPivot('status');
     }
 
+    public function decisions()
+    {
+        return $this->belongsToMany(Decision::class, 'defenders_decisions');
+    }
+
     public function reports()
     {
         return $this->hasMany(Report::class, 'defender_id');

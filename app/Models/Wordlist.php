@@ -38,6 +38,11 @@ class Wordlist extends Model
         return $this->hasMany(Rule::class, 'wordlist_id');
     }
 
+    public function decisions()
+    {
+        return $this->hasMany(Decision::class, 'wordlist_id');
+    }
+
     public function tags()
     {
         return $this->morphToMany(Tag::class,'taggable');

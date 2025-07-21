@@ -4,16 +4,30 @@ namespace App\Policies;
 
 use App\Models\Decision;
 use App\Models\User;
+use App\Services\AuthenticationService;
 use Illuminate\Auth\Access\Response;
 
 class DecisionPolicy
 {
+    private function getResource(User $user, string $action)
+    {
+        return AuthenticationService::can($user, 'decision', $action);
+    }
+
+    /**
+     * Determine whether the user can use all models.
+     */
+    public function all(User $user): bool
+    {
+        return $this->getResource($user, 'all');
+    }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $this->getResource($user, 'viewAny');
     }
 
     /**
@@ -21,7 +35,7 @@ class DecisionPolicy
      */
     public function view(User $user, Decision $decision): bool
     {
-        //
+        return $this->getResource($user, 'view');
     }
 
     /**
@@ -29,7 +43,7 @@ class DecisionPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return $this->getResource($user, 'create');
     }
 
     /**
@@ -37,7 +51,15 @@ class DecisionPolicy
      */
     public function update(User $user, Decision $decision): bool
     {
-        //
+        return $this->getResource($user, 'update');
+    }
+
+    /**
+     * Determine whether the user can delete any models.
+     */
+    public function deleteAny(User $user): bool
+    {
+        return $this->getResource($user, 'deleteAny');
     }
 
     /**
@@ -45,7 +67,7 @@ class DecisionPolicy
      */
     public function delete(User $user, Decision $decision): bool
     {
-        //
+        return $this->getResource($user, 'delete');
     }
 
     /**
@@ -53,7 +75,7 @@ class DecisionPolicy
      */
     public function restore(User $user, Decision $decision): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -61,6 +83,6 @@ class DecisionPolicy
      */
     public function forceDelete(User $user, Decision $decision): bool
     {
-        //
+        return false;
     }
 }

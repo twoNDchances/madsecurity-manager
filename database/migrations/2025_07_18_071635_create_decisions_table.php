@@ -17,7 +17,10 @@ return new class extends Migration
             $table->enum('phase_type', ['request', 'response']);
             $table->unsignedBigInteger('score');
             $table->string('action');
-            // $table->
+            $table->longText('action_configuration')->nullable();
+            $table->longText('description')->nullable();
+            $table->foreignId('wordlist_id')->nullable()->index()->constrained('wordlists')->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->index()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }
