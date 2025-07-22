@@ -46,6 +46,8 @@ class Permission extends Model
         'sync' => 'Sync-Data',
         'apply' => 'Apply-Data',
         'revoke' => 'Revoke-Data',
+        'implement' => 'Implement-Data',
+        'suspend' => 'Suspend-Data',
     ];
 
     private static array $exclusionList = [

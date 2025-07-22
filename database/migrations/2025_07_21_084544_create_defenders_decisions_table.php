@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('defender_id')->constrained('defenders')->cascadeOnDelete();
             $table->foreignId('decision_id')->constrained('decisions')->cascadeOnDelete();
+            $table->boolean('status')->default(false)->nullable();
             $table->timestamps();
         });
     }

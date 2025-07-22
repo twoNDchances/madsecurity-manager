@@ -30,6 +30,8 @@ class FilamentColorProvider extends ServiceProvider
             'slate' => Color::Slate,
             'rose' => Color::Rose,
             'pink' => Color::Pink,
+            'yellow' => Color::Yellow,
+            'orange' => Color::Orange,
         ];
 
         FilamentColor::register($colors);

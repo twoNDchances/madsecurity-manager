@@ -49,7 +49,6 @@ class DecisionResource extends Resource
             self::$form::score(),
             self::$form::phaseType(),
             self::$form::tags(),
-            self::$form::description(),
         ])
         ->columns(1);
     }
@@ -72,6 +71,7 @@ class DecisionResource extends Resource
                 ->columns(1)
                 ->columnSpan(1),
             ]),
+            self::$form::description()->columnSpanFull(),
         ];
         if ($owner) {
             $form[] = self::$form::owner();

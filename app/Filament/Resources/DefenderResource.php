@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\DefenderResource\Pages;
+use App\Filament\Resources\DefenderResource\RelationManagers\DecisionsRelationManager;
 use App\Filament\Resources\DefenderResource\RelationManagers\GroupsRelationManager;
 use App\Forms\DefenderForm;
 use App\Models\Defender;
@@ -68,6 +69,7 @@ class DefenderResource extends Resource
             self::information($group)->columns(2)->columnSpan(2),
             Forms\Components\Grid::make(1)
             ->schema([
+                self::reaction(),
                 self::inspection(),
                 self::authentication(),
             ])
@@ -92,14 +94,31 @@ class DefenderResource extends Resource
             Forms\Components\Fieldset::make('Location')
             ->schema([
                 self::$form::url()->columnSpanFull(),
-                self::$form::path('health'),
-                self::$form::path('sync'),
-                self::$form::path('apply'),
-                self::$form::path('revoke'),
-                self::$form::method('health', 'post'),
-                self::$form::method('sync', 'post'),
-                self::$form::method('apply', 'patch'),
-                self::$form::method('revoke', 'delete'),
+                Forms\Components\Fieldset::make('General')
+                ->schema([
+                    self::$form::path('health'),
+                    self::$form::method('health', 'post'),
+                    self::$form::path('sync'),
+                    self::$form::method('sync', 'post'),
+                ])->columns(4),
+
+                Forms\Components\Fieldset::make('Groups & Rules')
+                ->schema([
+                    self::$form::path('apply'),
+                    self::$form::method('apply', 'patch'),
+                    self::$form::path('revoke'),
+                    self::$form::method('revoke', 'delete'),
+                ])->columns(2)
+                ->columnSpan(2),
+
+                Forms\Components\Fieldset::make('Decisions')
+                ->schema([
+                    self::$form::path('implement'),
+                    self::$form::method('implement', 'patch'),
+                    self::$form::path('suspend'),
+                    self::$form::method('suspend', 'delete'),
+                ])->columns(2)
+                ->columnSpan(2),
             ])
             ->columns(4)
             ->columnSpanFull(),
@@ -108,6 +127,16 @@ class DefenderResource extends Resource
         ])
         ->collapsible()
         ->collapsed($condition);
+    }
+
+    private static function reaction()
+    {
+        return Forms\Components\Section::make('Defender Reaction')
+        ->schema([
+            self::$form::decisions(),
+        ])
+        ->columns(1)
+        ->collapsible();
     }
 
     private static function inspection()
@@ -196,6 +225,7 @@ class DefenderResource extends Resource
     {
         return [
             GroupsRelationManager::class,
+            DecisionsRelationManager::class,
         ];
     }
 

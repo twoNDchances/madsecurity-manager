@@ -23,6 +23,10 @@ class Defender extends Model
         'apply_method',
         'revoke',
         'revoke_method',
+        'implement',
+        'implement_method',
+        'suspend',
+        'suspend_method',
         'output',
         'description',
         'protection',
@@ -58,7 +62,8 @@ class Defender extends Model
 
     public function decisions()
     {
-        return $this->belongsToMany(Decision::class, 'defenders_decisions');
+        return $this->belongsToMany(Decision::class, 'defenders_decisions')
+        ->withPivot('status');
     }
 
     public function reports()

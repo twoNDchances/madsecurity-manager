@@ -2,27 +2,27 @@
 
 namespace App\Filament\Resources\DefenderResource\RelationManagers;
 
-use App\Filament\Resources\GroupResource;
-use App\Tables\GroupTable;
+use App\Filament\Resources\DecisionResource;
+use App\Tables\DecisionTable;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Table;
 
-class GroupsRelationManager extends RelationManager
+class DecisionsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'groups';
+    protected static string $relationship = 'decisions';
 
-    protected static ?string $icon = 'heroicon-o-rectangle-stack';
+    protected static ?string $icon = 'heroicon-o-scale';
 
-    private static $tableRelationship = GroupTable::class;
+    private static $tableRelationship = DecisionTable::class;
 
-    protected $listeners = ['refreshGroupTable' => '$refresh'];
+    protected $listeners = ['refreshDecisionTable' => '$refresh'];
 
     public function form(Form $form): Form
     {
         return $form
         ->schema([
-            GroupResource::main(),
+            DecisionResource::main()
         ]);
     }
 
@@ -30,11 +30,11 @@ class GroupsRelationManager extends RelationManager
     {
         return $table
         ->columns([
-            self::$tableRelationship::executionOrder(),
-            self::$tableRelationship::level(),
             self::$tableRelationship::name(),
+            self::$tableRelationship::score(),
+            self::$tableRelationship::phaseType(),
+            self::$tableRelationship::action(),
             self::$tableRelationship::status(),
-            self::$tableRelationship::rules(),
             self::$tableRelationship::tags(),
             self::$tableRelationship::owner(),
         ])

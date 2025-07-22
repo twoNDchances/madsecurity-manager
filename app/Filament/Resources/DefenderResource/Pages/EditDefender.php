@@ -22,6 +22,8 @@ class EditDefender extends EditRecord
             $action::sync(),
             $action::apply(),
             $action::revoke(),
+            $action::implement(),
+            $action::suspend(),
             Actions\DeleteAction::make()->icon('heroicon-o-trash'),
         ];
     }

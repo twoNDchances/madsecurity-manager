@@ -106,4 +106,13 @@ class DefenderValidator
             'max:255',
         ];
     }
+
+    public static function decisions()
+    {
+        return [
+            'nullable',
+            'array',
+            'exists:decisions,id',
+        ];
+    }
 }

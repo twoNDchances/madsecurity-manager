@@ -111,6 +111,22 @@ class DefenderPolicy
     }
 
     /**
+     * Determine whether the user can implement data from the Defender.
+     */
+    public function implement(User $user, Defender $defender): bool
+    {
+        return $this->operate($user, $defender,'implement');
+    }
+
+    /**
+     * Determine whether the user can suspend data from the Defender.
+     */
+    public function suspend(User $user, Defender $defender): bool
+    {
+        return $this->operate($user, $defender,'suspend');
+    }
+
+    /**
      * Determine whether the user can restore the model.
      */
     public function restore(User $user, Defender $defender): bool

@@ -83,4 +83,38 @@ class DefenderAction
         ->modalHeading('Revoke all')
         ->authorize(self::can('revoke'));
     }
+
+    public static function implement()
+    {
+        $action = function($record, $livewire)
+        {
+            $livewire->dispatch('refreshDefenderForm');
+            $livewire->dispatch('refreshDecisionTable');
+        };
+        return Action::make('implement_all')
+        ->label('Implement')
+        ->icon('heroicon-o-bolt')
+        ->color('orange')
+        ->action($action)
+        ->requiresConfirmation()
+        ->modalHeading('Implement all')
+        ->authorize(self::can('implement'));
+    }
+
+    public static function suspend()
+    {
+        $action = function($record, $livewire)
+        {
+            $livewire->dispatch('refreshDefenderForm');
+            $livewire->dispatch('refreshDecisionTable');
+        };
+        return Action::make('suspend_all')
+        ->label('Suspend')
+        ->icon('heroicon-o-bolt-slash')
+        ->color('yellow')
+        ->action($action)
+        ->requiresConfirmation()
+        ->modalHeading('Suspend all')
+        ->authorize(self::can('suspend'));
+    }
 }

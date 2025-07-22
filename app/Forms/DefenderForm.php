@@ -2,6 +2,7 @@
 
 namespace App\Forms;
 
+use App\Filament\Resources\DecisionResource;
 use App\Filament\Resources\GroupResource;
 use App\Forms\Actions\DefenderAction;
 use App\Services\FilamentFormService;
@@ -101,6 +102,28 @@ class DefenderForm
             'Some Description for this Defender',
         )
         ->rules(self::$validator::description());
+    }
+
+    public static function decisions($form = true)
+    {
+        $decisionField = FilamentFormService::select(
+            'decisions',
+            null,
+            self::$validator::decisions(),
+        )
+        ->relationship('decisions', 'name')
+        ->searchable()
+        ->multiple()
+        ->preload();
+        if ($form)
+        {
+            $former = [
+                DecisionResource::main(false, true),
+            ];
+            $decisionField = $decisionField
+            ->createOptionForm($former);
+        }
+        return $decisionField;
     }
 
     public static function important()

@@ -88,7 +88,7 @@ class RuleResource extends Resource
         ->schema([
             self::$form::log()->columnSpanFull(),
             self::$form::logisticOption('time'),
-            self::$form::logisticOption('user_agent'),
+            self::$form::logisticOption('user_agent', 'User Agent'),
             self::$form::logisticOption('client_ip'),
             self::$form::logisticOption('method'),
             self::$form::logisticOption('path', 'URL Path'),

@@ -42,6 +42,7 @@ class Decision extends Model
 
     public function defenders()
     {
-        return $this->belongsToMany(Defender::class, 'defenders_decisions');
+        return $this->belongsToMany(Defender::class, 'defenders_decisions')
+        ->withPivot('status');
     }
 }

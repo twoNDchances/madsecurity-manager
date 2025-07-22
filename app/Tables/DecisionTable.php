@@ -37,6 +37,12 @@ class DecisionTable
         return FilamentTableService::text('action');
     }
 
+    public static function status()
+    {
+        return FilamentTableService::icon('pivot.status', 'Status')
+        ->boolean();
+    }
+
     public static function defenders()
     {
         return FilamentTableService::text('defenders.name')
@@ -64,5 +70,10 @@ class DecisionTable
     public static function deleteBulkAction()
     {
         return self::$action::deleteBulkAction();
+    }
+
+    public static function operationActionGroup()
+    {
+        return self::$action::operationActionGroup();
     }
 }
