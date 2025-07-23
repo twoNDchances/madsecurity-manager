@@ -5,7 +5,9 @@ namespace App\Actions;
 use App\Services\AuthenticationService;
 use App\Services\DefenderApplyService;
 use App\Services\DefenderHealthService;
+use App\Services\DefenderImplementService;
 use App\Services\DefenderRevokeService;
+use App\Services\DefenderSuspendService;
 use App\Services\DefenderSyncService;
 use Filament\Actions\Action;
 
@@ -88,6 +90,7 @@ class DefenderAction
     {
         $action = function($record, $livewire)
         {
+            $record = DefenderImplementService::performAll($record);
             $livewire->dispatch('refreshDefenderForm');
             $livewire->dispatch('refreshDecisionTable');
         };
@@ -105,6 +108,7 @@ class DefenderAction
     {
         $action = function($record, $livewire)
         {
+            $record = DefenderSuspendService::performAll($record);
             $livewire->dispatch('refreshDefenderForm');
             $livewire->dispatch('refreshDecisionTable');
         };

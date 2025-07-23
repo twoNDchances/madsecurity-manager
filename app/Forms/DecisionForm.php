@@ -100,6 +100,7 @@ class DecisionForm
     public static function action()
     {
         $options = fn($get) => self::$validator::$actions[$get('phase_type')];
+        $state = fn($set) => $set('action_configuration', null);
         return FilamentFormService::select(
             'action',
             null,
@@ -107,7 +108,8 @@ class DecisionForm
             $options,
         )
         ->required()
-        ->reactive();
+        ->reactive()
+        ->afterStateUpdated($state);
     }
 
     public static function placeholder()
@@ -144,14 +146,27 @@ class DecisionForm
         ->url();
     }
 
-    public static function kill()
+    public static function killHeader()
     {
         $condition = fn($get) => $get('action') == 'kill';
         return FilamentFormService::textInput(
-            'action_configuration',
+            'kill_header',
             'Header',
             'Session ID Header',
-            self::$validator::kill(),
+            self::$validator::killHeader(),
+        )
+        ->required($condition)
+        ->visible($condition);
+    }
+
+    public static function killPath()
+    {
+        $condition = fn($get) => $get('action') == 'kill';
+        return FilamentFormService::textInput(
+            'kill_path',
+            'Path',
+            'Backend Path',
+            self::$validator::killPath(),
         )
         ->required($condition)
         ->visible($condition);

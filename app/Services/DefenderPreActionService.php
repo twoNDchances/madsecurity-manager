@@ -56,7 +56,7 @@ class DefenderPreActionService
         NotificationService::announce($status, static::$actionName, $output);
     }
 
-    protected static function send(Defender $defender, $method, $url): array
+    protected static function send(Defender $defender, $method, $url, $forGroupApi = true): array
     {
         $batchMinSize = 10000;
         $batchMaxSize = 100000;
@@ -76,13 +76,17 @@ class DefenderPreActionService
             'pass' => 0,
             'fall' => 0,
         ];
-        $successGroupsIds = [];
+        $successIds = [];
         for ($i = 0; $i < $maxBatchCount; $i++)
         {
-            $apiBatch = [
+            $apiBatch = $forGroupApi ? [
                 'groups' => $batches['groups'][$i] ?? [],
                 'rules' => $batches['rules'][$i] ?? [],
                 'targets' => $batches['targets'][$i] ?? [],
+                'wordlists' => $batches['wordlists'][$i] ?? [],
+                'words' => $batches['words'][$i] ?? [],
+            ] : [
+                'decisions' => $batches['decisions'][$i] ?? [],
                 'wordlists' => $batches['wordlists'][$i] ?? [],
                 'words' => $batches['words'][$i] ?? [],
             ];
@@ -110,9 +114,12 @@ class DefenderPreActionService
                 else
                 {
                     self::detail('notice', $message, $defender, 'success');
-                    $successGroupsIds = array_merge(
-                        $successGroupsIds,
-                        array_map(fn($item) => $item['id'] ?? $item, $apiBatch['groups']),
+                    $successIds = array_merge(
+                        $successIds,
+                        array_map(
+                            fn($item) => $item['id'] ?? $item,
+                            $forGroupApi ? $apiBatch['groups'] : $apiBatch['decisions'],
+                        ),
                     );
                     $status['pass']++;
                 }
@@ -130,16 +137,15 @@ class DefenderPreActionService
             }
         }
         NotificationService::notify(null, static::$actionName, implode("\n", $result));
-        // dd($successGroupsIds);
         return match ($status['pass'] > 0)
         {
             true => [
                 'status' => true,
-                'groupIds' => $successGroupsIds,
+                'successIds' => $successIds,
             ],
             false => [
                 'status' => false,
-                'groupIds' => $successGroupsIds,
+                'successIds' => $successIds,
             ],
         };
     }

@@ -17,6 +17,34 @@ class EditDecision extends EditRecord
         ];
     }
 
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if ($data['action'] == 'kill')
+        {
+            $actionConfiguration = explode(',', $data['action_configuration']);
+            $data['kill_header'] = $actionConfiguration[0];
+            $data['kill_path'] = $actionConfiguration[1];
+        }
+        return $data;
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        if (in_array($data['action'], ['deny', 'suspect', 'tag', 'warn', 'bait']))
+        {
+            $data['action_configuration'] = null;
+        }
+        if (in_array($data['action'], ['deny', 'suspect', 'redirect', 'kill']))
+        {
+            $data['wordlist_id'] = null;
+        }
+        if ($data['action'] == 'kill')
+        {
+            $data['action_configuration'] = implode(',', [$data['kill_header'], $data['kill_path']]);
+        }
+        return $data;
+    }
+
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

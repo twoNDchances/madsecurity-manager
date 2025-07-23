@@ -3,6 +3,8 @@
 namespace App\Tables\Actions;
 
 use App\Services\AuthenticationService;
+use App\Services\DefenderImplementService;
+use App\Services\DefenderSuspendService;
 use App\Services\FilamentTableService;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -42,6 +44,7 @@ class DecisionAction
     {
         $action = function ($record, $livewire)
         {
+            DefenderImplementService::performEach($record, $livewire->getOwnerRecord());
             $livewire->dispatch('refreshDefenderForm');
         };
         return Action::make('implement')
@@ -55,11 +58,13 @@ class DecisionAction
     {
         $action = function ($record, $livewire)
         {
+            DefenderSuspendService::performEach($record, $livewire->getOwnerRecord());
             $livewire->dispatch('refreshDefenderForm');
         };
         return Action::make('suspend')
         ->icon('heroicon-o-bolt-slash')
         ->color('yellow')
+        ->requiresConfirmation()
         ->action($action)
         ->authorize(self::can('suspend'));
     }

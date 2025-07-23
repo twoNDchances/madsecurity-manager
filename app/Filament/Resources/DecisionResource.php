@@ -65,7 +65,8 @@ class DecisionResource extends Resource
                 ->schema([
                     self::$form::placeholder(),
                     self::$form::redirect(),
-                    self::$form::kill(),
+                    self::$form::killHeader(),
+                    self::$form::killPath(),
                     self::$form::wordlist(),
                 ])
                 ->columns(1)

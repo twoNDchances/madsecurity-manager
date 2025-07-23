@@ -14,6 +14,10 @@ class CreateDecision extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = AuthenticationService::get()?->id;
+        if ($data['action'] == 'kill')
+        {
+            $data['action_configuration'] = implode(',', [$data['kill_header'], $data['kill_path']]);
+        }
         return $data;
     }
 

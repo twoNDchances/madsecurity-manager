@@ -98,12 +98,21 @@ class DecisionValidator
         ];
     }
 
-    public static function kill()
+    public static function killHeader()
     {
         return [
             'required_if:action,kill',
             'string',
             'max:255',
+        ];
+    }
+
+    public static function killPath()
+    {
+        return [
+            'required_if:action,kill',
+            'string',
+            'starts_with:/'
         ];
     }
 

@@ -35,7 +35,7 @@ class DefenderApplyService extends DefenderPreActionService
         return $defender;
     }
 
-    public static function performEach(Group $group, Defender $defender)
+    public static function performEach(Group $group, Defender $defender): Defender
     {
         $rules = self::getGroupsAndReturnRules([$group], $defender);
         self::generalAction(
@@ -45,6 +45,7 @@ class DefenderApplyService extends DefenderPreActionService
             $defender,
             $rules,
         );
+        return $defender;
     }
 
     private static function generalAction($type, $id, $name, $defender, $rules)
@@ -68,7 +69,7 @@ class DefenderApplyService extends DefenderPreActionService
         {
             $message = "$type [$id][$name] has been applied";
             self::detail('notice', $message, $defender, null);
-            foreach ($result['groupIds'] as $groupId)
+            foreach ($result['successIds'] as $groupId)
             {
                 $defender->groups()->updateExistingPivot($groupId, ['status' => true, 'updated_at' => Carbon::now()]);
             }
@@ -122,7 +123,14 @@ class DefenderApplyService extends DefenderPreActionService
             $targets[] = $rule['target_id'];
             if ($rule['wordlist_id'])
             {
-                self::getWordlistAndItsWords($rule['wordlist_id'], $defender);
+                $success = self::getWordlistAndItsWordsAndReturnBoolean(
+                    $rule['wordlist_id'],
+                    $defender,
+                );
+                if (!$success)
+                {
+                    continue;
+                }
             }
             self::$requestApiForm['rules'][] = self::clean(
                 $rule,
@@ -165,7 +173,14 @@ class DefenderApplyService extends DefenderPreActionService
             $targetReferers = self::getAllToRoot($target['id']);
             if ($target['wordlist_id'])
             {
-                self::getWordlistAndItsWords($target['wordlist_id'], $defender);
+                $success = self::getWordlistAndItsWordsAndReturnBoolean(
+                    $target['wordlist_id'],
+                    $defender,
+                );
+                if (!$success)
+                {
+                    continue;
+                }
             }
             self::$requestApiForm['targets'][] = self::clean($target);
             $point++;
@@ -183,7 +198,14 @@ class DefenderApplyService extends DefenderPreActionService
                 }
                 if ($target['wordlist_id'])
                 {
-                    self::getWordlistAndItsWords($target['wordlist_id'], $defender);
+                    $success = self::getWordlistAndItsWordsAndReturnBoolean(
+                        $target['wordlist_id'],
+                        $defender,
+                    );
+                    if (!$success)
+                    {
+                        continue;
+                    }
                 }
                 self::$requestApiForm['targets'][] = self::clean($target);
                 $point++;
@@ -192,19 +214,20 @@ class DefenderApplyService extends DefenderPreActionService
         return $point;
     }
 
-    private static function getWordlistAndItsWords($wordlistId, Defender $defender): void
+    private static function getWordlistAndItsWordsAndReturnBoolean($wordlistId, Defender $defender): bool
     {
         $wordlist = Wordlist::find($wordlistId);
         if (!$wordlist)
         {
             $message = "Wordlist [$wordlistId] not found";
             self::detail('emergency', $message, $defender, 'failure');
-            return;
+            return false;
         }
         $words = $wordlist->words()->get()->toArray();
         foreach ($words as $word) {
             self::$requestApiForm['words'][] = self::clean($word);
         }
         self::$requestApiForm['wordlists'][] = self::clean($wordlist->toArray());
+        return true;
     }
 }

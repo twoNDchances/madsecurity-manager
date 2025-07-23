@@ -15,10 +15,12 @@ class DefenderConsoleService
     ];
 
     private static array $actions = [
-        'health' => 'HEALTH',
-        'sync'   => 'SYNC',
-        'apply'  => 'APPLY',
-        'revoke' => 'REVOKE',
+        'health'    => 'HEALTH',
+        'sync'      => 'SYNC',
+        'apply'     => 'APPLY',
+        'revoke'    => 'REVOKE',
+        'implement' => 'IMPLEMENT',
+        'suspend'   => 'SUSPEND',
     ];
 
     private static function build($severity, $action, $message): string

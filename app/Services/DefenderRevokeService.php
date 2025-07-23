@@ -35,7 +35,7 @@ class DefenderRevokeService extends DefenderPreActionService
         return $defender;
     }
 
-    public static function performEach(Group $group, Defender $defender)
+    public static function performEach(Group $group, Defender $defender): Defender
     {
         $rules = self::getGroupsAndReturnRules([$group], $defender);
         self::generalAction(
@@ -45,6 +45,7 @@ class DefenderRevokeService extends DefenderPreActionService
             $defender,
             $rules,
         );
+        return $defender;
     }
 
     private static function generalAction($type, $id, $name, $defender, $rules)
@@ -68,7 +69,7 @@ class DefenderRevokeService extends DefenderPreActionService
         {
             $message = "$type [$id][$name] has been revoked";
             self::detail('notice', $message, $defender, null);
-            foreach ($result['groupIds'] as $groupId)
+            foreach ($result['successIds'] as $groupId)
             {
                 $defender->groups()->updateExistingPivot($groupId, ['status' => false, 'updated_at' => Carbon::now()]);
             }
