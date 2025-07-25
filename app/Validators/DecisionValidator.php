@@ -14,14 +14,12 @@ class DecisionValidator
     public static $actions = [
         'request' => [
             'deny' => 'Deny',
-            'suspect' => 'Suspect',
             'redirect' => 'Redirect',
             'kill' => 'Kill',
             'tag' => 'Tag',
         ],
         'response' => [
             'deny' => 'Deny',
-            'suspect' => 'Suspect',
             'warn' => 'Warn',
             'bait' => 'Bait',
         ],

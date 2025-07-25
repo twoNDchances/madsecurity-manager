@@ -131,12 +131,14 @@ class DefenderResource extends Resource
 
     private static function reaction()
     {
+        $condition = fn($livewire) => $livewire instanceof EditRecord;
         return Forms\Components\Section::make('Defender Reaction')
         ->schema([
             self::$form::decisions(),
         ])
         ->columns(1)
-        ->collapsible();
+        ->collapsible()
+        ->collapsed($condition);
     }
 
     private static function inspection()

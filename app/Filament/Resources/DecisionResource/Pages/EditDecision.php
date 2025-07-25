@@ -30,11 +30,11 @@ class EditDecision extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        if (in_array($data['action'], ['deny', 'suspect', 'tag', 'warn', 'bait']))
+        if (in_array($data['action'], ['deny', 'tag', 'warn', 'bait']))
         {
             $data['action_configuration'] = null;
         }
-        if (in_array($data['action'], ['deny', 'suspect', 'redirect', 'kill']))
+        if (in_array($data['action'], ['deny', 'redirect', 'kill']))
         {
             $data['wordlist_id'] = null;
         }
