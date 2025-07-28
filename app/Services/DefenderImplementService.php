@@ -65,7 +65,7 @@ class DefenderImplementService extends DefenderPreActionService
     {
         foreach ($decisions as $decision)
         {
-            if (in_array($decision->action, ['tag', 'warn', 'bait']) && !$decision->wordlist_id)
+            if (in_array($decision->action, ['tag', 'warn']) && !$decision->wordlist_id)
             {
                 $message = "Decision [$decision->id][$decision->name] missing Wordlist";
                 self::detail('emergency', $message, $defender, 'failure');

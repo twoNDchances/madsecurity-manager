@@ -21,7 +21,6 @@ class DecisionValidator
         'response' => [
             'deny' => 'Deny',
             'warn' => 'Warn',
-            'bait' => 'Bait',
         ],
     ];
 
@@ -117,7 +116,7 @@ class DecisionValidator
     public static function wordlist()
     {
         return [
-            'required_if:action,tag,warn,bait',
+            'required_if:action,tag,warn',
             'integer',
             'exists:wordlists,id',
         ];

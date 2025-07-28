@@ -67,7 +67,7 @@ class DefenderSuspendService extends DefenderPreActionService
         foreach ($decisions as $decision)
         {
             $context = "Decision [$decision->id][$decision->name]";
-            if (in_array($decision->action, ['tag', 'warn', 'bait']) && !$decision->wordlist_id)
+            if (in_array($decision->action, ['tag', 'warn']) && !$decision->wordlist_id)
             {
                 $message = "$context missing Wordlist";
                 self::detail('emergency', $message, $defender, 'failure');

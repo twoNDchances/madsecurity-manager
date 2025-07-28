@@ -116,7 +116,7 @@ class DecisionForm
     {
         $condition = fn($get) => !in_array(
             $get('action'),
-            ['redirect', 'tag', 'kill', 'warn', 'bait'],
+            ['redirect', 'tag', 'kill', 'warn'],
         );
         $content = function($get)
         {
@@ -176,7 +176,7 @@ class DecisionForm
     {
         $condition = fn($get) => in_array(
             $get('action'),
-            ['tag', 'warn', 'bait'],
+            ['tag', 'warn'],
         );
         $former = [
             WordlistResource::main(),
