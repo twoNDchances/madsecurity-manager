@@ -10,6 +10,7 @@ class Wordlist extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'name',
         'alias',
         'description',

@@ -10,6 +10,7 @@ class Target extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'alias',
         'type',
         'name',

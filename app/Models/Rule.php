@@ -10,6 +10,7 @@ class Rule extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'name',
         'alias',
         'phase',

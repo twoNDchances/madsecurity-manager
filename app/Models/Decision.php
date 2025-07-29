@@ -10,6 +10,7 @@ class Decision extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id',
         'name',
         'phase_type',
         'score',
