@@ -40,6 +40,8 @@ class DefenderAction
         {
             $record = DefenderSyncService::perform($record);
             $livewire->dispatch('refreshDefenderForm');
+            $livewire->dispatch('refreshGroupTable');
+            $livewire->dispatch('refreshDecisionTable');
         };
         return Action::make('sync')
         ->icon('heroicon-o-arrow-down-on-square-stack')
