@@ -84,30 +84,5 @@ class Target extends Model
         return self::getRoot($superior);
     }
 
-    public static function booting()
-    {
-        static::created(function($target) 
-        {
-            FingerprintService::generate(
-                $target,
-                'Create',
-            );
-        });
-
-        static::updated(function($target) 
-        {
-            FingerprintService::generate(
-                $target,
-                'Update',
-            );
-        });
-
-        static::deleted(function($target) 
-        {
-            FingerprintService::generate(
-                $target,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

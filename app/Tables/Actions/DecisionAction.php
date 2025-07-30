@@ -6,6 +6,7 @@ use App\Services\AuthenticationService;
 use App\Services\DefenderImplementService;
 use App\Services\DefenderSuspendService;
 use App\Services\FilamentTableService;
+use App\Services\FingerprintService;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteBulkAction;
 
@@ -46,6 +47,7 @@ class DecisionAction
         {
             DefenderImplementService::performEach($record, $livewire->getOwnerRecord());
             $livewire->dispatch('refreshDefenderForm');
+            FingerprintService::generate($record, 'Implement');
         };
         return Action::make('implement')
         ->icon('heroicon-o-bolt')
@@ -60,6 +62,7 @@ class DecisionAction
         {
             DefenderSuspendService::performEach($record, $livewire->getOwnerRecord());
             $livewire->dispatch('refreshDefenderForm');
+            FingerprintService::generate($record, 'Suspend');
         };
         return Action::make('suspend')
         ->icon('heroicon-o-bolt-slash')

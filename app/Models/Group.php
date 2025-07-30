@@ -55,30 +55,5 @@ class Group extends Model
     }
 
     // Businesses
-    public static function booting()
-    {
-        static::created(function($group) 
-        {
-            FingerprintService::generate(
-                $group,
-                'Create',
-            );
-        });
-
-        static::updated(function($group) 
-        {
-            FingerprintService::generate(
-                $group,
-                'Update',
-            );
-        });
-
-        static::deleted(function($group) 
-        {
-            FingerprintService::generate(
-                $group,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

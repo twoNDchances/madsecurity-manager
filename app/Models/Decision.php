@@ -54,30 +54,5 @@ class Decision extends Model
     }
 
     // Businesses
-    public static function booting()
-    {
-        static::created(function($decision) 
-        {
-            FingerprintService::generate(
-                $decision,
-                'Create',
-            );
-        });
-
-        static::updated(function($decision) 
-        {
-            FingerprintService::generate(
-                $decision,
-                'Update',
-            );
-        });
-
-        static::deleted(function($decision) 
-        {
-            FingerprintService::generate(
-                $decision,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

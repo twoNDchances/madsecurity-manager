@@ -125,30 +125,5 @@ class Permission extends Model
         return $permissions;
     }
 
-    public static function booting()
-    {
-        static::created(function($permission) 
-        {
-            FingerprintService::generate(
-                $permission,
-                'Create',
-            );
-        });
-
-        static::updated(function($permission) 
-        {
-            FingerprintService::generate(
-                $permission,
-                'Update',
-            );
-        });
-
-        static::deleted(function($permission) 
-        {
-            FingerprintService::generate(
-                $permission,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

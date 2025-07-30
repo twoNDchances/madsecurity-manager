@@ -9,7 +9,6 @@ use App\Tables\FingerprintTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -29,7 +28,37 @@ class FingerprintResource extends Resource
     {
         return $form
         ->schema([
-            //
+            self::main(),
+        ]);
+    }
+
+    private static function main()
+    {
+        return Forms\Components\Grid::make(2)
+        ->schema([
+            self::identification()->columns(2)->columnSpan(1),
+            self::information()->columns(3)->columnSpan(1),
+        ]);
+    }
+
+    private static function identification()
+    {
+        return Forms\Components\Section::make('Fingerprint Identification')
+        ->schema([
+            self::$form::owner(),
+            self::$form::ipAddress(),
+            self::$form::userAgent()->columnSpanFull(),
+        ]);
+    }
+
+    private static function information()
+    {
+        return Forms\Components\Section::make('Fingerprint Information')
+        ->schema([
+            self::$form::httpMethod()->columnSpan(2),
+            self::$form::action()->columnSpan(1),
+            self::$form::route()->columnSpanFull(),
+            self::$form::resource()->columnSpanFull(),
         ]);
     }
 
@@ -37,7 +66,12 @@ class FingerprintResource extends Resource
     {
         return $table
         ->columns([
-            //
+            self::$table::owner(),
+            self::$table::ipAddress(),
+            self::$table::httpMethod(),
+            self::$table::route(),
+            self::$table::action(),
+            self::$table::resource(),
         ])
         ->filters([
             //

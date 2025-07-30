@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->index()->constrained('users')->nullOnDelete();
             $table->string('ip_address')->nullable();
-            $table->text('user_agent')->nullable();
+            $table->longText('user_agent')->nullable();
 
             $table->string('http_method')->nullable();
-            $table->string('route')->nullable();
+            $table->longText('route')->nullable();
             $table->string('action')->nullable();
 
             $table->morphs('resource');

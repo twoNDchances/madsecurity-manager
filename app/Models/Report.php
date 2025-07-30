@@ -44,22 +44,6 @@ class Report extends Model
         return $this->morphMany(Fingerprint::class, 'resource');
     }
 
-    public static function booting()
-    {
-        static::created(function($report) 
-        {
-            FingerprintService::generate(
-                $report,
-                'Create',
-            );
-        });
-
-        static::deleted(function($report) 
-        {
-            FingerprintService::generate(
-                $report,
-                'Deleted',
-            );
-        });
-    }
+    // Businesses
+    public static bool $skipObserver = false;
 }

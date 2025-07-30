@@ -94,30 +94,5 @@ class Rule extends Model
     }
     
     // Businesses
-    public static function booting()
-    {
-        static::created(function($rule) 
-        {
-            FingerprintService::generate(
-                $rule,
-                'Create',
-            );
-        });
-
-        static::updated(function($rule) 
-        {
-            FingerprintService::generate(
-                $rule,
-                'Update',
-            );
-        });
-
-        static::deleted(function($rule) 
-        {
-            FingerprintService::generate(
-                $rule,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

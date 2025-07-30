@@ -14,6 +14,10 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        User::$skipObserver = true;
+        Permission::$skipObserver = true;
+        Tag::$skipObserver = true;
+
         $user = User::where('email', env('MANAGER_USER_MAIL', 'root@madsecurity.com'))->first()->id;
         $policies = Permission::getPolicyPermissionOptions();
         $excluded = Permission::flattenExclusionList();
@@ -38,5 +42,9 @@ class PermissionSeeder extends Seeder
             $ids[] = $permsision->id;
         }
         Tag::where('name', 'default assets')->first()->permissions()->sync($ids);
+
+        User::$skipObserver = false;
+        Permission::$skipObserver = false;
+        Tag::$skipObserver = false;
     }
 }

@@ -15,6 +15,11 @@ class PolicySeeder extends Seeder
      */
     public function run(): void
     {
+        Policy::$skipObserver = true;
+        User::$skipObserver = true;
+        Permission::$skipObserver = true;
+        Tag::$skipObserver = true;
+
         $full = 'Full Access';
         if (!Policy::where('name', $full)->exists())
         {
@@ -27,5 +32,10 @@ class PolicySeeder extends Seeder
             $policy->permissions()->sync($permissions);
             Tag::where('name', 'default assets')->first()->policies()->sync($policy->id);
         }
+
+        Policy::$skipObserver = false;
+        User::$skipObserver = false;
+        Permission::$skipObserver = false;
+        Tag::$skipObserver = false;
     }
 }

@@ -272,6 +272,11 @@ class TargetSeeder extends Seeder
                 ],
             ],
         ];
+
+        User::$skipObserver = true;
+        Target::$skipObserver = true;
+        Tag::$skipObserver = true;
+
         $user = User::where('email', env('MANAGER_USER_MAIL', 'root@madsecurity.com'))->first();
         $ids = [];
         foreach ($targets as $phase => $raw)
@@ -296,5 +301,9 @@ class TargetSeeder extends Seeder
             }
         }
         Tag::where('name', 'default assets')->first()->targets()->sync($ids);
+
+        User::$skipObserver = false;
+        Target::$skipObserver = false;
+        Tag::$skipObserver = false;
     }
 }

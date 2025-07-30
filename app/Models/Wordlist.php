@@ -56,30 +56,5 @@ class Wordlist extends Model
     }
 
     // Businesses
-    public static function booting()
-    {
-        static::created(function($wordlist) 
-        {
-            FingerprintService::generate(
-                $wordlist,
-                'Create',
-            );
-        });
-
-        static::updated(function($wordlist) 
-        {
-            FingerprintService::generate(
-                $wordlist,
-                'Update',
-            );
-        });
-
-        static::deleted(function($wordlist) 
-        {
-            FingerprintService::generate(
-                $wordlist,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

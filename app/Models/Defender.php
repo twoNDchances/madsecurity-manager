@@ -76,30 +76,5 @@ class Defender extends Model
     }
 
     // Businesses
-    public static function booting()
-    {
-        static::created(function($defender) 
-        {
-            FingerprintService::generate(
-                $defender,
-                'Create',
-            );
-        });
-
-        static::updated(function($defender) 
-        {
-            FingerprintService::generate(
-                $defender,
-                'Update',
-            );
-        });
-
-        static::deleted(function($defender) 
-        {
-            FingerprintService::generate(
-                $defender,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

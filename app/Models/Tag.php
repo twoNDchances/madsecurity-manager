@@ -75,30 +75,5 @@ class Tag extends Model
     }
 
     // Businesses
-    public static function booting()
-    {
-        static::created(function($tag) 
-        {
-            FingerprintService::generate(
-                $tag,
-                'Create',
-            );
-        });
-
-        static::updated(function($tag) 
-        {
-            FingerprintService::generate(
-                $tag,
-                'Update',
-            );
-        });
-
-        static::deleted(function($tag) 
-        {
-            FingerprintService::generate(
-                $tag,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

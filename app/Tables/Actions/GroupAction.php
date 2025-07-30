@@ -6,6 +6,7 @@ use App\Services\AuthenticationService;
 use App\Services\DefenderApplyService;
 use App\Services\DefenderRevokeService;
 use App\Services\FilamentTableService;
+use App\Services\FingerprintService;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteBulkAction;
 
@@ -46,6 +47,7 @@ class GroupAction
         {
             DefenderApplyService::performEach($record, $livewire->getOwnerRecord());
             $livewire->dispatch('refreshDefenderForm');
+            FingerprintService::generate($record, 'Apply');
         };
         return Action::make('apply')
         ->icon('heroicon-o-arrow-up-on-square-stack')
@@ -60,6 +62,7 @@ class GroupAction
         {
             DefenderRevokeService::performEach($record, $livewire->getOwnerRecord());
             $livewire->dispatch('refreshDefenderForm');
+            FingerprintService::generate($record, 'Revoke');
         };
         return Action::make('revoke')
         ->icon('heroicon-o-arrow-uturn-left')

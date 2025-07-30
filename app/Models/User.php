@@ -129,30 +129,5 @@ class User extends Authenticatable
         ->exists();
     }
 
-    public static function booting()
-    {
-        static::created(function($user) 
-        {
-            FingerprintService::generate(
-                $user,
-                'Create',
-            );
-        });
-
-        static::updated(function($user) 
-        {
-            FingerprintService::generate(
-                $user,
-                'Update',
-            );
-        });
-
-        static::deleted(function($user) 
-        {
-            FingerprintService::generate(
-                $user,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

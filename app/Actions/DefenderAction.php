@@ -8,6 +8,7 @@ use App\Services\DefenderHealthService;
 use App\Services\DefenderImplementService;
 use App\Services\DefenderRevokeService;
 use App\Services\DefenderSuspendService;
+use App\Services\FingerprintService;
 use Filament\Actions\Action;
 
 class DefenderAction
@@ -24,6 +25,7 @@ class DefenderAction
         {
             DefenderHealthService::perform($record);
             $livewire->dispatch('refreshDefenderForm');
+            FingerprintService::generate($record, 'Check Health');
         };
         return Action::make('check_health')
         ->icon('heroicon-o-question-mark-circle')
@@ -51,6 +53,7 @@ class DefenderAction
             $record = DefenderApplyService::performAll($record);
             $livewire->dispatch('refreshDefenderForm');
             $livewire->dispatch('refreshGroupTable');
+            FingerprintService::generate($record, 'Apply All');
         };
         return Action::make('apply_all')
         ->label('Apply')
@@ -69,6 +72,7 @@ class DefenderAction
             $record = DefenderRevokeService::performAll($record);
             $livewire->dispatch('refreshDefenderForm');
             $livewire->dispatch('refreshGroupTable');
+            FingerprintService::generate($record, 'Revoke All');
         };
         return Action::make('revoke_all')
         ->label('Revoke')
@@ -87,6 +91,7 @@ class DefenderAction
             $record = DefenderImplementService::performAll($record);
             $livewire->dispatch('refreshDefenderForm');
             $livewire->dispatch('refreshDecisionTable');
+            FingerprintService::generate($record, 'Implement All');
         };
         return Action::make('implement_all')
         ->label('Implement')
@@ -105,6 +110,7 @@ class DefenderAction
             $record = DefenderSuspendService::performAll($record);
             $livewire->dispatch('refreshDefenderForm');
             $livewire->dispatch('refreshDecisionTable');
+            FingerprintService::generate($record, 'Suspend All');
         };
         return Action::make('suspend_all')
         ->label('Suspend')

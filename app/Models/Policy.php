@@ -44,30 +44,5 @@ class Policy extends Model
     }
 
     // Businesses
-    public static function booting()
-    {
-        static::created(function($policy) 
-        {
-            FingerprintService::generate(
-                $policy,
-                'Create',
-            );
-        });
-
-        static::updated(function($policy) 
-        {
-            FingerprintService::generate(
-                $policy,
-                'Update',
-            );
-        });
-
-        static::deleted(function($policy) 
-        {
-            FingerprintService::generate(
-                $policy,
-                'Deleted',
-            );
-        });
-    }
+    public static bool $skipObserver = false;
 }

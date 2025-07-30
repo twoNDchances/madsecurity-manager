@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Defender;
+use App\Services\FingerprintService;
 use Illuminate\Http\Request;
 
 class CollectController extends Controller
@@ -23,6 +24,9 @@ class CollectController extends Controller
             'groups.rules.getTarget.getWordlist.words',
         ]);
         $data = json_encode($defender->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        Defender::$skipObserver = true;
+        FingerprintService::generate($defender, 'Collect All');
+        Defender::$skipObserver = false;
         return response($data)
         ->header('Content-Type', 'application/json')
         ->header('Content-Disposition', "attachment; filename=\"defender_$defender->id.json\"");

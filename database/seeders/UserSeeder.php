@@ -14,6 +14,9 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
+        User::$skipObserver = true;
+        Tag::$skipObserver = true;
+
         $mail = env('MANAGER_USER_MAIL', 'root@madsecurity.com');
         $user = User::firstOrCreate(
             ['email' => $mail],
@@ -30,5 +33,8 @@ class UserSeeder extends Seeder
         $tag = Tag::where('name', 'default assets')->first();
         $tag->users()->sync($user->id);
         $tag->update(['user_id' => $user->id]);
+
+        User::$skipObserver = false;
+        Tag::$skipObserver = false;
     }
 }

@@ -12,6 +12,8 @@ class TagSeeder extends Seeder
      */
     public function run(): void
     {
+        Tag::$skipObserver = true;
+
         Tag::firstOrCreate(
             ['name' => 'default assets'],
             [
@@ -19,5 +21,7 @@ class TagSeeder extends Seeder
                 'description' => 'Created by default',
             ],
         );
+
+        Tag::$skipObserver = false;
     }
 }

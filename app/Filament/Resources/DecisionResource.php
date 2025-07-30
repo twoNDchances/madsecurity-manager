@@ -117,7 +117,6 @@ class DecisionResource extends Resource
         return [
             'index' => Pages\ListDecisions::route('/'),
             'create' => Pages\CreateDecision::route('/create'),
-            'view' => Pages\ViewDecision::route('/{record}'),
             'edit' => Pages\EditDecision::route('/{record}/edit'),
         ];
     }

@@ -4,6 +4,7 @@ namespace App\Tables;
 
 use App\Services\FilamentTableService;
 use App\Tables\Actions\FingerprintAction;
+use Illuminate\Support\Str;
 
 class FingerprintTable
 {
@@ -11,7 +12,67 @@ class FingerprintTable
 
     public static function owner()
     {
-        return FilamentTableService::text('getOwner.email', 'Created by');
+        return FilamentTableService::text('getOwner.email', 'Performed by');
+    }
+
+    public static function ipAddress()
+    {
+        return FilamentTableService::text('ip_address', 'IP Address');
+    }
+
+    public static function httpMethod()
+    {
+        $colors = fn($state) => match ($state)
+        {
+            'GET' => 'success',
+            'POST' => 'pink',
+            'PUT' => 'primary',
+            'PATCH' => 'info',
+            'DELETE' => 'danger',
+            default => 'warning',
+        };
+        return FilamentTableService::text('http_method', 'HTTP Method')
+        ->badge()
+        ->color($colors);
+    }
+
+    public static function route()
+    {
+        return FilamentTableService::text('route');
+    }
+
+    public static function action()
+    {
+        $colors = fn($state) => match ($state)
+        {
+            'Create' => 'success',
+            'Update' => 'info',
+            'Delete' => 'danger',
+            'Check Health' => 'slate',
+            'Collect All' => 'teal',
+            'Apply', 'Apply All' => 'sky',
+            'Revoke', 'Revoke All' => 'pink',
+            'Implement', 'Implement All' => 'orange',
+            'Suspend', 'Suspend All' => 'yellow',
+            default => 'warning',
+        };
+        return FilamentTableService::text('action')
+        ->badge()
+        ->color($colors);
+    }
+
+    public static function resource()
+    {
+        $state = fn($state) => class_basename($state);
+        $url = function($record)
+        {
+            $resourceName = Str::lower(class_basename($record->resource_type));
+            return route('filament.manager.resources.' . $resourceName . 's.edit', ['record' => $record->resource_id]);
+        };
+        return FilamentTableService::text('resource_type', 'Resource')
+        ->formatStateUsing($state)
+        ->url($url)
+        ->openUrlInNewTab();
     }
 
     public static function actionGroup()
