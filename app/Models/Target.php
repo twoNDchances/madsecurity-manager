@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -63,6 +64,11 @@ class Target extends Model
         return $this->hasMany(Rule::class,'target_id');
     }
 
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
+
     // Businesses
     public static function getRoot($target)
     {
@@ -76,5 +82,32 @@ class Target extends Model
             return $target;
         }
         return self::getRoot($superior);
+    }
+
+    public static function booting()
+    {
+        static::created(function($target) 
+        {
+            FingerprintService::generate(
+                $target,
+                'Create',
+            );
+        });
+
+        static::updated(function($target) 
+        {
+            FingerprintService::generate(
+                $target,
+                'Update',
+            );
+        });
+
+        static::deleted(function($target) 
+        {
+            FingerprintService::generate(
+                $target,
+                'Deleted',
+            );
+        });
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -61,5 +62,43 @@ class Tag extends Model
     public function wordlists()
     {
         return $this->morphedByMany(Wordlist::class, 'taggable');
+    }
+
+    public function decisions()
+    {
+        return $this->morphedByMany(Decision::class, 'taggable');
+    }
+
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
+
+    // Businesses
+    public static function booting()
+    {
+        static::created(function($tag) 
+        {
+            FingerprintService::generate(
+                $tag,
+                'Create',
+            );
+        });
+
+        static::updated(function($tag) 
+        {
+            FingerprintService::generate(
+                $tag,
+                'Update',
+            );
+        });
+
+        static::deleted(function($tag) 
+        {
+            FingerprintService::generate(
+                $tag,
+                'Deleted',
+            );
+        });
     }
 }

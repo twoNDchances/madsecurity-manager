@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -47,5 +48,38 @@ class Wordlist extends Model
     public function tags()
     {
         return $this->morphToMany(Tag::class,'taggable');
+    }
+
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
+
+    // Businesses
+    public static function booting()
+    {
+        static::created(function($wordlist) 
+        {
+            FingerprintService::generate(
+                $wordlist,
+                'Create',
+            );
+        });
+
+        static::updated(function($wordlist) 
+        {
+            FingerprintService::generate(
+                $wordlist,
+                'Update',
+            );
+        });
+
+        static::deleted(function($wordlist) 
+        {
+            FingerprintService::generate(
+                $wordlist,
+                'Deleted',
+            );
+        });
     }
 }

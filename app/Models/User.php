@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -101,6 +102,11 @@ class User extends Authenticatable
         return $this->morphToMany(Tag::class,'taggable');
     }
 
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
+
     // Businesses
     public function hasPermission(string $action): bool
     {
@@ -121,5 +127,32 @@ class User extends Authenticatable
             }
         )
         ->exists();
+    }
+
+    public static function booting()
+    {
+        static::created(function($user) 
+        {
+            FingerprintService::generate(
+                $user,
+                'Create',
+            );
+        });
+
+        static::updated(function($user) 
+        {
+            FingerprintService::generate(
+                $user,
+                'Update',
+            );
+        });
+
+        static::deleted(function($user) 
+        {
+            FingerprintService::generate(
+                $user,
+                'Deleted',
+            );
+        });
     }
 }

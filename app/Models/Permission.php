@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,6 +34,11 @@ class Permission extends Model
         return $this->morphToMany(Tag::class,'taggable');
     }
 
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
+
     // Businesses
     private static array $methodDescriptions = [
         'all' => 'Full',
@@ -52,6 +58,10 @@ class Permission extends Model
 
     private static array $exclusionList = [
         'report' => [
+            'create',
+            'update',
+        ],
+        'fingerprint' => [
             'create',
             'update',
         ],
@@ -113,5 +123,32 @@ class Permission extends Model
             $permissions[$key] = $value;
         }
         return $permissions;
+    }
+
+    public static function booting()
+    {
+        static::created(function($permission) 
+        {
+            FingerprintService::generate(
+                $permission,
+                'Create',
+            );
+        });
+
+        static::updated(function($permission) 
+        {
+            FingerprintService::generate(
+                $permission,
+                'Update',
+            );
+        });
+
+        static::deleted(function($permission) 
+        {
+            FingerprintService::generate(
+                $permission,
+                'Deleted',
+            );
+        });
     }
 }

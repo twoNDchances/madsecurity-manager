@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -45,5 +46,38 @@ class Decision extends Model
     {
         return $this->belongsToMany(Defender::class, 'defenders_decisions')
         ->withPivot('status');
+    }
+
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
+
+    // Businesses
+    public static function booting()
+    {
+        static::created(function($decision) 
+        {
+            FingerprintService::generate(
+                $decision,
+                'Create',
+            );
+        });
+
+        static::updated(function($decision) 
+        {
+            FingerprintService::generate(
+                $decision,
+                'Update',
+            );
+        });
+
+        static::deleted(function($decision) 
+        {
+            FingerprintService::generate(
+                $decision,
+                'Deleted',
+            );
+        });
     }
 }

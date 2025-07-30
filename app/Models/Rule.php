@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -86,6 +87,37 @@ class Rule extends Model
     {
         return $this->hasMany(Report::class, 'rule_id');
     }
+
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
     
     // Businesses
+    public static function booting()
+    {
+        static::created(function($rule) 
+        {
+            FingerprintService::generate(
+                $rule,
+                'Create',
+            );
+        });
+
+        static::updated(function($rule) 
+        {
+            FingerprintService::generate(
+                $rule,
+                'Update',
+            );
+        });
+
+        static::deleted(function($rule) 
+        {
+            FingerprintService::generate(
+                $rule,
+                'Deleted',
+            );
+        });
+    }
 }

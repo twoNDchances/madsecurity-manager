@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -48,5 +49,36 @@ class Group extends Model
         ->withPivot('status');
     }
 
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
+
     // Businesses
+    public static function booting()
+    {
+        static::created(function($group) 
+        {
+            FingerprintService::generate(
+                $group,
+                'Create',
+            );
+        });
+
+        static::updated(function($group) 
+        {
+            FingerprintService::generate(
+                $group,
+                'Update',
+            );
+        });
+
+        static::deleted(function($group) 
+        {
+            FingerprintService::generate(
+                $group,
+                'Deleted',
+            );
+        });
+    }
 }

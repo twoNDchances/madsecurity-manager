@@ -18,7 +18,7 @@ class ReportResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-flag';
 
-    protected static ?string $navigationGroup = 'Audit';
+    protected static ?string $navigationGroup = 'Audits';
 
     private static $form = ReportForm::class;
 

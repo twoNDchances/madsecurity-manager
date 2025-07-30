@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,5 +38,36 @@ class Policy extends Model
         return $this->morphToMany(Tag::class,'taggable');
     }
 
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
+
     // Businesses
+    public static function booting()
+    {
+        static::created(function($policy) 
+        {
+            FingerprintService::generate(
+                $policy,
+                'Create',
+            );
+        });
+
+        static::updated(function($policy) 
+        {
+            FingerprintService::generate(
+                $policy,
+                'Update',
+            );
+        });
+
+        static::deleted(function($policy) 
+        {
+            FingerprintService::generate(
+                $policy,
+                'Deleted',
+            );
+        });
+    }
 }

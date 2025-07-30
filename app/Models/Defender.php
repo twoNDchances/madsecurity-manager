@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -69,5 +70,36 @@ class Defender extends Model
         return $this->hasMany(Report::class, 'defender_id');
     }
 
+    public function fingerprints()
+    {
+        return $this->morphMany(Fingerprint::class, 'resource');
+    }
+
     // Businesses
+    public static function booting()
+    {
+        static::created(function($defender) 
+        {
+            FingerprintService::generate(
+                $defender,
+                'Create',
+            );
+        });
+
+        static::updated(function($defender) 
+        {
+            FingerprintService::generate(
+                $defender,
+                'Update',
+            );
+        });
+
+        static::deleted(function($defender) 
+        {
+            FingerprintService::generate(
+                $defender,
+                'Deleted',
+            );
+        });
+    }
 }

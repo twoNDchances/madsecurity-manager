@@ -2,10 +2,8 @@
 
 namespace App\Actions;
 
-use App\Models\Defender;
 use App\Services\AuthenticationService;
 use App\Services\DefenderApplyService;
-use App\Services\DefenderCollectService;
 use App\Services\DefenderHealthService;
 use App\Services\DefenderImplementService;
 use App\Services\DefenderRevokeService;
