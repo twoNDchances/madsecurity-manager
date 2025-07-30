@@ -19,7 +19,7 @@ class EditDefender extends EditRecord
         $action = DefenderAction::class;
         return [
             $action::checkHealth(),
-            $action::sync(),
+            $action::collect(),
             $action::apply(),
             $action::revoke(),
             $action::implement(),

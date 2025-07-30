@@ -43,7 +43,7 @@ class Permission extends Model
         'delete' => 'Delete',
         'deleteAny' => 'Multi-Delete',
         'health' => 'Health-Check',
-        'sync' => 'Sync-Data',
+        'collect' => 'Collect-Data',
         'apply' => 'Apply-Data',
         'revoke' => 'Revoke-Data',
         'implement' => 'Implement-Data',

@@ -54,11 +54,6 @@ class DefenderTable
         return FilamentTableService::text('health');
     }
 
-    public static function sync()
-    {
-        return FilamentTableService::text('sync');
-    }
-
     public static function apply()
     {
         return FilamentTableService::text('apply');
@@ -67,6 +62,16 @@ class DefenderTable
     public static function revoke()
     {
         return FilamentTableService::text('revoke');
+    }
+
+    public static function implement()
+    {
+        return FilamentTableService::text('implement');
+    }
+
+    public static function suspend()
+    {
+        return FilamentTableService::text('suspend');
     }
 
     public static function protection()

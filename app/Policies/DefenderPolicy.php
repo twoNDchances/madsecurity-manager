@@ -87,11 +87,11 @@ class DefenderPolicy
     }
 
     /**
-     * Determine whether the user can sync data from the Defender.
+     * Determine whether the user can collect data from the Defender.
      */
-    public function sync(User $user, Defender $defender): bool
+    public function collect(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'sync');
+        return $this->operate($user, $defender,'collect');
     }
 
     /**

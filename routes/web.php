@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CollectController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,10 @@ Route::get('/', function () {
 Route::name('manager.')
 ->group(function ()
 {
-    $prefix = env('MANAGER_VERIFICATION_ROUTE', 'verify');
-    Route::get("/$prefix/{token}", [UserController::class, 'verify'])->name('verification');
+    $verificationPrefix = env('MANAGER_VERIFICATION_ROUTE', 'verify');
+    Route::get("/$verificationPrefix/{token}", [UserController::class, 'verify'])->name('verification');
+
+    $collectionPrefix = env('MANAGER_COLLECTION_ROUTE', 'collect');
+    Route::middleware('auth.defender.collect')
+    ->get($collectionPrefix, [CollectController::class, 'collect'])->name('collection');
 });

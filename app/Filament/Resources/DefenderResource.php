@@ -98,9 +98,7 @@ class DefenderResource extends Resource
                 ->schema([
                     self::$form::path('health'),
                     self::$form::method('health', 'post'),
-                    self::$form::path('sync'),
-                    self::$form::method('sync', 'post'),
-                ])->columns(4),
+                ])->columns(2),
 
                 Forms\Components\Fieldset::make('Groups & Rules')
                 ->schema([
@@ -205,9 +203,10 @@ class DefenderResource extends Resource
             self::$table::lastStatus(),
             self::$table::groups(),
             self::$table::health(),
-            self::$table::sync(),
             self::$table::apply(),
             self::$table::revoke(),
+            self::$table::implement(),
+            self::$table::suspend(),
             self::$table::protection(),
             self::$table::tags(),
             self::$table::owner(),
@@ -256,7 +255,6 @@ class DefenderResource extends Resource
             'periodic',
             'last_status',
             'health',
-            'sync',
             'apply',
             'revoke',
             'output',

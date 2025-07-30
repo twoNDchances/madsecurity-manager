@@ -30,6 +30,7 @@ class EnvironmentProvider extends ServiceProvider
             'MANAGER_HTTP_USER_AGENT' => env('MANAGER_HTTP_USER_AGENT', 'M&DSecurity@Manager'),
 
             'MANAGER_VERIFICATION_ROUTE' => env('MANAGER_VERIFICATION_ROUTE', 'verify'),
+            'MANAGER_COLLECTION_ROUTE' => env('MANAGER_COLLECTION_ROUTE', 'collect'),
         ];
 
         $errors = [];

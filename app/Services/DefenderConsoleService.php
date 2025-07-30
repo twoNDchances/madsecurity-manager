@@ -16,7 +16,6 @@ class DefenderConsoleService
 
     private static array $actions = [
         'health'    => 'HEALTH',
-        'sync'      => 'SYNC',
         'apply'     => 'APPLY',
         'revoke'    => 'REVOKE',
         'implement' => 'IMPLEMENT',

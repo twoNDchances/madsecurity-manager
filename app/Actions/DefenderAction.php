@@ -2,13 +2,14 @@
 
 namespace App\Actions;
 
+use App\Models\Defender;
 use App\Services\AuthenticationService;
 use App\Services\DefenderApplyService;
+use App\Services\DefenderCollectService;
 use App\Services\DefenderHealthService;
 use App\Services\DefenderImplementService;
 use App\Services\DefenderRevokeService;
 use App\Services\DefenderSuspendService;
-use App\Services\DefenderSyncService;
 use Filament\Actions\Action;
 
 class DefenderAction
@@ -34,22 +35,15 @@ class DefenderAction
         ->authorize(self::can('health'));
     }
 
-    public static function sync()
+    public static function collect()
     {
-        $action = function($record, $livewire)
-        {
-            $record = DefenderSyncService::perform($record);
-            $livewire->dispatch('refreshDefenderForm');
-            $livewire->dispatch('refreshGroupTable');
-            $livewire->dispatch('refreshDecisionTable');
-        };
-        return Action::make('sync')
+        $url = fn($record) => route('manager.collection') . '?id='. $record->id;
+        return Action::make('collect')
         ->icon('heroicon-o-arrow-down-on-square-stack')
         ->color('teal')
-        ->action($action)
-        ->requiresConfirmation()
-        ->modalDescription('This action will sync data from Defender to Manager, are you sure you would like to do this?')
-        ->authorize(self::can('sync'));
+        ->url($url)
+        ->openUrlInNewTab()
+        ->authorize(self::can('collect'));
     }
 
     public static function apply()
