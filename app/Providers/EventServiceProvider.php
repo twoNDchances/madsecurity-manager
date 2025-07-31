@@ -10,6 +10,7 @@ use App\Models\Policy;
 use App\Models\Report;
 use App\Models\Rule;
 use App\Models\Tag;
+use App\Models\Token;
 use App\Models\User;
 use App\Models\Wordlist;
 use App\Observers\DecisionObserver;
@@ -19,6 +20,7 @@ use App\Observers\PermissionObserver;
 use App\Observers\PolicyObserver;
 use App\Observers\RuleObserver;
 use App\Observers\TagObserver;
+use App\Observers\TokenObserver;
 use App\Observers\UserObserver;
 use App\Observers\WordlistObserver;
 use Illuminate\Auth\Events\Registered;
@@ -52,6 +54,7 @@ class EventServiceProvider extends ServiceProvider
         Report::observe(Report::class);
         Rule::observe(RuleObserver::class);
         Tag::observe(TagObserver::class);
+        Token::observe(TokenObserver::class);
         User::observe(UserObserver::class);
         Wordlist::observe(WordlistObserver::class);
     }

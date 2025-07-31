@@ -27,7 +27,7 @@ class CustomValidatorCommand extends Command
     public function handle()
     {
         $name = $this->argument('name');
-        $path = app_path("Validators/{$name}.php");
+        $path = app_path("Validators/{$name}Validator.php");
 
         if (File::exists($path)) {
             $this->error("Validator '{$name}' already exist!");
@@ -40,7 +40,7 @@ class CustomValidatorCommand extends Command
 
 namespace $namespace;
 
-class $name
+class {$name}Validator
 {
     //
 }

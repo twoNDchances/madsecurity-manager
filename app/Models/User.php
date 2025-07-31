@@ -107,6 +107,11 @@ class User extends Authenticatable
         return $this->morphMany(Fingerprint::class, 'resource');
     }
 
+    public function tokens()
+    {
+        return $this->belongsToMany(Token::class, 'tokens_users');
+    }
+
     // Businesses
     public function hasPermission(string $action): bool
     {

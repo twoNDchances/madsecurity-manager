@@ -69,9 +69,9 @@ class Tag extends Model
         return $this->morphedByMany(Decision::class, 'taggable');
     }
 
-    public function fingerprints()
+    public function tokens()
     {
-        return $this->morphMany(Fingerprint::class, 'resource');
+        return $this->morphMany(Token::class, 'taggable');
     }
 
     // Businesses
