@@ -5,6 +5,7 @@ namespace App\Filament\Resources\TokenResource\Pages;
 use App\Filament\Resources\TokenResource;
 use App\Services\AuthenticationService;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Hash;
 
 class CreateToken extends CreateRecord
 {
@@ -13,6 +14,7 @@ class CreateToken extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = AuthenticationService::get()?->id;
+        $data['value'] = Hash::make($data['value']);
         return $data;
     }
 

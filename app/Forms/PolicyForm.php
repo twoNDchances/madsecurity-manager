@@ -7,7 +7,7 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\PolicyValidator;
+use App\Validators\GUI\PolicyValidator;
 
 class PolicyForm
 {
@@ -76,7 +76,7 @@ class PolicyForm
         if ($form)
         {
             $former = [
-                UserResource::main(false),
+                UserResource::main(false, false),
             ];
             $creator = fn($data) => CreateUser::callByStatic($data)->id;
             $userField = $userField

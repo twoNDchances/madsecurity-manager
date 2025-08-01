@@ -14,9 +14,7 @@ return new class extends Migration
         Schema::create('tokens', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique()->index();
-            $table->string('key')->index();
             $table->string('value')->unique()->index();
-            $table->enum('located_at', ['query', 'header']);
             $table->longText('description')->nullable();
             $table->dateTime('expired_at')->nullable();
             $table->foreignId('user_id')->nullable()->index()->constrained('users')->nullOnDelete();

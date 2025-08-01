@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class CustomValidatorCommand extends Command
 {
@@ -12,7 +13,7 @@ class CustomValidatorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'custom:validator {name}';
+    protected $signature = 'custom:validator {name} {--type=gui}';
 
     /**
      * The console command description.
@@ -27,14 +28,20 @@ class CustomValidatorCommand extends Command
     public function handle()
     {
         $name = $this->argument('name');
-        $path = app_path("Validators/{$name}Validator.php");
+        $type = Str::upper($this->option('type') ?? 'gui');
+        if (!in_array($type, ['GUI', 'API']))
+        {
+            $this->error("Invalid type specified. Use 'gui' or 'api'!");
+            return;
+        }
+        $path = app_path("Validators/{$type}/{$name}Validator.php");
 
         if (File::exists($path)) {
-            $this->error("Validator '{$name}' already exist!");
+            $this->error("Validator '{$type}/{$name}' already exist!");
             return;
         }
 
-        $namespace = 'App\Validators';
+        $namespace = "App\Validators\\$type";
         $content = <<<PHP
 <?php
 
@@ -46,9 +53,9 @@ class {$name}Validator
 }
 
 PHP;
-        File::ensureDirectoryExists(app_path('Validators'));
+        File::ensureDirectoryExists(app_path("Validators/{$type}"));
         File::put($path, $content);
 
-        $this->info("Validator '{$name}' created at {$path}");
+        $this->info("Validator '{$type}/{$name}' created at {$path}");
     }
 }

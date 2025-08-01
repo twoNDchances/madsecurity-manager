@@ -37,4 +37,23 @@ class TagFieldService
         ->limitList(3)
         ->expandableLimitedList();
     }
+
+    public static function tagIds()
+    {
+        return 'nullable|array';
+    }
+
+    public static function tagId()
+    {
+        return 'exists:tags,id';
+    }
+
+    public static function syncTags($validated, $resource)
+    {
+        if (!isset($validated['tag_ids']))
+        {
+            return;
+        }
+        $resource->tags()->sync($validated['tag_ids']);
+    }
 }

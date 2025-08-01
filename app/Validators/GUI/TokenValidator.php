@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Validators;
+namespace App\Validators\GUI;
 
+use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Validation\Rule;
 
 class TokenValidator
@@ -23,19 +24,11 @@ class TokenValidator
         ];
     }
 
-    public static function key()
-    {
-        return [
-            'required',
-            'string',
-            'max:255',
-        ];
-    }
-
     public static function value()
     {
+        $condition = fn($livewire) => $livewire instanceOf CreateRecord;
         return [
-            'required',
+            fn($livewire) => $condition($livewire) ? 'required' : 'nullable',
             'string',
             'min:48',
             'max:48',
@@ -47,14 +40,6 @@ class TokenValidator
                 }
                 return 'unique:tokens,value';
             },
-        ];
-    }
-
-    public static function locatedAt()
-    {
-        return [
-            'required',
-            'in:query,header',
         ];
     }
 
@@ -71,6 +56,15 @@ class TokenValidator
         return [
             'nullable',
             'date',
+        ];
+    }
+
+    public static function users()
+    {
+        return [
+            'nullable',
+            'array',
+            'exists:users,id',
         ];
     }
 }

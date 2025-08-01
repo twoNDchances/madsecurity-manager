@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Validators;
+namespace App\Validators\GUI;
 
 use Illuminate\Validation\Rule;
 
-class TagValidator
+class PolicyValidator
 {
     public static function name()
     {
@@ -16,19 +16,19 @@ class TagValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('tags', 'name')->ignore($record->id);
+                    return Rule::unique('policies', 'name')->ignore($record->id);
                 }
-                return 'unique:tags,name';
+                return 'unique:policies,name';
             },
         ];
     }
 
-    public static function color()
+    public static function permissions()
     {
         return [
-            'required',
-            'string',
-            'size:7',
+            'nullable',
+            'array',
+            'exists:permissions,id',
         ];
     }
 
@@ -37,6 +37,15 @@ class TagValidator
         return [
             'nullable',
             'string',
+        ];
+    }
+
+    public static function users()
+    {
+        return [
+            'nullable',
+            'array',
+            'exists:users,id',
         ];
     }
 }

@@ -3,11 +3,12 @@
 namespace App\Forms;
 
 use App\Filament\Resources\PolicyResource;
+use App\Filament\Resources\TokenResource;
 use App\Forms\Actions\UserAction;
 use App\Services\AuthenticationService;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\UserValidator;
+use App\Validators\GUI\UserValidator;
 use Filament\Resources\Pages\CreateRecord;
 
 class UserForm
@@ -125,5 +126,27 @@ class UserForm
         )
         ->helperText($helperText)
         ->disabled($condition);
+    }
+
+    public static function tokens($form = true)
+    {
+        $tokenField = FilamentFormService::select(
+            'tokens',
+            'Tokens',
+            self::$validator::tokens(),
+        )
+        ->relationship('tokens', 'name')
+        ->multiple()
+        ->searchable()
+        ->preload();
+        if ($form)
+        {
+            $former = [
+                TokenResource::main(false, true),
+            ];
+            $tokenField = $tokenField
+            ->createOptionForm($former);
+        }
+        return $tokenField;
     }
 }

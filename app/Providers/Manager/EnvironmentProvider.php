@@ -31,6 +31,8 @@ class EnvironmentProvider extends ServiceProvider
 
             'MANAGER_VERIFICATION_ROUTE' => env('MANAGER_VERIFICATION_ROUTE', 'verify'),
             'MANAGER_COLLECTION_ROUTE' => env('MANAGER_COLLECTION_ROUTE', 'collect'),
+
+            'MANAGER_TOKEN_KEY' => env('MANAGER_TOKEN_KEY', 'X-Manager-Token'),
         ];
 
         $errors = [];

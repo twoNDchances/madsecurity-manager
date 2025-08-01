@@ -7,7 +7,7 @@ use App\Filament\Resources\WordlistResource;
 use App\Filament\Resources\WordlistResource\Pages\CreateWordlist;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\DecisionValidator;
+use App\Validators\GUI\DecisionValidator;
 use Illuminate\Support\Str;
 
 class DecisionForm

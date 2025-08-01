@@ -28,7 +28,42 @@ class TokenResource extends Resource
     {
         return $form
         ->schema([
-            self::$form::value(),
+            self::main(),
+        ]);
+    }
+
+    public static function main($user = true, $owner = false)
+    {
+        $form = [
+            self::information()->columnSpan(2),
+            self::scope($user)->columnSpan(1),
+        ];
+        if ($owner)
+        {
+            $form[] = self::$form::owner();
+        }
+        return Forms\Components\Grid::make(3)
+        ->schema($form);
+    }
+
+    private static function information()
+    {
+        return Forms\Components\Section::make('Token Information')
+        ->schema([
+            self::$form::name(),
+            self::$form::expiredAt(),
+            self::$form::value()->columnSpanFull(),
+            self::$form::tags()->columnSpanFull(),
+            self::$form::description()->columnSpanFull(),
+        ])
+        ->columns(2);
+    }
+
+    private static function scope($user = true)
+    {
+        return Forms\Components\Section::make('Token Scope')
+        ->schema([
+            self::$form::users($user),
         ]);
     }
 
@@ -36,6 +71,9 @@ class TokenResource extends Resource
     {
         return $table
         ->columns([
+            self::$table::name(),
+            self::$table::expiredAt(),
+            self::$table::users(),
             self::$table::tags(),
             self::$table::owner(),
         ])
@@ -75,9 +113,7 @@ class TokenResource extends Resource
     {
         return [
             'name',
-            'key',
             'value',
-            'located_at',
             'description',
             'expired_at',
             'getOwner.name',
@@ -95,8 +131,6 @@ class TokenResource extends Resource
     {
         return [
             'Name' => $record->name,
-            'Key' => $record->key,
-            'Located at' => $record->located_at,
             'Expired at' => $record->expired_at,
         ];
     }

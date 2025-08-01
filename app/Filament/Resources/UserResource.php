@@ -33,12 +33,17 @@ class UserResource extends Resource
         ]);
     }
 
-    public static function main($policy = true)
+    public static function main($policy = true, $token = true)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
             self::information()->columns(2)->columnSpan(2),
-            self::scope($policy)->columnSpan(1),
+            Forms\Components\Grid::make(1)
+            ->schema([
+                self::scope($policy),
+                self::access($token),
+            ])
+            ->columnSpan(1),
         ]);
     }
 
@@ -61,6 +66,14 @@ class UserResource extends Resource
             self::$form::policies($policy),
             self::$form::activation(),
             self::$form::important(),
+        ]);
+    }
+
+    private static function access($token = true)
+    {
+        return Forms\Components\Section::make('User Access')
+        ->schema([
+            self::$form::tokens($token),
         ]);
     }
 

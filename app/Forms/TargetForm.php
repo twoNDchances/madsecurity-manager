@@ -7,7 +7,7 @@ use App\Filament\Resources\WordlistResource\Pages\CreateWordlist;
 use App\Models\Target;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\TargetValidator;
+use App\Validators\GUI\TargetValidator;
 use Illuminate\Support\Str;
 
 class TargetForm

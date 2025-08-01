@@ -11,11 +11,14 @@ class Token extends Model
 
     protected $fillable = [
         'name',
-        'key',
         'value',
-        'located_at',
         'description',
         'expired_at',
+        'user_id'
+    ];
+
+    protected $hidden = [
+        'value',
     ];
 
     // Belongs

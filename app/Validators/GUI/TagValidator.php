@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Validators;
+namespace App\Validators\GUI;
 
 use Illuminate\Validation\Rule;
 
-class WordlistValidator
+class TagValidator
 {
     public static function name()
     {
@@ -12,36 +12,27 @@ class WordlistValidator
             'required',
             'string',
             'max:255',
-        ];
-    }
-
-    public static function alias()
-    {
-        return [
-            'required',
-            'string',
-            'max:255',
-            'alpha_dash',
             function($record)
             {
                 if ($record)
                 {
-                    return Rule::unique('wordlists', 'alias')->ignore($record->id);
+                    return Rule::unique('tags', 'name')->ignore($record->id);
                 }
-                return 'unique:wordlists,alias';
+                return 'unique:tags,name';
             },
         ];
     }
 
-    public static function description()
+    public static function color()
     {
         return [
-            'nullable',
+            'required',
             'string',
+            'size:7',
         ];
     }
 
-    public static function content()
+    public static function description()
     {
         return [
             'nullable',

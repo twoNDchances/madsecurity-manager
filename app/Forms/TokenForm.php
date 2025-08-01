@@ -2,10 +2,13 @@
 
 namespace App\Forms;
 
+use App\Filament\Resources\UserResource;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Forms\Actions\TokenAction;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\TokenValidator;
+use App\Validators\GUI\TokenValidator;
+use Filament\Resources\Pages\CreateRecord;
 
 class TokenForm
 {
@@ -25,31 +28,69 @@ class TokenForm
         ->unique(ignoreRecord: true);
     }
 
-    public static function key()
+    public static function expiredAt()
     {
-        return FilamentFormService::textInput(
-            'key',
-            null,
-            'Key',
-            self::$validator::key(),
-        )
-        ->required();
+        return FilamentFormService::dateTimePicker(
+            'expired_at',
+            'Expired At',
+            self::$validator::expiredAt(),
+        );
     }
 
     public static function value()
     {
+        $condition = fn($livewire) => $livewire instanceOf CreateRecord;
+        $length = fn($livewire) => $condition($livewire) ? 48 : null;
+        $helperText = 'Copy Token as soon as click generate, Token will be hashed after saving';
         return FilamentFormService::textInput(
             'value',
             null,
             'Value',
             self::$validator::value(),
         )
-        ->required()
+        ->required($condition)
         ->unique(ignoreRecord: true)
-        ->minLength(48)
-        ->maxLength(48)
+        ->minLength($length)
+        ->maxLength(48) 
         ->readOnly()
+        ->password()
+        ->revealable()
+        ->helperText($helperText)
         ->suffixAction(self::$action::generateToken());
+    }
+
+    public static function description()
+    {
+        return FilamentFormService::textarea(
+            'description',
+            null,
+            'Some Description about this Token',
+        )
+        ->rules(self::$validator::description());
+    }
+
+    public static function users($form = true)
+    {
+        $userField = FilamentFormService::select(
+            'users',
+            'Users',
+            self::$validator::users(),
+        )
+        ->relationship('users', 'email')
+        ->multiple()
+        ->searchable()
+        ->preload();
+        if ($form)
+        {
+            $former = [
+                UserResource::main(false, false),
+            ];
+            $creator = fn($data) => CreateUser::callByStatic($data)->id;
+            $userField = $userField
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
+        }
+        return $userField;
     }
 
     public static function tags()

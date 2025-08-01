@@ -7,7 +7,7 @@ use App\Filament\Resources\GroupResource;
 use App\Forms\Actions\DefenderAction;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\DefenderValidator;
+use App\Validators\GUI\DefenderValidator;
 use Illuminate\Support\Str;
 
 class DefenderForm

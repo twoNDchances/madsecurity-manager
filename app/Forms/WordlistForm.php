@@ -4,7 +4,7 @@ namespace App\Forms;
 
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\WordlistValidator;
+use App\Validators\GUI\WordlistValidator;
 
 class WordlistForm
 {

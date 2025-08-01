@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Placeholder;
@@ -98,5 +99,14 @@ class FilamentFormService
         $user = AuthenticationService::get();
         return Hidden::make('user_id')
         ->default($user->id);
+    }
+
+    public static function dateTimePicker($name, $label = null, $rules = [], $timezone = 'Asia/Ho_Chi_Minh')
+    {
+        return DateTimePicker::make($name)
+        ->label($label)
+        ->rules($rules)
+        ->timezone($timezone)
+        ->displayFormat('H:i:s d/m/Y');
     }
 }

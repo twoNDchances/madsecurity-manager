@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Validators;
+namespace App\Validators\GUI;
 
 use App\Models\Rule as ModelsRule;
 use Illuminate\Validation\Rule;

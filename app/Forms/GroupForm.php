@@ -8,7 +8,7 @@ use App\Forms\Actions\GroupAction;
 use App\Models\Group;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\GroupValidator;
+use App\Validators\GUI\GroupValidator;
 
 class GroupForm
 {

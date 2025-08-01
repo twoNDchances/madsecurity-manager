@@ -6,7 +6,7 @@ use App\Filament\Resources\PolicyResource;
 use App\Models\Permission;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\PermissionValidator;
+use App\Validators\GUI\PermissionValidator;
 
 class PermissionForm
 {

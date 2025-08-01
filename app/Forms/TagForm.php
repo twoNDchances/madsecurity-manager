@@ -3,7 +3,7 @@
 namespace App\Forms;
 
 use App\Services\FilamentFormService;
-use App\Validators\TagValidator;
+use App\Validators\GUI\TagValidator;
 
 class TagForm
 {

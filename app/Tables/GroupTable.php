@@ -6,7 +6,7 @@ use App\Services\AuthenticationService;
 use App\Services\FilamentTableService;
 use App\Services\TagFieldService;
 use App\Tables\Actions\GroupAction;
-use App\Validators\GroupValidator;
+use App\Validators\GUI\GroupValidator;
 
 class GroupTable
 {

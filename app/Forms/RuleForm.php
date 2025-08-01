@@ -11,7 +11,7 @@ use App\Forms\Actions\RuleAction;
 use App\Models\Target;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
-use App\Validators\RuleValidator;
+use App\Validators\GUI\RuleValidator;
 use Filament\Forms\Components\Fieldset;
 use Illuminate\Support\Str;
 

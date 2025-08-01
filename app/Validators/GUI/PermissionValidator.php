@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Validators;
+namespace App\Validators\GUI;
 
+use App\Models\Permission;
 use Illuminate\Validation\Rule;
 
-class PolicyValidator
+class PermissionValidator
 {
     public static function name()
     {
@@ -16,19 +17,19 @@ class PolicyValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('policies', 'name')->ignore($record->id);
+                    return Rule::unique('permissions', 'name')->ignore($record->id);
                 }
-                return 'unique:policies,name';
+                return 'unique:permissions,name';
             },
         ];
     }
 
-    public static function permissions()
+    public static function action()
     {
+        $options = Permission::getAvailablePermissions();
         return [
-            'nullable',
-            'array',
-            'exists:permissions,id',
+            'required',
+            'in:' . implode(',', array_keys($options)),
         ];
     }
 
@@ -40,12 +41,12 @@ class PolicyValidator
         ];
     }
 
-    public static function users()
+    public static function policies()
     {
         return [
             'nullable',
             'array',
-            'exists:users,id',
+            'exists:policies,id',
         ];
     }
 }

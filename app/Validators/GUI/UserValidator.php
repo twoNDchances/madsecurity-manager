@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Validators;
+namespace App\Validators\GUI;
 
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Validation\Rule;
@@ -39,15 +39,8 @@ class UserValidator
         $condition = fn($livewire) => $livewire instanceOf CreateRecord;
         return [
             fn($livewire) => $condition($livewire) ? 'required' : 'nullable',
-            fn($livewire) => $condition($livewire) ? 'min:4' :
-            function ($attribute, $value, $fail)
-            {
-                if (!empty($value) && strlen($value) < 4)
-                {
-                    $fail("The {$attribute} must be at least 4 characters.");
-                }
-            },
             'string',
+            'min:4',
             'max:255',
         ];
     }
@@ -83,6 +76,15 @@ class UserValidator
         return [
             'required',
             'boolean',
+        ];
+    }
+
+    public static function tokens()
+    {
+        return [
+            'nullable',
+            'array',
+            'exists:tokens,id',
         ];
     }
 }
