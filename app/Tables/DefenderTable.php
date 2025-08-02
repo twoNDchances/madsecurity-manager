@@ -2,7 +2,7 @@
 
 namespace App\Tables;
 
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\FilamentTableService;
 use App\Services\TagFieldService;
 use App\Tables\Actions\DefenderAction;
@@ -26,8 +26,8 @@ class DefenderTable
 
     public static function periodic()
     {
-        $user = AuthenticationService::get();
-        if (AuthenticationService::can($user, 'defender', 'update'))
+        $user = IdentificationService::get();
+        if (IdentificationService::can($user, 'defender', 'update'))
         {
             return FilamentTableService::toggle('periodic');
         }

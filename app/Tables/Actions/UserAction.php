@@ -2,7 +2,7 @@
 
 namespace App\Tables\Actions;
 
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\FilamentTableService;
 use App\Services\NotificationService;
 use Filament\Tables\Actions\DeleteAction;
@@ -24,7 +24,7 @@ class UserAction
     {
         $action = function ($record)
         {
-            $user = AuthenticationService::get();
+            $user = IdentificationService::get();
             if ($record->id == $user->id)
             {
                 NotificationService::notify('failure', 'Delete self rejected');
@@ -41,7 +41,7 @@ class UserAction
     {
         $action = function ($records)
         {
-            $user = AuthenticationService::get();
+            $user = IdentificationService::get();
             $counter = 0 ;
             foreach ($records as $record)
             {

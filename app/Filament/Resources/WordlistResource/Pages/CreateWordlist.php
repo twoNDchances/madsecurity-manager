@@ -4,7 +4,7 @@ namespace App\Filament\Resources\WordlistResource\Pages;
 
 use App\Filament\Resources\WordlistResource;
 use App\Models\Word;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,7 +14,7 @@ class CreateWordlist extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['user_id'] = AuthenticationService::get()?->id;
+        $data['user_id'] = IdentificationService::get()?->id;
         $words = array_filter(array_map(
             'trim',
             explode("\n", $data['content'])

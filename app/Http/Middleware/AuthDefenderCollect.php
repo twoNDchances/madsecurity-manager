@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,12 +21,12 @@ class AuthDefenderCollect
         {
             abort(404);
         }
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         if (!$user)
         {
             abort(404);
         }
-        $can = AuthenticationService::can($user, 'defender', 'collect');
+        $can = IdentificationService::can($user, 'defender', 'collect');
         if (!$can)
         {
             abort(404);

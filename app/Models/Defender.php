@@ -41,6 +41,10 @@ class Defender extends Model
         'protection' => 'boolean',
     ];
 
+    protected $hidden = [
+        'user_id',
+    ];
+
     // Belongs
     public function getOwner()
     {

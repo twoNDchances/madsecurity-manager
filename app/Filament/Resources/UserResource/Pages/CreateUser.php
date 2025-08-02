@@ -4,7 +4,7 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
 use App\Mail\VerificationMail;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\NotificationService;
 use Exception;
 use Filament\Resources\Pages\CreateRecord;
@@ -20,7 +20,7 @@ class CreateUser extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['password'] = Hash::make($data['password']);
-        $data['user_id'] = AuthenticationService::get()?->id;
+        $data['user_id'] = IdentificationService::get()?->id;
         if ($data['force_verification'])
         {
             $data['token'] = Str::uuid();

@@ -2,8 +2,7 @@
 
 namespace App\Validators\GUI;
 
-use App\Models\Rule as ModelsRule;
-use Illuminate\Validation\Rule;
+use App\Models\Rule;
 
 class GroupValidator
 {
@@ -36,7 +35,7 @@ class GroupValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('groups', 'name')->ignore($record->id);
+                    return "unique:groups,name,$record->id";
                 }
                 return 'unique:groups,name';
             },
@@ -54,7 +53,7 @@ class GroupValidator
                 $phase = null;
                 foreach ($value as $id)
                 {
-                    $rule = ModelsRule::find($id);
+                    $rule = Rule::find($id);
                     if (!$rule)
                     {
                         continue;

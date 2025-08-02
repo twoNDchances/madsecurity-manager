@@ -2,7 +2,7 @@
 
 namespace App\Tables;
 
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\FilamentTableService;
 use App\Services\TagFieldService;
 use App\Tables\Actions\GroupAction;
@@ -12,13 +12,13 @@ class GroupTable
 {
     private static $action = GroupAction::class;
 
-    private static $user = AuthenticationService::class;
+    private static $user = IdentificationService::class;
 
     private static $validator = GroupValidator::class;
 
     public static function executionOrder()
     {
-        if (!AuthenticationService::can(self::$user::get(), 'group', 'update'))
+        if (!IdentificationService::can(self::$user::get(), 'group', 'update'))
         {
             return FilamentTableService::text(
                 'execution_order',
@@ -34,7 +34,7 @@ class GroupTable
 
     public static function level()
     {
-        if (!AuthenticationService::can(self::$user::get(), 'group', 'update'))
+        if (!IdentificationService::can(self::$user::get(), 'group', 'update'))
         {
             return FilamentTableService::text('level');
         }

@@ -4,13 +4,13 @@ namespace App\Policies;
 
 use App\Models\Group;
 use App\Models\User;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 
 class GroupPolicy
 {
     private function getResource(User $user, string $action)
     {
-        return AuthenticationService::can($user, 'group', $action);
+        return IdentificationService::can($user, 'group', $action);
     }
 
     /**

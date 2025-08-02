@@ -2,87 +2,117 @@
 
 namespace App\Validators\API;
 
+use App\Services\TagFieldService;
+
 class DefenderValidator
 {
-    public static array $methods = [
+    public static function build($required = true, $id = null)
+    {
+        return [
+            'name' => self::name($required),
+            'group_ids' => self::groupIds(),
+            'group_ids.*' => self::groupId(),
+            'url' => self::url($required, $id),
+            'health' => self::path($required),
+            'health_method' => self::method($required),
+            'apply' => self::path($required),
+            'apply_method' => self::method($required),
+            'revoke' => self::path($required),
+            'revoke_method' => self::method($required),
+            'implement' => self::path($required),
+            'implement_method' => self::method($required),
+            'suspend' => self::path($required),
+            'suspend_method' => self::method($required),
+            'tag_ids' => TagFieldService::tagIds(),
+            'tag_ids.*' => TagFieldService::tagId(),
+            'description' => self::description(),
+            'important' => self::important($required),
+            'periodic' => self::periodic($required),
+            'protection' => self::protection($required),
+            'username' => self::username(),
+            'password' => self::password(),
+            'decision_ids' => self::decisionIds(),
+            'decision_ids.*' => self::decisionId(),
+        ];
+    }
+
+    private static array $methods = [
         'post' => 'POST',
         'put' => 'PUT',
         'patch' => 'PATCH',
         'delete' => 'DELETE',
     ];
 
-    public static function name()
+    private static function name($required = true)
     {
-        return 'required|string|max:255';
+        return ($required ? 'required' : 'sometimes') . '|string|max:255';
     }
 
-    public static function groupIds()
+    private static function groupIds()
     {
         return 'nullable|array';
     }
 
-    public static function groupId()
+    private static function groupId()
     {
         return 'exists:groups,id';
     }
 
-    public static function url()
+    private static function url($required = true, $id = null)
     {
-        return 'required|string|url|unique:defenders,url';
+        return ($required ? 'required' : 'sometimes') . '|string|url|unique:defenders,url' . ($id ? ",$id" : '');
     }
 
-    public static function path()
+    private static function path($required = true)
     {
-        return 'required|string|starts_with:/';
+        return ($required ? 'required' : 'sometimes') . '|string|starts_with:/';
     }
 
-    public static function method()
+    private static function method($required = true)
     {
-        return 'required|string|in:' . implode(',', array_keys(self::$methods));
+        return ($required ? 'required' : 'sometimes') . '|string|in:' . implode(
+            ',',
+            array_keys(self::$methods),
+        );
     }
 
-    public static function description()
+    private static function description()
     {
         return 'nullable|string';
     }
 
-    public static function important()
+    private static function important($required = true)
     {
-        return 'required|boolean';
+        return ($required ? 'required' : 'sometimes') . '|boolean';
     }
 
-    public static function periodic()
+    private static function periodic($required = true)
     {
-        return 'required|boolean';
+        return ($required ? 'required' : 'sometimes') . '|boolean';
     }
 
-    public static function protection()
+    private static function protection($required = true)
     {
-        return 'required|boolean';
+        return ($required ? 'required' : 'sometimes') . '|boolean';
     }
 
-    public static function username()
+    private static function username()
     {
         return 'required_if:protection,true|string|max:255';
     }
 
-    public static function password()
+    private static function password()
     {
         return 'required_if:protection,true|string|min:8|max:255';
     }
 
-    public static function decisionIds()
+    private static function decisionIds()
     {
-        return [
-            'nullable',
-            'array',
-        ];
+        return 'nullable|array';
     }
 
-    public static function decisionId()
+    private static function decisionId()
     {
-        return [
-            'exists:decisions,id',
-        ];
+        return 'exists:decisions,id';
     }
 }

@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class AuthenticationService
+class IdentificationService
 {
     public static function get()
     {
@@ -48,5 +48,26 @@ class AuthenticationService
             return [];
         }
         return $widgets;
+    }
+
+    public static function load(&$resource, $relationships)
+    {
+        $user = self::get();
+        if (!$user)
+        {
+            return;
+        }
+        $fields = [];
+        foreach ($relationships as $name => $field)
+        {
+            if (self::can($user, $name, 'view'))
+            {
+                $fields[] = $field;
+            }
+        }
+        if (count($fields) > 0)
+        {
+            $resource->load($fields);
+        }
     }
 }

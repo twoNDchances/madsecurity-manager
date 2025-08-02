@@ -2,7 +2,7 @@
 
 namespace App\Tables\Actions;
 
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\FilamentTableService;
 use App\Services\NotificationService;
 use Filament\Tables\Actions\DeleteBulkAction;
@@ -18,7 +18,7 @@ class DefenderAction
     {
         $action = function ($records)
         {
-            $user = AuthenticationService::get();
+            $user = IdentificationService::get();
             $counter = 0;
             foreach ($records as $record)
             {

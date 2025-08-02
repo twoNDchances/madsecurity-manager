@@ -67,7 +67,7 @@ class FingerprintTable
         $url = function($record)
         {
             $resourceName = Str::lower(class_basename($record->resource_type));
-            return route('filament.manager.resources.' . $resourceName . 's.edit', ['record' => $record->resource_id]);
+            return route('filament.manager.resources.' . Str::plural($resourceName) . '.edit', ['record' => $record->resource_id]);
         };
         return FilamentTableService::text('resource_type', 'Resource')
         ->formatStateUsing($state)

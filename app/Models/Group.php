@@ -11,7 +11,6 @@ class Group extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'name',
         'execution_order',
         'level',
@@ -22,6 +21,10 @@ class Group extends Model
     protected $casts = [
         'execution_order' => 'integer',
         'level' => 'integer',
+    ];
+
+    protected $hidden = [
+        'user_id',
     ];
 
     // Belongs

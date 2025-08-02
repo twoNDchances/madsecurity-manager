@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\RuleResource\Pages;
 
 use App\Filament\Resources\RuleResource;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateRule extends CreateRecord
@@ -12,7 +12,7 @@ class CreateRule extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['user_id'] = AuthenticationService::get()?->id;
+        $data['user_id'] = IdentificationService::get()?->id;
         if ($data['comparator'] == '@inRange')
         {
             $data['value'] = implode(',', [$data['from'], $data['to']]);

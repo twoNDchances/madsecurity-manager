@@ -4,14 +4,14 @@ namespace App\Policies;
 
 use App\Models\Fingerprint;
 use App\Models\User;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use Illuminate\Auth\Access\Response;
 
 class FingerprintPolicy
 {
     private function getResource(User $user, string $action)
     {
-        return AuthenticationService::can($user, 'fingerprint', $action);
+        return IdentificationService::can($user, 'fingerprint', $action);
     }
 
     /**

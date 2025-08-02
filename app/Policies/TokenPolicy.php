@@ -4,13 +4,13 @@ namespace App\Policies;
 
 use App\Models\Token;
 use App\Models\User;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 
 class TokenPolicy
 {
     private function getResource(User $user, string $action)
     {
-        return AuthenticationService::can($user, 'token', $action);
+        return IdentificationService::can($user, 'token', $action);
     }
 
     /**

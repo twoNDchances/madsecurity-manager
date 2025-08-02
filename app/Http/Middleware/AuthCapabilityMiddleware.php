@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -17,7 +17,7 @@ class AuthCapabilityMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         if (!$user)
         {
             abort(404);
@@ -29,7 +29,13 @@ class AuthCapabilityMiddleware
             abort(404);
         }
         $resource = Str::singular($components[2]);
-        $can = AuthenticationService::can($user, $resource, $components[3]);
+        $action = match ($components[3])
+        {
+            'list' => 'viewAny',
+            'show' => 'view',
+            default => $components[3],
+        };
+        $can = IdentificationService::can($user, $resource, $action);
         if (!$can)
         {
             abort(404);

@@ -27,7 +27,7 @@ class UserValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('users', 'email')->ignore($record->id);
+                    return "unique:users,email,$record->id";
                 }
                 return 'unique:users,email';
             },

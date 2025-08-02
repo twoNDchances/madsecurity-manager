@@ -5,7 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Forms\UserForm;
 use App\Models\User;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Tables\UserTable;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -80,7 +80,7 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         $query = User::query();
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         if (!$user->important)
         {
             $query->where('important',false);
@@ -125,7 +125,7 @@ class UserResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         $model = static::getModel();
         return !$user->important ? $model::where('important', false)->count() : $model::count();
     }

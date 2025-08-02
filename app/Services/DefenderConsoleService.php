@@ -25,7 +25,7 @@ class DefenderConsoleService
     private static function build($severity, $action, $message): string
     {
         $time = Carbon::now()->format('d/m/Y - H:i:s');
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         return "$time [$severity] [$action] : [$user->email] : $message";
     }
 

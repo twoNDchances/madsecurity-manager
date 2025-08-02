@@ -2,7 +2,7 @@
 
 namespace App\Tables;
 
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\FilamentTableService;
 use App\Services\TagFieldService;
 use App\Tables\Actions\UserAction;
@@ -23,8 +23,8 @@ class UserTable
 
     public static function activation()
     {
-        $user = AuthenticationService::get();
-        if (AuthenticationService::can($user, 'user', 'update'))
+        $user = IdentificationService::get();
+        if (IdentificationService::can($user, 'user', 'update'))
         {
             return FilamentTableService::toggle('active', 'Activated');
         }

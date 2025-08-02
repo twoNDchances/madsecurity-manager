@@ -7,7 +7,7 @@ use App\Filament\Resources\DefenderResource\RelationManagers\DecisionsRelationMa
 use App\Filament\Resources\DefenderResource\RelationManagers\GroupsRelationManager;
 use App\Forms\DefenderForm;
 use App\Models\Defender;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Tables\DefenderTable;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -190,7 +190,7 @@ class DefenderResource extends Resource
     public static function table(Table $table): Table
     {
         $query = Defender::query();
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         if (!$user->important)
         {
             $query->where('important',false);
@@ -241,7 +241,7 @@ class DefenderResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         $model = static::getModel();
         return !$user->important ? $model::where('important', false)->count() : $model::count();
     }

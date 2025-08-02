@@ -3,7 +3,7 @@
 namespace App\Tables;
 
 use App\Tables\Actions\RuleAction;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\FilamentTableService;
 use App\Services\TagFieldService;
 use Illuminate\Support\Str;
@@ -44,8 +44,8 @@ class RuleTable
 
     public static function inverse()
     {
-        $user = AuthenticationService::get();
-        $can = AuthenticationService::can($user, 'rule', 'update');
+        $user = IdentificationService::get();
+        $can = IdentificationService::can($user, 'rule', 'update');
         if ($can) {
             return FilamentTableService::toggle('inverse');
         }

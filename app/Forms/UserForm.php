@@ -5,7 +5,7 @@ namespace App\Forms;
 use App\Filament\Resources\PolicyResource;
 use App\Filament\Resources\TokenResource;
 use App\Forms\Actions\UserAction;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\GUI\UserValidator;
@@ -110,10 +110,10 @@ class UserForm
 
     public static function important()
     {
-        $condition = fn() => !AuthenticationService::get()->important;
+        $condition = fn() => !IdentificationService::get()->important;
         $helperText = function() use ($condition)
         {
-            if ($condition)
+            if ($condition())
             {
                 return 'This feature can not use now.';
             }

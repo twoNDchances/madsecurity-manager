@@ -2,8 +2,6 @@
 
 namespace App\Validators\GUI;
 
-use Illuminate\Validation\Rule;
-
 class WordlistValidator
 {
     public static function name()
@@ -26,7 +24,7 @@ class WordlistValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('wordlists', 'alias')->ignore($record->id);
+                    return "unique:wordlists,alias,$record->id";
                 }
                 return 'unique:wordlists,alias';
             },

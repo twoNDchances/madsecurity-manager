@@ -3,7 +3,6 @@
 namespace App\Validators\GUI;
 
 use App\Models\Target;
-use Illuminate\Validation\Rule;
 
 class RuleValidator
 {
@@ -87,7 +86,7 @@ class RuleValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('rules', 'alias')->ignore($record->id);
+                    return "unique:rules,alias,$record->id";
                 }
                 return 'unique:rules,alias';
             },

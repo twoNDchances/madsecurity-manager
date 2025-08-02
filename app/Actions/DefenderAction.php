@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\DefenderApplyService;
 use App\Services\DefenderHealthService;
 use App\Services\DefenderImplementService;
@@ -15,8 +15,8 @@ class DefenderAction
 {
     private static function can($action)
     {
-        $user = AuthenticationService::get();
-        return AuthenticationService::can($user, 'defender', $action);
+        $user = IdentificationService::get();
+        return IdentificationService::can($user, 'defender', $action);
     }
 
     public static function checkHealth()

@@ -2,8 +2,6 @@
 
 namespace App\Validators\GUI;
 
-use Illuminate\Validation\Rule;
-
 class DecisionValidator
 {
     public static $phaseTypes = [
@@ -61,7 +59,7 @@ class DecisionValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('decisions', 'name')->ignore($record->id);
+                    return "unique:decisions,name,$record->id";
                 }
                 return 'unique:decisions,name';
             },

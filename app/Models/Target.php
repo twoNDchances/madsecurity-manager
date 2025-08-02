@@ -11,7 +11,6 @@ class Target extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'alias',
         'type',
         'name',
@@ -30,6 +29,11 @@ class Target extends Model
     protected $casts = [
         'phase' => 'integer',
         'immutable' => 'boolean',
+    ];
+
+    protected $hidden = [
+        'wordlist_id',
+        'user_id',
     ];
 
     // Belongs

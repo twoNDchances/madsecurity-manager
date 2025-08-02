@@ -27,6 +27,11 @@ class Report extends Model
         'target_ids' => 'array',
     ];
 
+    protected $hidden = [
+        'defender_id',
+        'rule_id',
+    ];
+
     // Belongs
     public function getDefender()
     {

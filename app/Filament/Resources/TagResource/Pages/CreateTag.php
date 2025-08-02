@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\TagResource\Pages;
 
 use App\Filament\Resources\TagResource;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateTag extends CreateRecord
@@ -12,7 +12,7 @@ class CreateTag extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['user_id'] = AuthenticationService::get()?->id;
+        $data['user_id'] = IdentificationService::get()?->id;
         return $data;
     }
 

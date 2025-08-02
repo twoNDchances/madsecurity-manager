@@ -4,13 +4,13 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Wordlist;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 
 class WordlistPolicy
 {
     private function getResource(User $user, string $action)
     {
-        return AuthenticationService::can($user, 'user', $action);
+        return IdentificationService::can($user, 'user', $action);
     }
 
     /**

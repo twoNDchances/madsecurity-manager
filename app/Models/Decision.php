@@ -11,7 +11,6 @@ class Decision extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'name',
         'phase_type',
         'score',
@@ -23,6 +22,11 @@ class Decision extends Model
 
     protected $casts = [
         'score' => 'integer',
+    ];
+
+    protected $hidden = [
+        'wordlist_id',
+        'user_id',
     ];
 
     // Belongs

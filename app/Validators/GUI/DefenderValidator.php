@@ -35,6 +35,14 @@ class DefenderValidator
             'required',
             'string',
             'url',
+            function($record)
+            {
+                if ($record)
+                {
+                    return "unique:defenders,url,$record->id";
+                }
+                return 'unique:defenders,url';
+            }
         ];
     }
 

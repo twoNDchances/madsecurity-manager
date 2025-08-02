@@ -3,7 +3,6 @@
 namespace App\Validators\GUI;
 
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Validation\Rule;
 
 class TokenValidator
 {
@@ -17,7 +16,7 @@ class TokenValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('tokens', 'name')->ignore($record->id);
+                    return "unique:tokens,name,$record->id";
                 }
                 return 'unique:tokens,name';
             },
@@ -36,7 +35,7 @@ class TokenValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('tokens', 'value')->ignore($record->id);
+                    return "unique:tokens,value,$record->id";
                 }
                 return 'unique:tokens,value';
             },

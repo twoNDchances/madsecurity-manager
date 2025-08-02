@@ -17,6 +17,10 @@ class Tag extends Model
         'user_id',
     ];
 
+    protected $hidden = [
+        'user_id',
+    ];
+
     // Belongs
     public function getOwner()
     {

@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\SystemStat;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use Filament\Pages\Page;
 
 class Dashboard extends Page
@@ -14,7 +14,7 @@ class Dashboard extends Page
 
     protected function getHeaderWidgets(): array
     {
-        return AuthenticationService::render([
+        return IdentificationService::render([
             SystemStat::class,
         ]);
     }

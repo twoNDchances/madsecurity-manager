@@ -11,7 +11,6 @@ class Rule extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'name',
         'alias',
         'phase',
@@ -52,6 +51,12 @@ class Rule extends Model
         'output' => 'boolean',
         'target' => 'boolean',
         'rule' => 'boolean',
+    ];
+
+    protected $hidden = [
+        'target_id',
+        'wordlist_id',
+        'user_id',
     ];
 
     // Belongs

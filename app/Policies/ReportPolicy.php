@@ -4,13 +4,13 @@ namespace App\Policies;
 
 use App\Models\Report;
 use App\Models\User;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 
 class ReportPolicy
 {
     private function getResource(User $user, string $action)
     {
-        return AuthenticationService::can($user, 'report', $action);
+        return IdentificationService::can($user, 'report', $action);
     }
 
     /**

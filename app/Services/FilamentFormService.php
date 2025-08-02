@@ -96,7 +96,7 @@ class FilamentFormService
 
     public static function owner()
     {
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         return Hidden::make('user_id')
         ->default($user->id);
     }

@@ -2,8 +2,6 @@
 
 namespace App\Validators\GUI;
 
-use Illuminate\Validation\Rule;
-
 class TagValidator
 {
     public static function name()
@@ -16,7 +14,7 @@ class TagValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('tags', 'name')->ignore($record->id);
+                    return "unique:tags,name,$record->id";
                 }
                 return 'unique:tags,name';
             },

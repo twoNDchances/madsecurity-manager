@@ -2,7 +2,7 @@
 
 namespace App\Tables\Actions;
 
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\DefenderImplementService;
 use App\Services\DefenderSuspendService;
 use App\Services\FilamentTableService;
@@ -37,8 +37,8 @@ class DecisionAction
 
     private static function can($action)
     {
-        $user = AuthenticationService::get();
-        return AuthenticationService::can($user, 'defender', $action);
+        $user = IdentificationService::get();
+        return IdentificationService::can($user, 'defender', $action);
     }
 
     private static function implement()

@@ -11,11 +11,14 @@ class Wordlist extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'name',
         'alias',
         'description',
         'user_id'
+    ];
+
+    protected $hidden = [
+        'user_id',
     ];
 
     // Belongs

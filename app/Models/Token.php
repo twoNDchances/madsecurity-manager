@@ -19,6 +19,7 @@ class Token extends Model
 
     protected $hidden = [
         'value',
+        'user_id',
     ];
 
     // Belongs

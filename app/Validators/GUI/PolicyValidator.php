@@ -2,8 +2,6 @@
 
 namespace App\Validators\GUI;
 
-use Illuminate\Validation\Rule;
-
 class PolicyValidator
 {
     public static function name()
@@ -16,7 +14,7 @@ class PolicyValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('policies', 'name')->ignore($record->id);
+                    return "unique:policies,name,$record->id";
                 }
                 return 'unique:policies,name';
             },

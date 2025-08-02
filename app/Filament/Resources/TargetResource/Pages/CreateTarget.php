@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\TargetResource\Pages;
 
 use App\Filament\Resources\TargetResource;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -18,7 +18,7 @@ class CreateTarget extends CreateRecord
             'length' => 'number',
             default => $data['datatype'],
         };
-        $data['user_id'] = AuthenticationService::get()?->id;
+        $data['user_id'] = IdentificationService::get()?->id;
         return $data;
     }
 

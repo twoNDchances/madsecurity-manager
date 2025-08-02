@@ -9,7 +9,7 @@ class FingerprintService
 {
     public static function generate($resource, $action)
     {
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         return Fingerprint::create([
             'user_id' => $user->id,
             'ip_address' => request()->getClientIp(),

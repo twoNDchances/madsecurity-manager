@@ -4,13 +4,13 @@ namespace App\Policies;
 
 use App\Models\Target;
 use App\Models\User;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 
 class TargetPolicy
 {
     private function getResource(User $user, string $action)
     {
-        return AuthenticationService::can($user, 'policy', $action);
+        return IdentificationService::can($user, 'policy', $action);
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\GroupResource\Pages;
 
 use App\Filament\Resources\GroupResource;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateGroup extends CreateRecord
@@ -12,7 +12,7 @@ class CreateGroup extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['user_id'] = AuthenticationService::get()?->id;
+        $data['user_id'] = IdentificationService::get()?->id;
         return $data;
     }
 

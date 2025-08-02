@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Defender;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 use App\Services\TagFieldService;
 use App\Validators\API\DefenderValidator;
 use Illuminate\Http\Request;
@@ -13,7 +13,7 @@ class DefenderController extends Controller
 {
     public function list(Request $request)
     {
-        $user = AuthenticationService::get();
+        $user = IdentificationService::get();
         $defenders = Defender::query();
         if (!$user->important)
         {
@@ -30,54 +30,87 @@ class DefenderController extends Controller
     public function show($id)
     {
         $defender = Defender::findOrFail($id);
-        $defender->load([
-            'decisions',
-            'groups',
-            'groups.rules',
-            'groups.rules.getTarget',
-            'tags',
-            'reports',
+        IdentificationService::load($defender, [
+            'decision' => 'decisions',
+            'group' => 'groups',
+            'report' => 'reports',
+            'tag' => 'tags',
+            'user' => 'getOwner',
         ]);
         return $defender;
     }
 
     public function create(Request $request)
     {
-        $validator = DefenderValidator::class;
-        $validation = Validator::make($request->all(), [
-            'name' => $validator::name(),
-            'group_ids' => $validator::groupIds(),
-            'group_ids.*' => $validator::groupId(),
-            'url' => $validator::url(),
-            'path' => $validator::path(),
-            'method' => $validator::method(),
-            'tag_ids' => TagFieldService::tagIds(),
-            'tag_ids.*' => TagFieldService::tagId(),
-            'description' => $validator::description(),
-            'important' => $validator::important(),
-            'protection' => $validator::protection(),
-            'username' => $validator::username(),
-            'password' => $validator::password(),
-            'decision_ids' => $validator::decisionIds(),
-            'decision_ids.*' => $validator::decisionId(),
-        ]);
-        if ($validation->fails())
+        $validator = Validator::make($request->all(), DefenderValidator::build());
+        if ($validator->fails())
         {
             return response()->json([
                 'message' => 'Validation failed',
-                'errors' => $validation->errors(),
+                'errors' => $validator->errors(),
             ], 400);
         }
-        $validated = $validation->validated();
+        $validated = $validator->validated();
+        $validated['user_id'] = IdentificationService::get()->id;
         $defender = Defender::create($validated);
+        if (isset($validated['group_ids']))
+        {
+            $defender->groups()->sync($validated['group_ids']);
+        }
+        if (isset($validated['decision_ids']))
+        {
+            $defender->decisions()->sync($validated['decision_ids']);
+        }
         TagFieldService::syncTags($validated, $defender);
-        $defender->load([
-            'decisions',
-            'groups',
-            'groups.rules',
-            'groups.rules.getTarget',
-            'tags',
+        IdentificationService::load($defender, [
+            'decision' => 'decisions',
+            'group' => 'groups',
+            'tag' => 'tags',
+            'user' => 'getOwner',
         ]);
         return $defender;
+    }
+
+    public function update(Request $request, $id)
+    {
+        $defender = Defender::findOrFail($id);
+        $validator = Validator::make($request->all(), DefenderValidator::build(
+            false,
+            $id,
+        ));
+        if ($validator->fails())
+        {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+        $validated = $validator->validated();
+        $defender->update($validated);
+        if (isset($validated['group_ids']))
+        {
+            $defender->groups()->sync($validated['group_ids']);
+        }
+        if (isset($validated['decision_ids']))
+        {
+            $defender->decisions()->sync($validated['decision_ids']);
+        }
+        TagFieldService::syncTags($validated, $defender);
+        IdentificationService::load($defender, [
+            'decision' => 'decisions',
+            'group' => 'groups',
+            'tag' => 'tags',
+            'user' => 'getOwner',
+        ]);
+        return $defender;
+    }
+
+    public function delete($id)
+    {
+        $defender = Defender::findOrFail($id);
+        $defender->delete();
+        return response()->json([
+            'message' => "Defender $defender->id deleted"
+        ]);
     }
 }

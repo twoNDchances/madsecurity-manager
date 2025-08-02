@@ -3,7 +3,6 @@
 namespace App\Validators\GUI;
 
 use App\Models\Permission;
-use Illuminate\Validation\Rule;
 
 class PermissionValidator
 {
@@ -17,7 +16,7 @@ class PermissionValidator
             {
                 if ($record)
                 {
-                    return Rule::unique('permissions', 'name')->ignore($record->id);
+                    return "unique:permissions,name,$record->id";
                 }
                 return 'unique:permissions,name';
             },

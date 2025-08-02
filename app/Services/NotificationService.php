@@ -38,7 +38,7 @@ class NotificationService
         }
         else
         {
-            $user = AuthenticationService::get();
+            $user = IdentificationService::get();
             $backbone->sendToDatabase($user, $immediately);
         }
         return $backbone;

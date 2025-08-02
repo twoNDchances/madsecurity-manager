@@ -3,13 +3,13 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Services\AuthenticationService;
+use App\Services\IdentificationService;
 
 class UserPolicy
 {
     private function getResource(User $user, string $action)
     {
-        return AuthenticationService::can($user, 'user', $action);
+        return IdentificationService::can($user, 'user', $action);
     }
 
     /**
