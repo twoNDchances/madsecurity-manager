@@ -3,6 +3,7 @@
 namespace App\Validators\API;
 
 use App\Models\Rule;
+use App\Services\TagFieldService;
 
 class GroupValidator
 {
@@ -16,6 +17,8 @@ class GroupValidator
             'rule_ids.*' => self::ruleId(),
             'defender_ids' => self::defenderIds(),
             'defender_ids.*' => self::defenderId(),
+            'tag_ids' => TagFieldService::tagIds(),
+            'tag_ids.*' => TagFieldService::tagId(),
             'description' => self::description(),
         ];
     }

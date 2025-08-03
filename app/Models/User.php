@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ImportantScope;
 use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -36,6 +37,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'user_id',
     ];
 
     /**
@@ -89,6 +91,21 @@ class User extends Authenticatable
     public function getWordlists()
     {
         return $this->hasMany(Wordlist::class, 'user_id');
+    }
+
+    public function getTokens()
+    {
+        return $this->hasMany(Token::class, 'user_id');
+    }
+
+    public function getDecisions()
+    {
+        return $this->hasMany(Decision::class, 'user_id');
+    }
+
+    public function getDefenders()
+    {
+        return $this->hasMany(Defender::class, 'user_id');
     }
 
     // Relationships

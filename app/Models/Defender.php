@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\ImportantScope;
 use App\Services\FingerprintService;
+use App\Services\IdentificationService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 

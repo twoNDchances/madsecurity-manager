@@ -11,20 +11,42 @@ use Illuminate\Support\Facades\Validator;
 
 class PermissionController extends Controller
 {
+    private function relationships($user)
+    {
+        return [
+            'policy' => 'policies',
+            'tag' => 'tags',
+            'user' => [
+                'getOwner' => function($query) use ($user)
+                {
+                    if (!$user->important)
+                    {
+                        $query = $query->where('important', false);
+                    }
+                    return $query;
+                },
+            ],
+        ];
+    }
+
     public function list(Request $request)
     {
+        $permissions = Permission::query();
+        if ($request->boolean('all'))
+        {
+            return $permissions->get();
+        }
         $pageSize = $request->integer('pageSize', 10);
-        return Permission::paginate($pageSize);
+        return $permissions->paginate($pageSize);
     }
 
     public function show($id)
     {
         $permission = Permission::findOrFail($id);
-        IdentificationService::load($permission, [
-            'policy' => 'policies',
-            'tag' => 'tags',
-            'user' => 'getOwner',
-        ]);
+        IdentificationService::load(
+            $permission,
+            $this->relationships(IdentificationService::get()),
+        );
         return $permission;
     }
 
@@ -39,18 +61,15 @@ class PermissionController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $validated['user_id'] = IdentificationService::get()->id;
+        $user = IdentificationService::get();
+        $validated['user_id'] = $user->id;
         $permission = Permission::create($validated);
         if (isset($validated['policy_ids']))
         {
             $permission->policies()->sync($validated['policy_ids']);
         }
         TagFieldService::syncTags($validated, $permission);
-        IdentificationService::load($permission, [
-            'policy' => 'policies',
-            'tag' => 'tags',
-            'user' => 'getOwner',
-        ]);
+        IdentificationService::load($permission, $this->relationships($user));
         return $permission;
     }
 
@@ -69,16 +88,16 @@ class PermissionController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
+        $permission->update($validated);
         if (isset($validated['policy_ids']))
         {
             $permission->policies()->sync($validated['policy_ids']);
         }
         TagFieldService::syncTags($validated, $permission);
-        IdentificationService::load($permission, [
-            'policy' => 'policies',
-            'tag' => 'tags',
-            'user' => 'getOwner',
-        ]);
+        IdentificationService::load(
+            $permission,
+            $this->relationships(IdentificationService::get()),
+        );
         return $permission;
     }
 

@@ -5,7 +5,11 @@ use App\Http\Controllers\DefenderController;
 use App\Http\Controllers\FingerprintController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TokenController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\WordlistController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -83,6 +87,50 @@ Route::middleware(['auth.token', 'auth.capability'])
             Route::post('create', [PermissionController::class, 'create'])->name('create');
             Route::patch('update/{id}', [PermissionController::class, 'update'])->name('update');
             Route::delete('delete/{id}', [PermissionController::class, 'delete'])->name('delete');
+        });
+
+        Route::prefix('policies')
+        ->name('policies.')
+        ->group(function()
+        {
+            Route::get('list', [PolicyController::class, 'list'])->name('list');
+            Route::get('show/{id}', [PolicyController::class, 'show'])->name('show');
+            Route::post('create', [PolicyController::class, 'create'])->name('create');
+            Route::patch('update/{id}', [PolicyController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [PolicyController::class, 'delete'])->name('delete');
+        });
+
+        Route::prefix('tokens')
+        ->name('tokens.')
+        ->group(function()
+        {
+            Route::get('list', [TokenController::class, 'list'])->name('list');
+            Route::get('show/{id}', [TokenController::class, 'show'])->name('show');
+            Route::post('create', [TokenController::class, 'create'])->name('create');
+            Route::patch('update/{id}', [TokenController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [TokenController::class, 'delete'])->name('delete');
+        });
+
+        Route::prefix('users')
+        ->name('users.')
+        ->group(function()
+        {
+            Route::get('list', [UserController::class, 'list'])->name('list');
+            Route::get('show/{id}', [UserController::class, 'show'])->name('show');
+            Route::post('create', [UserController::class, 'create'])->name('create');
+            Route::patch('update/{id}', [UserController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [UserController::class, 'delete'])->name('delete');
+        });
+
+        Route::prefix('wordlists')
+        ->name('wordlists.')
+        ->group(function()
+        {
+            Route::get('list', [WordlistController::class, 'list'])->name('list');
+            Route::get('show/{id}', [WordlistController::class, 'show'])->name('show');
+            Route::post('create', [WordlistController::class, 'create'])->name('create');
+            Route::patch('update/{id}', [WordlistController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [WordlistController::class, 'delete'])->name('delete');
         });
     });
 });

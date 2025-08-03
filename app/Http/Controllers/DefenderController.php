@@ -11,6 +11,26 @@ use Illuminate\Support\Facades\Validator;
 
 class DefenderController extends Controller
 {
+    private function relationships($user)
+    {
+        return [
+            'decision' => 'decisions',
+            'group' => 'groups',
+            'report' => 'reports',
+            'tag' => 'tags',
+            'user' => [
+                'getOwner' => function($query) use ($user)
+                {
+                    if (!$user->important)
+                    {
+                        $query = $query->where('important', false);
+                    }
+                    return $query;
+                },
+            ],
+        ];
+    }
+
     public function list(Request $request)
     {
         $user = IdentificationService::get();
@@ -30,13 +50,12 @@ class DefenderController extends Controller
     public function show($id)
     {
         $defender = Defender::findOrFail($id);
-        IdentificationService::load($defender, [
-            'decision' => 'decisions',
-            'group' => 'groups',
-            'report' => 'reports',
-            'tag' => 'tags',
-            'user' => 'getOwner',
-        ]);
+        $user = IdentificationService::get();
+        if ($defender->important && !$user->important)
+        {
+            abort(404);
+        }
+        IdentificationService::load($defender, $this->relationships($user));
         return $defender;
     }
 
@@ -51,7 +70,8 @@ class DefenderController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $validated['user_id'] = IdentificationService::get()->id;
+        $user = IdentificationService::get();
+        $validated['user_id'] = $user->id;
         $defender = Defender::create($validated);
         if (isset($validated['group_ids']))
         {
@@ -62,12 +82,7 @@ class DefenderController extends Controller
             $defender->decisions()->sync($validated['decision_ids']);
         }
         TagFieldService::syncTags($validated, $defender);
-        IdentificationService::load($defender, [
-            'decision' => 'decisions',
-            'group' => 'groups',
-            'tag' => 'tags',
-            'user' => 'getOwner',
-        ]);
+        IdentificationService::load($defender, $this->relationships($user));
         return $defender;
     }
 
@@ -96,12 +111,10 @@ class DefenderController extends Controller
             $defender->decisions()->sync($validated['decision_ids']);
         }
         TagFieldService::syncTags($validated, $defender);
-        IdentificationService::load($defender, [
-            'decision' => 'decisions',
-            'group' => 'groups',
-            'tag' => 'tags',
-            'user' => 'getOwner',
-        ]);
+        IdentificationService::load(
+            $defender,
+            $this->relationships(IdentificationService::get(),
+        ));
         return $defender;
     }
 

@@ -3,7 +3,6 @@
 namespace App\Validators\GUI;
 
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Validation\Rule;
 
 class UserValidator
 {

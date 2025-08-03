@@ -3,6 +3,7 @@
 namespace App\Validators\API;
 
 use App\Models\Permission;
+use App\Services\TagFieldService;
 
 class PermissionValidator
 {
@@ -11,6 +12,8 @@ class PermissionValidator
         return [
             'name' => self::name($required, $id),
             'action' => self::action($required),
+            'tag_ids' => TagFieldService::tagIds(),
+            'tag_ids.*' => TagFieldService::tagId(),
             'description' => self::description(),
             'policy_ids' => self::policyIds(),
             'policy_ids.*' => self::policyId(),

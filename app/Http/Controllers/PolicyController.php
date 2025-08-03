@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Group;
+use App\Models\Policy;
 use App\Services\IdentificationService;
 use App\Services\TagFieldService;
-use App\Validators\API\GroupValidator;
+use App\Validators\API\PolicyValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class GroupController extends Controller
+class PolicyController extends Controller
 {
     private function relationships($user)
     {
         return [
-            'defender' => [
-                'defenders' => function($query) use ($user)
+            'permission' => 'permissions',
+            'user' => [
+                'users' => function($query) use ($user)
                 {
                     if (!$user->important)
                     {
@@ -23,10 +24,6 @@ class GroupController extends Controller
                     }
                     return $query;
                 },
-            ],
-            'rule' => 'rules',
-            'tag' => 'tags',
-            'user' => [
                 'getOwner' => function($query) use ($user)
                 {
                     if (!$user->important)
@@ -36,33 +33,34 @@ class GroupController extends Controller
                     return $query;
                 },
             ],
+            'tag' => 'tags',
         ];
     }
 
     public function list(Request $request)
     {
-        $groups = Group::query();
+        $policies = Policy::query();
         if ($request->boolean('all'))
         {
-            return $groups->get();
+            return $policies->get();
         }
         $pageSize = $request->integer('pageSize', 10);
-        return $groups->paginate($pageSize);
+        return $policies->paginate($pageSize);
     }
 
     public function show($id)
     {
-        $group = Group::findOrFail($id);
+        $policy = Policy::findOrFail($id);
         IdentificationService::load(
-            $group,
+            $policy,
             $this->relationships(IdentificationService::get()),
         );
-        return $group;
+        return $policy;
     }
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), GroupValidator::build());
+        $validator = Validator::make($request->all(), PolicyValidator::build());
         if ($validator->fails())
         {
             return response()->json([
@@ -73,26 +71,26 @@ class GroupController extends Controller
         $validated = $validator->validated();
         $user = IdentificationService::get();
         $validated['user_id'] = $user->id;
-        $group = Group::create($validated);
-        if (isset($validated['defender_ids']))
+        $policy = Policy::create($validated);
+        if (isset($validated['permission_ids']))
         {
-            $group->defenders()->sync($validated['defender_ids']);
+            $policy->permissions()->sync($validated['permission_ids']);
         }
-        if (isset($validated['rule_ids']))
+        if (isset($validated['user_ids']))
         {
-            $group->rules()->sync($validated['rule_ids']);
+            $policy->users()->sync($validated['user_ids']);
         }
-        TagFieldService::syncTags($validated, $group);
-        IdentificationService::load($group, $this->relationships($user));
-        return $group;
+        TagFieldService::syncTags($validated, $policy);
+        IdentificationService::load($policy, $this->relationships($user));
+        return $policy;
     }
 
     public function update(Request $request, $id)
     {
-        $group = Group::findOrFail($id);
-        $validator = Validator::make($request->all(), GroupValidator::build(
+        $policy = Policy::findOrFail($id);
+        $validator = Validator::make($request->all(), PolicyValidator::build(
             false,
-            $group->id,
+            $policy->id,
         ));
         if ($validator->fails())
         {
@@ -102,29 +100,29 @@ class GroupController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $group->update($validated);
-        if (isset($validated['defender_ids']))
+        $policy->update($validated);
+        if (isset($validated['permission_ids']))
         {
-            $group->defenders()->sync($validated['defender_ids']);
+            $policy->permissions()->sync($validated['permission_ids']);
         }
-        if (isset($validated['rule_ids']))
+        if (isset($validated['user_ids']))
         {
-            $group->rules()->sync($validated['rule_ids']);
+            $policy->users()->sync($validated['user_ids']);
         }
-        TagFieldService::syncTags($validated, $group);
+        TagFieldService::syncTags($validated, $policy);
         IdentificationService::load(
-            $group,
+            $policy,
             $this->relationships(IdentificationService::get()),
         );
-        return $group;
+        return $policy;
     }
 
     public function delete($id)
     {
-        $group = Group::findOrFail($id);
-        $group->delete();
+        $policy = Policy::findOrFail($id);
+        $policy->delete();
         return response()->json([
-            'message' => "Group $group->id deleted"
+            'message' => "Policy $policy->id deleted"
         ]);
     }
 }

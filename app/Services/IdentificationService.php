@@ -62,7 +62,14 @@ class IdentificationService
         {
             if (self::can($user, $name, 'view'))
             {
-                $fields[] = $field;
+                if (is_string($field))
+                {
+                    $fields[] = $field;
+                }
+                if (is_array($field))
+                {
+                    $fields = array_merge($fields, $field);
+                }
             }
         }
         if (count($fields) > 0)

@@ -14,6 +14,10 @@ class Word extends Model
         'wordlist_id',
     ];
 
+    protected $hidden = [
+        'wordlist_id',
+    ];
+
     // Belongs
     public function wordlist()
     {

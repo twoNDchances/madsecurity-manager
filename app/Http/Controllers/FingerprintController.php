@@ -8,18 +8,40 @@ use Illuminate\Http\Request;
 
 class FingerprintController extends Controller
 {
+    private function relationships($user)
+    {
+        return [
+            'user' => [
+                'getOwner' => function($query) use ($user)
+                {
+                    if (!$user->important)
+                    {
+                        $query = $query->where('important', false);
+                    }
+                    return $query;
+                },
+            ],
+        ];
+    }
+
     public function list(Request $request)
     {
+        $fingerprints = Fingerprint::query();
+        if ($request->boolean('all'))
+        {
+            return $fingerprints->get();
+        }
         $pageSize = $request->integer('pageSize', 10);
-        return Fingerprint::paginate($pageSize);
+        return $fingerprints->paginate($pageSize);
     }
 
     public function show($id)
     {
         $fingerprint = Fingerprint::findOrFail($id);
-        IdentificationService::load($fingerprint, [
-            'user' => 'getOwner',
-        ]);
+        IdentificationService::load(
+            $fingerprint,
+            $this->relationships(IdentificationService::get()),
+        );
         return $fingerprint;
     }
 
