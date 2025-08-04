@@ -80,7 +80,7 @@ class FingerprintForm
         $state = function($record, $set)
         {
             $resourceName = Str::lower(class_basename($record->resource_type));
-            $set('resource', route('filament.manager.resources.' . $resourceName . 's.edit', ['record' => $record->resource_id]));
+            $set('resource', route('filament.manager.resources.' . Str::plural($resourceName) . '.edit', ['record' => $record->resource_id]));
         };
         return FilamentFormService::textInput(
             'resource',
