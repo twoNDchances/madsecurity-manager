@@ -76,7 +76,7 @@ class PolicyForm
         if ($form)
         {
             $former = [
-                UserResource::main(false, false),
+                UserResource::main(false, false, true),
             ];
             $creator = fn($data) => CreateUser::callByStatic($data)->id;
             $userField = $userField

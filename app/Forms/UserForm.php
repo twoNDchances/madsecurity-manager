@@ -149,4 +149,9 @@ class UserForm
         }
         return $tokenField;
     }
+
+    public static function owner()
+    {
+        return FilamentFormService::owner();
+    }
 }
