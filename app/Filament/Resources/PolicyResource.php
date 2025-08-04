@@ -32,11 +32,11 @@ class PolicyResource extends Resource
         ]);
     }
 
-    public static function main($permission = true, $user = true, $owner = false, $disabledRelationship = false)
+    public static function main($permission = true, $user = true, $owner = false)
     {
         $form = [
             self::information($permission)->columns(2)->columnSpan(2),
-            self::scope($user)->disabled($disabledRelationship)->columnSpan(1),
+            self::scope($user)->columnSpan(1),
         ];
         if ($owner)
         {
@@ -57,11 +57,11 @@ class PolicyResource extends Resource
         ]);
     }
     
-    private static function scope($user = true, $disabledRelationship = false)
+    private static function scope($user = true)
     {
         return Forms\Components\Section::make('Policy Scope')
         ->schema([
-            self::$form::users($user)->disabled($disabledRelationship),
+            self::$form::users($user),
         ]);
     }
 
