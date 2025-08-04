@@ -89,7 +89,7 @@ class UserForm
         if ($form)
         {
             $former = [
-                PolicyResource::main(false, false, true),
+                PolicyResource::main(false, false, true, true),
             ];
             $policyField = $policyField
             ->createOptionForm($former);

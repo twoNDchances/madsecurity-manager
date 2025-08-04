@@ -83,7 +83,7 @@ class TokenForm
         if ($form)
         {
             $former = [
-                UserResource::main(false, false, true),
+                UserResource::main(false, false, true, true),
             ];
             $creator = fn($data) => CreateUser::callByStatic($data)->id;
             $userField = $userField

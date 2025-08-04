@@ -39,7 +39,7 @@ class PolicyForm
         if ($form)
         {
             $former = [
-                PermissionResource::main(false, true),
+                PermissionResource::main(false, true, true),
             ];
             $permissionField = $permissionField
             ->createOptionForm($former);
@@ -76,7 +76,7 @@ class PolicyForm
         if ($form)
         {
             $former = [
-                UserResource::main(false, false, true),
+                UserResource::main(false, false, true, true),
             ];
             $creator = fn($data) => CreateUser::callByStatic($data)->id;
             $userField = $userField

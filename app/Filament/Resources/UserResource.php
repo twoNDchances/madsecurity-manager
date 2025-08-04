@@ -33,14 +33,14 @@ class UserResource extends Resource
         ]);
     }
 
-    public static function main($policy = true, $token = true, $owner = false)
+    public static function main($policy = true, $token = true, $owner = false, $disabledRelationship = false)
     {
         $form = [
             self::information()->columns(2)->columnSpan(2),
             Forms\Components\Grid::make(1)
             ->schema([
-                self::scope($policy),
-                self::access($token),
+                self::scope($policy, $disabledRelationship),
+                self::access($token, $disabledRelationship),
             ])
             ->columnSpan(1),
         ];
@@ -64,21 +64,21 @@ class UserResource extends Resource
         ]);
     }
 
-    private static function scope($policy = true)
+    private static function scope($policy = true, $disabledRelationship = false)
     {
         return Forms\Components\Section::make('User Scope')
         ->schema([
-            self::$form::policies($policy),
+            self::$form::policies($policy)->disabled($disabledRelationship),
             self::$form::activation(),
             self::$form::important(),
         ]);
     }
 
-    private static function access($token = true)
+    private static function access($token = true, $disabledRelationship = false)
     {
         return Forms\Components\Section::make('User Access')
         ->schema([
-            self::$form::tokens($token),
+            self::$form::tokens($token)->disabled($disabledRelationship),
         ]);
     }
 
