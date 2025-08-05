@@ -17,6 +17,7 @@ class CreateUser extends CreateRecord
 {
     protected static string $resource = UserResource::class;
 
+    // Complex Logic
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['password'] = Hash::make($data['password']);

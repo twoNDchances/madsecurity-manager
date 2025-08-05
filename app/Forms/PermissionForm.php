@@ -66,7 +66,7 @@ class PermissionForm
         if ($form)
         {
             $former = [
-                PolicyResource::main(false, false, true, true),
+                PolicyResource::main(false, false, true),
             ];
             $policyField = $policyField
             ->createOptionForm($former);

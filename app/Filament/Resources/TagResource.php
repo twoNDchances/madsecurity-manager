@@ -32,12 +32,17 @@ class TagResource extends Resource
         ]);
     }
 
-    public static function main()
+    public static function main($owner = false)
     {
-        return Forms\Components\Grid::make(3)
-        ->schema([
+        $form = [
             self::information()->columns(2)->columnSpanFull(),
-        ]);
+        ];
+        if ($owner)
+        {
+            $form[] = self::$form::owner();
+        }
+        return Forms\Components\Grid::make(3)
+        ->schema($form);
     }
 
     private static function information()

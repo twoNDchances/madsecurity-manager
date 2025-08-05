@@ -16,12 +16,6 @@ class CreateTag extends CreateRecord
         return $data;
     }
 
-    public static function callByStatic(array $data)
-    {
-        $mutater = (new static())->mutateFormDataBeforeCreate($data);
-        return (new static())->handleRecordCreation($mutater);
-    }
-
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

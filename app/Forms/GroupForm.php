@@ -72,11 +72,9 @@ class GroupForm
         ->helperText('Interact with Defender to Apply and Revoke Rules, matching AND logic by grouping multiple Rules together');
         if ($form)
         {
-            $former = [
-                RuleResource::main(false, true),
-            ];
             $ruleField = $ruleField
-            ->createOptionForm($former);
+            ->suffixAction(self::$action::createRule())
+            ->helperText('Will open a new tab because creating Rule requires other processing');
         }
         return $ruleField;
     }

@@ -40,4 +40,9 @@ class TagForm
         )
         ->rules(self::$validator::description());
     }
+
+    public static function owner()
+    {
+        return FilamentFormService::owner();
+    }
 }

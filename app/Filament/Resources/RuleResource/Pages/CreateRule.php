@@ -10,6 +10,7 @@ class CreateRule extends CreateRecord
 {
     protected static string $resource = RuleResource::class;
 
+    // Complex Logic
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = IdentificationService::get()?->id;

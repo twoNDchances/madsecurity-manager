@@ -11,6 +11,7 @@ class CreateTarget extends CreateRecord
 {
     protected static string $resource = TargetResource::class;
 
+    // Complex Logic
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['final_datatype'] = match ($data['engine']) {
@@ -20,12 +21,6 @@ class CreateTarget extends CreateRecord
         };
         $data['user_id'] = IdentificationService::get()?->id;
         return $data;
-    }
-
-    public static function callByStatic(array $data)
-    {
-        $mutater = (new static())->mutateFormDataBeforeCreate($data);
-        return (new static())->handleRecordCreation($mutater);
     }
 
     protected function getRedirectUrl(): string

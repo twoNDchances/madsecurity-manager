@@ -27,4 +27,15 @@ class RuleAction
         ->icon('heroicon-o-check')
         ->action($action);
     }
+
+    public static function createTarget()
+    {
+        $url = route('filament.manager.resources.targets.create');
+        return Action::make('create_target')
+        ->icon('heroicon-o-plus')
+        ->url($url)
+        ->openUrlInNewTab()
+        ->color('primary')
+        ->label('Create Target');
+    }
 }

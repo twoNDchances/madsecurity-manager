@@ -2,7 +2,6 @@
 
 namespace App\Forms;
 
-use App\Filament\Resources\DecisionResource;
 use App\Filament\Resources\GroupResource;
 use App\Forms\Actions\DefenderAction;
 use App\Services\FilamentFormService;
@@ -117,11 +116,9 @@ class DefenderForm
         ->preload();
         if ($form)
         {
-            $former = [
-                DecisionResource::main(false, true),
-            ];
             $decisionField = $decisionField
-            ->createOptionForm($former);
+            ->suffixAction(self::$action::createDecision())
+            ->helperText('Will open a new tab because creating Decision requires other processing');
         }
         return $decisionField;
     }

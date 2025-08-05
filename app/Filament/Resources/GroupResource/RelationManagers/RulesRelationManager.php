@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\GroupResource\RelationManagers;
 
+use App\Filament\Resources\RuleResource;
 use App\Tables\RuleTable;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -17,7 +18,7 @@ class RulesRelationManager extends RelationManager
     {
         return $form
         ->schema([
-            //
+            RuleResource::main(),
         ]);
     }
 

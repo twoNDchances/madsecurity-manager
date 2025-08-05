@@ -77,14 +77,10 @@ class RuleForm
         ->afterStateUpdated($state);
     }
 
-    public static function target()
+    public static function target($form = true)
     {
         $filter = fn($query, $get) => $query->where('phase', $get('phase'));
         $prefix = fn($state) => Target::find($state)->final_datatype ?? null;
-        $former = [
-            TargetResource::main(),
-        ];
-        $creator = fn($data) => CreateTarget::callByStatic($data)->id;
         $state = function($state, $set)
         {
             if (!$state)
@@ -92,7 +88,7 @@ class RuleForm
                 $set('comparator', null);
             }
         };
-        return FilamentFormService::select(
+        $targetField = FilamentFormService::select(
             'target_id',
             'Target',
             self::$validator::target(),
@@ -107,9 +103,13 @@ class RuleForm
         ->preload()
         ->reactive()
         ->prefix($prefix)
-        ->createOptionForm($former)
-        ->createOptionUsing($creator)
         ->afterStateUpdated($state);
+        if ($form)
+        {
+            $targetField = $targetField
+            ->suffixAction(self::$action::createTarget());
+        }
+        return $targetField;
     }
 
     public static function comparator()

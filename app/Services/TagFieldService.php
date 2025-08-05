@@ -11,13 +11,11 @@ class TagFieldService
     public static function setTags()
     {
         $former = [
-            TagResource::main(),
+            TagResource::main(true),
         ];
-        $creator = fn($data) => CreateTag::callByStatic($data)->id;
         return FilamentFormService::select('tags')
         ->relationship('tags', 'name')
         ->createOptionForm($former)
-        ->createOptionUsing($creator)
         ->searchable()
         ->multiple()
         ->preload();

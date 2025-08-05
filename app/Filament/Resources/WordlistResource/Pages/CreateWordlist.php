@@ -12,6 +12,7 @@ class CreateWordlist extends CreateRecord
 {
     protected static string $resource = WordlistResource::class;
 
+    // Complex Logic
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['user_id'] = IdentificationService::get()?->id;

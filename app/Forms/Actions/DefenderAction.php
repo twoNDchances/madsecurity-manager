@@ -44,6 +44,17 @@ class DefenderAction
         ->action($action);
     }
 
+    public static function createDecision()
+    {
+        $url = route('filament.manager.resources.decisions.create');
+        return Action::make('create_decision')
+        ->label('Create Decision')
+        ->icon('heroicon-o-plus')
+        ->url($url)
+        ->openUrlInNewTab()
+        ->color('primary');
+    }
+
     public static function clearOutput()
     {
         $action = function($record, $set)
