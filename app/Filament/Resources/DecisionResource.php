@@ -9,7 +9,6 @@ use App\Tables\DecisionTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,12 +32,12 @@ class DecisionResource extends Resource
         ]);
     }
 
-    public static function main($defender = true, $owner = false)
+    public static function main($defender = true)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
             self::information()->columnSpan(1),
-            self::definition($defender, $owner)->columnSpan(2),
+            self::definition($defender)->columnSpan(2),
         ]);
     }
 
@@ -53,9 +52,10 @@ class DecisionResource extends Resource
         ->columns(1);
     }
 
-    private static function definition($defender = true, $owner = false)
+    private static function definition($defender = true)
     {
-        $form = [
+        return Forms\Components\Section::make('Decision Definition')
+        ->schema([
             self::$form::name()->columnSpan(1),
             self::$form::defenders($defender)->columnSpan(1),
             Forms\Components\Fieldset::make('Task')
@@ -73,12 +73,7 @@ class DecisionResource extends Resource
                 ->columnSpan(1),
             ]),
             self::$form::description()->columnSpanFull(),
-        ];
-        if ($owner) {
-            $form[] = self::$form::owner();
-        }
-        return Forms\Components\Section::make('Decision Definition')
-        ->schema($form)
+        ])
         ->columns(2);
     }
 

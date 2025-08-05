@@ -72,9 +72,11 @@ class GroupForm
         ->helperText('Interact with Defender to Apply and Revoke Rules, matching AND logic by grouping multiple Rules together');
         if ($form)
         {
+            $former = [
+                RuleResource::main(false),
+            ];
             $ruleField = $ruleField
-            ->suffixAction(self::$action::createRule())
-            ->helperText('Will open a new tab because creating Rule requires other processing');
+            ->createOptionForm($former);
         }
         return $ruleField;
     }
@@ -93,7 +95,7 @@ class GroupForm
         if ($form)
         {
             $former = [
-                DefenderResource::main(false, true),
+                DefenderResource::main(false),
             ];
             $defenderField = $defenderField
             ->createOptionForm($former);
@@ -114,10 +116,5 @@ class GroupForm
             'Some Description about this Group'
         )
         ->rules(self::$validator::description());
-    }
-
-    public static function owner()
-    {
-        return FilamentFormService::owner();
     }
 }

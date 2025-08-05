@@ -4,9 +4,26 @@ namespace App\Observers;
 
 use App\Models\Decision;
 use App\Services\FingerprintService;
+use App\Services\IdentificationService;
 
 class DecisionObserver
 {
+    /**
+     * Handle the Decision "creating" event.
+     */
+    public function creating(Decision $decision): void
+    {
+        if ($decision::$skipObserver)
+        {
+            return;
+        }
+        $decision->user_id = IdentificationService::get()->id;
+        if ($decision->action == 'kill')
+        {
+            // $decision->action_configuration = implode(',', [$data['kill_header'], $data['kill_path']]);
+        }
+    }
+
     /**
      * Handle the Decision "created" event.
      */

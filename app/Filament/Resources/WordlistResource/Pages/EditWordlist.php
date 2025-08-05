@@ -28,7 +28,7 @@ class EditWordlist extends EditRecord
         ]);
         $words = array_filter(array_map(
             'trim',
-            explode("\n", $data['content'])
+            explode("\n", $data['temporary'])
         ));
         $record->words()->delete();
         $now = now();

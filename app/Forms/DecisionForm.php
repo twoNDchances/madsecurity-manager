@@ -4,7 +4,6 @@ namespace App\Forms;
 
 use App\Filament\Resources\DefenderResource;
 use App\Filament\Resources\WordlistResource;
-use App\Filament\Resources\WordlistResource\Pages\CreateWordlist;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\GUI\DecisionValidator;
@@ -89,7 +88,7 @@ class DecisionForm
         if ($form)
         {
             $former = [
-                DefenderResource::main(false, true),
+                DefenderResource::main(false),
             ];
             $defenderField = $defenderField
             ->createOptionForm($former);
@@ -181,7 +180,6 @@ class DecisionForm
         $former = [
             WordlistResource::main(),
         ];
-        $creator = fn($data) => CreateWordlist::callByStatic($data)->id;
         return FilamentFormService::select(
             'getWordlist',
             'Wordlist Alias',
@@ -192,12 +190,6 @@ class DecisionForm
         ->preload()
         ->required($condition)
         ->visible($condition)
-        ->createOptionForm($former)
-        ->createOptionUsing($creator);
-    }
-
-    public static function owner()
-    {
-        return FilamentFormService::owner();
+        ->createOptionForm($former);
     }
 }

@@ -14,11 +14,17 @@ class Wordlist extends Model
         'name',
         'alias',
         'description',
-        'user_id'
+        'user_id',
+        'temporary',
+    ];
+
+    protected $attributes = [
+        'tmp' => null,
     ];
 
     protected $hidden = [
         'user_id',
+        'temporary',
     ];
 
     // Belongs

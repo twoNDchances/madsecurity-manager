@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('alias')->unique()->index();
+            $table->longText('temporary')->nullable();
             $table->longText('description')->nullable();
             $table->foreignId('user_id')->nullable()->index()->constrained('users')->nullOnDelete();
             $table->timestamps();

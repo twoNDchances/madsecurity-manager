@@ -4,9 +4,22 @@ namespace App\Observers;
 
 use App\Models\Permission;
 use App\Services\FingerprintService;
+use App\Services\IdentificationService;
 
 class PermissionObserver
 {
+    /**
+     * Handle the Decision "creating" event.
+     */
+    public function creating(Permission $permission): void
+    {
+        if ($permission::$skipObserver)
+        {
+            return;
+        }
+        $permission->user_id = IdentificationService::get()->id;
+    }
+
     /**
      * Handle the Permission "created" event.
      */

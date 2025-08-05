@@ -4,9 +4,22 @@ namespace App\Observers;
 
 use App\Models\Group;
 use App\Services\FingerprintService;
+use App\Services\IdentificationService;
 
 class GroupObserver
 {
+    /**
+     * Handle the Decision "creating" event.
+     */
+    public function creating(Group $group): void
+    {
+        if ($group::$skipObserver)
+        {
+            return;
+        }
+        $group->user_id = IdentificationService::get()->id;
+    }
+
     /**
      * Handle the Group "created" event.
      */

@@ -16,15 +16,4 @@ class GroupAction
         ->icon('heroicon-o-arrow-path')
         ->action($action);
     }
-
-    public static function createRule()
-    {
-        $url = route('filament.manager.resources.rules.create');
-        return Action::make('create_rule')
-        ->label('Create Rule')
-        ->icon('heroicon-o-plus')
-        ->url($url)
-        ->openUrlInNewTab()
-        ->color('primary');
-    }
 }

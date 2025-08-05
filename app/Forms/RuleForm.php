@@ -4,9 +4,7 @@ namespace App\Forms;
 
 use App\Filament\Resources\GroupResource;
 use App\Filament\Resources\TargetResource;
-use App\Filament\Resources\TargetResource\Pages\CreateTarget;
 use App\Filament\Resources\WordlistResource;
-use App\Filament\Resources\WordlistResource\Pages\CreateWordlist;
 use App\Forms\Actions\RuleAction;
 use App\Models\Target;
 use App\Services\FilamentFormService;
@@ -106,8 +104,11 @@ class RuleForm
         ->afterStateUpdated($state);
         if ($form)
         {
+            $former = [
+                TargetResource::main(),
+            ];
             $targetField = $targetField
-            ->suffixAction(self::$action::createTarget());
+            ->createOptionForm($former);
         }
         return $targetField;
     }
@@ -270,7 +271,6 @@ class RuleForm
         $former = [
             WordlistResource::main(),
         ];
-        $creator = fn($data) => CreateWordlist::callByStatic($data)->id;
         return FilamentFormService::select(
             'getWordlist',
             'Wordlist Alias',
@@ -281,8 +281,7 @@ class RuleForm
         ->relationship('getWordlist', 'alias')
         ->preload()
         ->searchable()
-        ->createOptionForm($former)
-        ->createOptionUsing($creator);
+        ->createOptionForm($former);
     }
 
     public static function action()
@@ -466,14 +465,14 @@ class RuleForm
             null,
             self::$validator::groups(),
         )
-        ->relationship('groups', 'name', )
+        ->relationship('groups', 'name')
         ->searchable()
         ->multiple()
         ->preload();
         if ($form)
         {
             $former = [
-                GroupResource::main(false, false, true),
+                GroupResource::main(false, false),
             ];
             $groupField = $groupField
             ->createOptionForm($former);
@@ -519,10 +518,5 @@ class RuleForm
         ->required()
         ->default(true)
         ->disabled($condition);
-    }
-
-    public static function owner()
-    {
-        return FilamentFormService::owner();
     }
 }

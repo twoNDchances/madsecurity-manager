@@ -4,9 +4,22 @@ namespace App\Observers;
 
 use App\Models\Rule;
 use App\Services\FingerprintService;
+use App\Services\IdentificationService;
 
 class RuleObserver
 {
+    /**
+     * Handle the Decision "creating" event.
+     */
+    public function creating(Rule $rule): void
+    {
+        if ($rule::$skipObserver)
+        {
+            return;
+        }
+        $rule->user_id = IdentificationService::get()->id;
+    }
+
     /**
      * Handle the Rule "created" event.
      */

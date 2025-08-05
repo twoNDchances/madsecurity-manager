@@ -11,7 +11,7 @@ class TagFieldService
     public static function setTags()
     {
         $former = [
-            TagResource::main(true),
+            TagResource::main(),
         ];
         return FilamentFormService::select('tags')
         ->relationship('tags', 'name')

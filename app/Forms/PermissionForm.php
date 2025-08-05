@@ -66,16 +66,11 @@ class PermissionForm
         if ($form)
         {
             $former = [
-                PolicyResource::main(false, false, true),
+                PolicyResource::main(false, false),
             ];
             $policyField = $policyField
             ->createOptionForm($former);
         }
         return $policyField;
-    }
-
-    public static function owner()
-    {
-        return FilamentFormService::owner();
     }
 }

@@ -3,7 +3,6 @@
 namespace App\Forms;
 
 use App\Filament\Resources\UserResource;
-use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Forms\Actions\TokenAction;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
@@ -83,12 +82,10 @@ class TokenForm
         if ($form)
         {
             $former = [
-                UserResource::main(false, false, true),
+                UserResource::main(false, false),
             ];
-            $creator = fn($data) => CreateUser::callByStatic($data)->id;
             $userField = $userField
-            ->createOptionForm($former)
-            ->createOptionUsing($creator);
+            ->createOptionForm($former);
         }
         return $userField;
     }
@@ -96,10 +93,5 @@ class TokenForm
     public static function tags()
     {
         return TagFieldService::setTags();
-    }
-
-    public static function owner()
-    {
-        return FilamentFormService::owner();
     }
 }

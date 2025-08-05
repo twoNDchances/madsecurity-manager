@@ -94,13 +94,6 @@ class FilamentFormService
         ->schema($schema);
     }
 
-    public static function owner()
-    {
-        $user = IdentificationService::get();
-        return Hidden::make('user_id')
-        ->default($user->id);
-    }
-
     public static function dateTimePicker($name, $label = null, $rules = [], $timezone = 'Asia/Ho_Chi_Minh')
     {
         return DateTimePicker::make($name)

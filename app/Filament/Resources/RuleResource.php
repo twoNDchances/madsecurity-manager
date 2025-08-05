@@ -32,18 +32,13 @@ class RuleResource extends Resource
         ]);
     }
 
-    public static function main($group = true, $owner = false)
+    public static function main($group = true)
     {
-        $form = [
+        return Forms\Components\Grid::make(3)
+        ->schema([
             self::core($group)->columns(2)->columnSpan(2),
             self::logistic()->columns(2)->columnSpan(1),
-        ];
-        if ($owner)
-        {
-            $form[] = self::$form::owner();
-        }
-        return Forms\Components\Grid::make(3)
-        ->schema($form);
+        ]);
     }
 
     public static function core($group = true)

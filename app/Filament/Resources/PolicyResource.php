@@ -32,18 +32,13 @@ class PolicyResource extends Resource
         ]);
     }
 
-    public static function main($permission = true, $user = true, $owner = false)
+    public static function main($permission = true, $user = true)
     {
-        $form = [
+        return Forms\Components\Grid::make(3)
+        ->schema([
             self::information($permission)->columns(2)->columnSpan(2),
             self::scope($user)->columnSpan(1),
-        ];
-        if ($owner)
-        {
-            $form[] = self::$form::owner();
-        }
-        return Forms\Components\Grid::make(3)
-        ->schema($form);
+        ]);
     }
 
     private static function information($permission = true)

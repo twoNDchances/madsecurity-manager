@@ -39,7 +39,7 @@ class PolicyForm
         if ($form)
         {
             $former = [
-                PermissionResource::main(false, true),
+                PermissionResource::main(false),
             ];
             $permissionField = $permissionField
             ->createOptionForm($former);
@@ -76,18 +76,11 @@ class PolicyForm
         if ($form)
         {
             $former = [
-                UserResource::main(false, false, true),
+                UserResource::main(false, false),
             ];
-            $creator = fn($data) => CreateUser::callByStatic($data)->id;
             $userField = $userField
-            ->createOptionForm($former)
-            ->createOptionUsing($creator);
+            ->createOptionForm($former);
         }
         return $userField;
-    }
-
-    public static function owner()
-    {
-        return FilamentFormService::owner();
     }
 }

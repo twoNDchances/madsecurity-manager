@@ -66,11 +66,6 @@ class {$name}Form
     {
         return TagFieldService::setTags();
     }
-
-    public static function owner()
-    {
-        return FilamentFormService::owner();
-    }
 }
 
 PHP;

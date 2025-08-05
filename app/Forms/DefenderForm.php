@@ -2,6 +2,7 @@
 
 namespace App\Forms;
 
+use App\Filament\Resources\DecisionResource;
 use App\Filament\Resources\GroupResource;
 use App\Forms\Actions\DefenderAction;
 use App\Services\FilamentFormService;
@@ -40,7 +41,7 @@ class DefenderForm
         if ($form)
         {
             $former = [
-                GroupResource::main(false, false, true),
+                GroupResource::main(false, false),
             ];
             $groupField = $groupField
             ->createOptionForm($former);
@@ -116,9 +117,11 @@ class DefenderForm
         ->preload();
         if ($form)
         {
+            $former = [
+                DecisionResource::main(false),
+            ];
             $decisionField = $decisionField
-            ->suffixAction(self::$action::createDecision())
-            ->helperText('Will open a new tab because creating Decision requires other processing');
+            ->createOptionForm($former);
         }
         return $decisionField;
     }
@@ -229,10 +232,5 @@ class DefenderForm
     public static function clearOutput()
     {
         return self::$action::clearOutput();
-    }
-
-    public static function owner()
-    {
-        return FilamentFormService::owner();
     }
 }

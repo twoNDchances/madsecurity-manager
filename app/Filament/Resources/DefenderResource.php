@@ -37,7 +37,7 @@ class DefenderResource extends Resource
         ]);
     }
 
-    public static function main($group = true, $owner = false)
+    public static function main($group = true)
     {
         $condition = fn($livewire) => !$livewire instanceof CreateRecord;
         $active = function($livewire) use ($condition)
@@ -49,7 +49,7 @@ class DefenderResource extends Resource
             Forms\Components\Tabs\Tab::make('Definition')
             ->icon('heroicon-o-server')
             ->schema([
-                self::definition($group, $owner),
+                self::definition($group),
             ]),
 
             Forms\Components\Tabs\Tab::make('Terminal')
@@ -63,9 +63,10 @@ class DefenderResource extends Resource
         ->activeTab($active);
     }
 
-    public static function definition($group = true, $owner = false)
+    public static function definition($group = true)
     {
-        $form = [
+        return Forms\Components\Grid::make(3)
+        ->schema([
             self::information($group)->columns(2)->columnSpan(2),
             Forms\Components\Grid::make(1)
             ->schema([
@@ -75,13 +76,7 @@ class DefenderResource extends Resource
             ])
             ->columns(1)
             ->columnSpan(1),
-        ];
-        if ($owner)
-        {
-            $form[] = self::$form::owner();
-        }
-        return Forms\Components\Grid::make(3)
-        ->schema($form);
+        ]);
     }
 
     private static function information($group = true)

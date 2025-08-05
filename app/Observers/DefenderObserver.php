@@ -4,9 +4,22 @@ namespace App\Observers;
 
 use App\Models\Defender;
 use App\Services\FingerprintService;
+use App\Services\IdentificationService;
 
 class DefenderObserver
 {
+    /**
+     * Handle the Decision "creating" event.
+     */
+    public function creating(Defender $defender): void
+    {
+        if ($defender::$skipObserver)
+        {
+            return;
+        }
+        $defender->user_id = IdentificationService::get()->id;
+    }
+
     /**
      * Handle the Defender "created" event.
      */

@@ -5,7 +5,6 @@ namespace App\Forms\Actions;
 use App\Services\HttpRequestService;
 use App\Services\NotificationService;
 use Filament\Forms\Components\Actions\Action;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class DefenderAction
 {
@@ -42,17 +41,6 @@ class DefenderAction
         return Action::make('check_health')
         ->icon('heroicon-o-check')
         ->action($action);
-    }
-
-    public static function createDecision()
-    {
-        $url = route('filament.manager.resources.decisions.create');
-        return Action::make('create_decision')
-        ->label('Create Decision')
-        ->icon('heroicon-o-plus')
-        ->url($url)
-        ->openUrlInNewTab()
-        ->color('primary');
     }
 
     public static function clearOutput()

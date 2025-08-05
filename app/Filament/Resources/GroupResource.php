@@ -33,12 +33,12 @@ class GroupResource extends Resource
         ]);
     }
 
-    public static function main($rule = true, $defender = true, $owner = false)
+    public static function main($rule = true, $defender = true)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
             self::information()->columnSpan(1),
-            self::definition($rule, $defender, $owner)->columnSpan(2),
+            self::definition($rule, $defender)->columnSpan(2),
         ]);
     }
 
@@ -52,21 +52,16 @@ class GroupResource extends Resource
         ->columns(1);
     }
 
-    private static function definition($rule = true, $defender = true, $owner = false)
+    private static function definition($rule = true, $defender = true)
     {
-        $form = [
+        return Forms\Components\Section::make('Group Definition')
+        ->schema([
             self::$form::name()->columnSpan(1),
             self::$form::defenders($defender)->columnSpan(1),
             self::$form::rules($rule)->columnSpanFull(),
             self::$form::tags()->columnSpan(1),
             self::$form::description()->columnSpan(1),
-        ];
-        if ($owner)
-        {
-            $form[] = self::$form::owner();
-        }
-        return Forms\Components\Section::make('Group Definition')
-        ->schema($form)
+        ])
         ->columns(2);
     }
 

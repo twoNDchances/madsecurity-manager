@@ -3,7 +3,6 @@
 namespace App\Forms;
 
 use App\Filament\Resources\WordlistResource;
-use App\Filament\Resources\WordlistResource\Pages\CreateWordlist;
 use App\Models\Target;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
@@ -113,7 +112,6 @@ class TargetForm
         $former = [
             WordlistResource::main(),
         ];
-        $creator = fn($data) => CreateWordlist::callByStatic($data)->id;
         return FilamentFormService::select(
             'wordlist_id',
             'Wordlist',
@@ -125,7 +123,6 @@ class TargetForm
         ->searchable()
         ->preload()
         ->createOptionForm($former)
-        ->createOptionUsing($creator)
         ->helperText('The Array datatype can use a Wordlist');
     }
 

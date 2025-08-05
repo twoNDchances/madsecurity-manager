@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Fingerprint;
-use Illuminate\Support\Str;
 
 class FingerprintService
 {

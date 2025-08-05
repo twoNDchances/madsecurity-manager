@@ -89,7 +89,7 @@ class UserForm
         if ($form)
         {
             $former = [
-                PolicyResource::main(false, false, true),
+                PolicyResource::main(false, false),
             ];
             $policyField = $policyField
             ->createOptionForm($former);
@@ -142,16 +142,11 @@ class UserForm
         if ($form)
         {
             $former = [
-                TokenResource::main(false, true),
+                TokenResource::main(false),
             ];
             $tokenField = $tokenField
             ->createOptionForm($former);
         }
         return $tokenField;
-    }
-
-    public static function owner()
-    {
-        return FilamentFormService::owner();
     }
 }

@@ -10,12 +10,6 @@ class CreatePolicy extends CreateRecord
 {
     protected static string $resource = PolicyResource::class;
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['user_id'] = IdentificationService::get()?->id;
-        return $data;
-    }
-
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');
