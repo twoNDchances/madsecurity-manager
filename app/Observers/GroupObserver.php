@@ -8,8 +8,7 @@ use App\Services\IdentificationService;
 
 class GroupObserver
 {
-    /**
-     * Handle the Decision "creating" event.
+    /**Group "creating" event.
      */
     public function creating(Group $group): void
     {

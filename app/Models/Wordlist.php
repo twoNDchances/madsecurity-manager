@@ -15,16 +15,10 @@ class Wordlist extends Model
         'alias',
         'description',
         'user_id',
-        'temporary',
-    ];
-
-    protected $attributes = [
-        'tmp' => null,
     ];
 
     protected $hidden = [
         'user_id',
-        'temporary',
     ];
 
     // Belongs

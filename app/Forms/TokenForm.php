@@ -3,6 +3,7 @@
 namespace App\Forms;
 
 use App\Filament\Resources\UserResource;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Forms\Actions\TokenAction;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
@@ -84,14 +85,29 @@ class TokenForm
             $former = [
                 UserResource::main(false, false),
             ];
+            $creator = function(array $data)
+            {
+                $user = CreateUser::callByStatic($data);
+                TagFieldService::syncTags($data, $user);
+                if (isset($form['policies']))
+                {
+                    $user->policies()->sync($data['policies']);
+                }
+                if (isset($form['tokens']))
+                {
+                    $user->tokens()->sync($data['tokens']);
+                }
+                return $user->id;
+            };
             $userField = $userField
-            ->createOptionForm($former);
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
         }
         return $userField;
     }
 
-    public static function tags()
+    public static function tags($dehydrated = false)
     {
-        return TagFieldService::setTags();
+        return TagFieldService::setTags($dehydrated);
     }
 }

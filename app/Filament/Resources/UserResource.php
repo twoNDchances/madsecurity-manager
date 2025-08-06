@@ -33,47 +33,47 @@ class UserResource extends Resource
         ]);
     }
 
-    public static function main($policy = true, $token = true)
+    public static function main($policy = true, $token = true, $dehydrated = false)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::information()->columns(2)->columnSpan(2),
+            self::information($dehydrated)->columns(2)->columnSpan(2),
             Forms\Components\Grid::make(1)
             ->schema([
-                self::scope($policy),
-                self::access($token),
+                self::scope($policy, $dehydrated),
+                self::access($token, $dehydrated),
             ])
             ->columnSpan(1),
         ]);
     }
 
-    private static function information()
+    private static function information($dehydrated = false)
     {
         return Forms\Components\Section::make('User Information')
         ->schema([
             self::$form::name(),
             self::$form::email(),
             self::$form::password()->columnSpanFull(),
-            self::$form::tags()->columnSpanFull(),
+            self::$form::tags($dehydrated)->columnSpanFull(),
             self::$form::verification()->columnSpanFull(),
         ]);
     }
 
-    private static function scope($policy = true)
+    private static function scope($policy = true, $dehydrated = false)
     {
         return Forms\Components\Section::make('User Scope')
         ->schema([
-            self::$form::policies($policy),
+            self::$form::policies($policy)->dehydrated($dehydrated),
             self::$form::activation(),
             self::$form::important(),
         ]);
     }
 
-    private static function access($token = true)
+    private static function access($token = true, $dehydrated = false)
     {
         return Forms\Components\Section::make('User Access')
         ->schema([
-            self::$form::tokens($token),
+            self::$form::tokens($token)->dehydrated($dehydrated),
         ]);
     }
 

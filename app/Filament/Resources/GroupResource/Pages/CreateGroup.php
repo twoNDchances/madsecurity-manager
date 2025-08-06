@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\GroupResource\Pages;
 
 use App\Filament\Resources\GroupResource;
-use App\Services\IdentificationService;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateGroup extends CreateRecord

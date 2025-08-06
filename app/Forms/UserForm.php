@@ -4,12 +4,14 @@ namespace App\Forms;
 
 use App\Filament\Resources\PolicyResource;
 use App\Filament\Resources\TokenResource;
+use App\Filament\Resources\TokenResource\Pages\CreateToken;
 use App\Forms\Actions\UserAction;
 use App\Services\IdentificationService;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\GUI\UserValidator;
 use Filament\Resources\Pages\CreateRecord;
+use GuzzleHttp\Promise\Create;
 
 class UserForm
 {
@@ -58,9 +60,9 @@ class UserForm
         ->suffixAction(self::$action::generatePassword());
     }
 
-    public static function tags()
+    public static function tags($dehydrated = false)
     {
-        return TagFieldService::setTags();
+        return TagFieldService::setTags($dehydrated);
     }
 
     public static function verification()
@@ -142,10 +144,20 @@ class UserForm
         if ($form)
         {
             $former = [
-                TokenResource::main(false),
+                TokenResource::main(false, true),
             ];
+            $creator = function(array $data)
+            {
+                $token = CreateToken::callByStatic($data);
+                TagFieldService::syncTags($data, $token);
+                if (isset($data['users']))
+                {
+                    $token->users()->sync($data['users']);
+                }
+            };
             $tokenField = $tokenField
-            ->createOptionForm($former);
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
         }
         return $tokenField;
     }

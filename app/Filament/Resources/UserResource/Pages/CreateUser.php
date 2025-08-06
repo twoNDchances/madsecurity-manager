@@ -4,7 +4,6 @@ namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
 use App\Mail\VerificationMail;
-use App\Services\IdentificationService;
 use App\Services\NotificationService;
 use Exception;
 use Filament\Resources\Pages\CreateRecord;
@@ -21,7 +20,6 @@ class CreateUser extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['password'] = Hash::make($data['password']);
-        $data['user_id'] = IdentificationService::get()?->id;
         if ($data['force_verification'])
         {
             $data['token'] = Str::uuid();
@@ -48,8 +46,8 @@ class CreateUser extends CreateRecord
 
     public static function callByStatic(array $data): Model
     {
-        $mutater = (new static())->mutateFormDataBeforeCreate($data);
-        return (new static())->handleRecordCreation($mutater);
+        $form = (new static())->mutateFormDataBeforeCreate($data);
+        return (new static())->handleRecordCreation($form);
     }
 
     protected function getRedirectUrl(): string

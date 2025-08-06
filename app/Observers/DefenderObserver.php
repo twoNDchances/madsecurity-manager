@@ -9,7 +9,7 @@ use App\Services\IdentificationService;
 class DefenderObserver
 {
     /**
-     * Handle the Decision "creating" event.
+     * Handle the Defender "creating" event.
      */
     public function creating(Defender $defender): void
     {

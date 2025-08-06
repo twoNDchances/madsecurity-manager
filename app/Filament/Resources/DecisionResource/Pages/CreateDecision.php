@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\DecisionResource\Pages;
 
 use App\Filament\Resources\DecisionResource;
-use App\Services\IdentificationService;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class CreateDecision extends CreateRecord
 {
@@ -13,12 +13,17 @@ class CreateDecision extends CreateRecord
     // Complex Logic
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['user_id'] = IdentificationService::get()?->id;
         if ($data['action'] == 'kill')
         {
             $data['action_configuration'] = implode(',', [$data['kill_header'], $data['kill_path']]);
         }
         return $data;
+    }
+
+    public static function callByStatic(array $data): Model
+    {
+        $form = (new static())->mutateFormDataBeforeCreate($data);
+        return (new static())->handleRecordCreation($form);
     }
 
     protected function getRedirectUrl(): string

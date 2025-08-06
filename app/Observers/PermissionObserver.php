@@ -9,7 +9,7 @@ use App\Services\IdentificationService;
 class PermissionObserver
 {
     /**
-     * Handle the Decision "creating" event.
+     * Handle the Permission "creating" event.
      */
     public function creating(Permission $permission): void
     {

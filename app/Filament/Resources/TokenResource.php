@@ -32,33 +32,33 @@ class TokenResource extends Resource
         ]);
     }
 
-    public static function main($user = true)
+    public static function main($user = true, $dehydrated = false)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::information()->columnSpan(2),
-            self::scope($user)->columnSpan(1),
+            self::information($dehydrated)->columnSpan(2),
+            self::scope($user, $dehydrated)->columnSpan(1),
         ]);
     }
 
-    private static function information()
+    private static function information($dehydrated = false)
     {
         return Forms\Components\Section::make('Token Information')
         ->schema([
             self::$form::name(),
             self::$form::expiredAt(),
             self::$form::value()->columnSpanFull(),
-            self::$form::tags()->columnSpanFull(),
+            self::$form::tags($dehydrated)->columnSpanFull(),
             self::$form::description()->columnSpanFull(),
         ])
         ->columns(2);
     }
 
-    private static function scope($user = true)
+    private static function scope($user = true, $dehydrated = false)
     {
         return Forms\Components\Section::make('Token Scope')
         ->schema([
-            self::$form::users($user),
+            self::$form::users($user, $dehydrated),
         ]);
     }
 

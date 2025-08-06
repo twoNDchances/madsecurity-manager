@@ -8,7 +8,7 @@ use Filament\Support\Colors\Color;
 
 class TagFieldService
 {
-    public static function setTags()
+    public static function setTags($dehydrated = false)
     {
         $former = [
             TagResource::main(),
@@ -18,7 +18,8 @@ class TagFieldService
         ->createOptionForm($former)
         ->searchable()
         ->multiple()
-        ->preload();
+        ->preload()
+        ->dehydrated($dehydrated);
     }
 
     public static function getTags()

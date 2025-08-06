@@ -5,11 +5,12 @@ namespace App\Observers;
 use App\Models\Token;
 use App\Services\FingerprintService;
 use App\Services\IdentificationService;
+use Illuminate\Support\Facades\Hash;
 
 class TokenObserver
 {
     /**
-     * Handle the Decision "creating" event.
+     * Handle the Token "creating" event.
      */
     public function creating(Token $token): void
     {

@@ -18,10 +18,6 @@ class DecisionObserver
             return;
         }
         $decision->user_id = IdentificationService::get()->id;
-        if ($decision->action == 'kill')
-        {
-            // $decision->action_configuration = implode(',', [$data['kill_header'], $data['kill_path']]);
-        }
     }
 
     /**

@@ -9,7 +9,7 @@ use App\Services\IdentificationService;
 class TagObserver
 {
     /**
-     * Handle the Decision "creating" event.
+     * Handle the Tag "creating" event.
      */
     public function creating(Tag $tag): void
     {

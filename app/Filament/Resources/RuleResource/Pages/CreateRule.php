@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\RuleResource\Pages;
 
 use App\Filament\Resources\RuleResource;
-use App\Services\IdentificationService;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class CreateRule extends CreateRecord
 {
@@ -13,7 +13,6 @@ class CreateRule extends CreateRecord
     // Complex Logic
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['user_id'] = IdentificationService::get()?->id;
         if ($data['comparator'] == '@inRange')
         {
             $data['value'] = implode(',', [$data['from'], $data['to']]);
@@ -28,6 +27,12 @@ class CreateRule extends CreateRecord
             };
         }
         return $data;
+    }
+
+    public static function callByStatic(array $data): Model
+    {
+        $form = (new static())->mutateFormDataBeforeCreate($data);
+        return (new static())->handleRecordCreation($form);
     }
 
     protected function getRedirectUrl(): string

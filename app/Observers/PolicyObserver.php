@@ -9,7 +9,7 @@ use App\Services\IdentificationService;
 class PolicyObserver
 {
     /**
-     * Handle the Decision "creating" event.
+     * Handle the Policy "creating" event.
      */
     public function creating(Policy $policy): void
     {

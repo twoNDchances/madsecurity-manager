@@ -9,7 +9,7 @@ use App\Services\IdentificationService;
 class RuleObserver
 {
     /**
-     * Handle the Decision "creating" event.
+     * Handle the Rule "creating" event.
      */
     public function creating(Rule $rule): void
     {

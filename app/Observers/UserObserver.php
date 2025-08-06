@@ -9,7 +9,7 @@ use App\Services\IdentificationService;
 class UserObserver
 {
     /**
-     * Handle the Decision "creating" event.
+     * Handle the User "creating" event.
      */
     public function creating(User $user): void
     {

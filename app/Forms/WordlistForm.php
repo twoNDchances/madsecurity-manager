@@ -54,11 +54,11 @@ class WordlistForm
         $state = function ($record, $set)
         {
             if ($record) {
-                $set('tmp', $record->words()->pluck('content')->implode("\n"));
+                $set('content', $record->words()->pluck('content')->implode("\n"));
             }
         };
         return FilamentFormService::textarea(
-            'tmp',
+            'content',
             'Content',
             'End a word with a new line'
         )
