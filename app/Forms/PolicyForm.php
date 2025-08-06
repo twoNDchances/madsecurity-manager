@@ -81,7 +81,10 @@ class PolicyForm
             $creator = function(array $data)
             {
                 $user = CreateUser::callByStatic($data);
-                TagFieldService::syncTags($data, $user);
+                if (isset($data['tags']))
+                {
+                    $user->tags()->sync($data['tags']);
+                }
                 if (isset($form['policies']))
                 {
                     $user->policies()->sync($data['policies']);

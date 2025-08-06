@@ -33,12 +33,12 @@ class GroupResource extends Resource
         ]);
     }
 
-    public static function main($rule = true, $defender = true)
+    public static function main($rule = true, $defender = true, $dehydrated = false)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
             self::information()->columnSpan(1),
-            self::definition($rule, $defender)->columnSpan(2),
+            self::definition($rule, $defender, $dehydrated)->columnSpan(2),
         ]);
     }
 
@@ -52,14 +52,14 @@ class GroupResource extends Resource
         ->columns(1);
     }
 
-    private static function definition($rule = true, $defender = true)
+    private static function definition($rule = true, $defender = true, $dehydrated = false)
     {
         return Forms\Components\Section::make('Group Definition')
         ->schema([
             self::$form::name()->columnSpan(1),
             self::$form::defenders($defender)->columnSpan(1),
-            self::$form::rules($rule)->columnSpanFull(),
-            self::$form::tags()->columnSpan(1),
+            self::$form::rules($rule)->dehydrated($dehydrated)->columnSpanFull(),
+            self::$form::tags($dehydrated)->columnSpan(1),
             self::$form::description()->columnSpan(1),
         ])
         ->columns(2);

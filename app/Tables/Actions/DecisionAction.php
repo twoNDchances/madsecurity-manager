@@ -7,14 +7,38 @@ use App\Services\DefenderImplementService;
 use App\Services\DefenderSuspendService;
 use App\Services\FilamentTableService;
 use App\Services\FingerprintService;
+use App\Services\NotificationService;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 
 class DecisionAction
 {
+    public static function refreshTable()
+    {
+        $action = function($livewire)
+        {
+            $livewire->dispatch('refreshDecisionTable');
+            NotificationService::notify('success', 'Refreshed', 'Decision table has been refreshed');
+        };
+        return Action::make('refresh')
+        ->label('Refresh Decision')
+        ->action($action)
+        ->color('warning')
+        ->icon('heroicon-o-arrow-path');
+    }
+
     public static function actionGroup()
     {
         return FilamentTableService::actionGroup();
+    }
+
+    private static function editDecision()
+    {
+        $url = fn($record) => route('filament.manager.resources.decisions.edit', $record->id);
+        return EditAction::make()
+        ->url($url)
+        ->openUrlInNewTab();
     }
 
     public static function deleteBulkAction()
@@ -22,16 +46,22 @@ class DecisionAction
         return DeleteBulkAction::make();
     }
 
-    public static function operationActionGroup()
+    public static function operationActionGroup($custom = false)
     {
+        $actions = [];
+        if ($custom)
+        {
+            $actions[] = self::editDecision();
+        }
+        $actions = array_merge($actions, [
+            self::implement(),
+            self::suspend(),
+        ]);
         return FilamentTableService::actionGroup(
             true,
+            !$custom ? true : false,
             true,
-            true,
-            [
-                self::implement(),
-                self::suspend(),
-            ],
+            $actions,
         );
     }
 

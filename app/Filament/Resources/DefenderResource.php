@@ -37,7 +37,7 @@ class DefenderResource extends Resource
         ]);
     }
 
-    public static function main($group = true)
+    public static function main($group = true, $decision = true, $dehydrated = false)
     {
         $condition = fn($livewire) => !$livewire instanceof CreateRecord;
         $active = function($livewire) use ($condition)
@@ -49,7 +49,7 @@ class DefenderResource extends Resource
             Forms\Components\Tabs\Tab::make('Definition')
             ->icon('heroicon-o-server')
             ->schema([
-                self::definition($group),
+                self::definition($group, $decision, $dehydrated),
             ]),
 
             Forms\Components\Tabs\Tab::make('Terminal')
@@ -63,14 +63,14 @@ class DefenderResource extends Resource
         ->activeTab($active);
     }
 
-    public static function definition($group = true)
+    public static function definition($group = true, $decision = true, $dehydrated = false)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::information($group)->columns(2)->columnSpan(2),
+            self::information($group, $dehydrated)->columns(2)->columnSpan(2),
             Forms\Components\Grid::make(1)
             ->schema([
-                self::reaction(),
+                self::reaction($decision),
                 self::inspection(),
                 self::authentication(),
             ])
@@ -79,7 +79,7 @@ class DefenderResource extends Resource
         ]);
     }
 
-    private static function information($group = true)
+    private static function information($group = true, $dehydrated = false)
     {
         $condition = fn($livewire) => $livewire instanceof EditRecord;
         return Forms\Components\Section::make('Defender Information')
@@ -115,19 +115,19 @@ class DefenderResource extends Resource
             ])
             ->columns(4)
             ->columnSpanFull(),
-            self::$form::tags()->columnSpan(1),
+            self::$form::tags($dehydrated)->columnSpan(1),
             self::$form::description()->columnSpan(1),
         ])
         ->collapsible()
         ->collapsed($condition);
     }
 
-    private static function reaction()
+    private static function reaction($decision = true)
     {
         $condition = fn($livewire) => $livewire instanceof EditRecord;
         return Forms\Components\Section::make('Defender Reaction')
         ->schema([
-            self::$form::decisions(),
+            self::$form::decisions($decision),
         ])
         ->columns(1)
         ->collapsible()

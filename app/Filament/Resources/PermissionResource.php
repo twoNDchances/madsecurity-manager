@@ -32,22 +32,22 @@ class PermissionResource extends Resource
         ]);
     }
 
-    public static function main($policy = true)
+    public static function main($policy = true, $dehydrated = false)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::information()->columns(2)->columnSpan(2),
+            self::information($dehydrated)->columns(2)->columnSpan(2),
             self::scope($policy)->columnSpan(1),
         ]);
     }
 
-    private static function information()
+    private static function information($dehydrated = false)
     {
         return Forms\Components\Section::make('Permission Information')
         ->schema([
             self::$form::name(),
             self::$form::action(),
-            self::$form::tags()->columnSpanFull(),
+            self::$form::tags($dehydrated)->columnSpanFull(),
             self::$form::description()->columnSpanFull(),
         ]);
     }

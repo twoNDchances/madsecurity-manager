@@ -4,6 +4,7 @@ namespace App\Forms;
 
 use App\Filament\Resources\DefenderResource;
 use App\Filament\Resources\RuleResource;
+use App\Filament\Resources\RuleResource\Pages\CreateRule;
 use App\Forms\Actions\GroupAction;
 use App\Models\Group;
 use App\Services\FilamentFormService;
@@ -73,10 +74,23 @@ class GroupForm
         if ($form)
         {
             $former = [
-                RuleResource::main(false),
+                RuleResource::main(false, true),
             ];
+            $creator = function(array $data)
+            {
+                $rule = CreateRule::callByStatic($data);
+                if (isset($data['groups']))
+                {
+                    $rule->groups()->sync($data['groups']);
+                }
+                if (isset($data['tags']))
+                {
+                    $rule->tags()->sync($data['tags']);
+                }
+            };
             $ruleField = $ruleField
-            ->createOptionForm($former);
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
         }
         return $ruleField;
     }
@@ -95,7 +109,7 @@ class GroupForm
         if ($form)
         {
             $former = [
-                DefenderResource::main(false),
+                DefenderResource::main(false, false),
             ];
             $defenderField = $defenderField
             ->createOptionForm($former);
@@ -103,9 +117,9 @@ class GroupForm
         return $defenderField;
     }
 
-    public static function tags()
+    public static function tags($dehydrated = false)
     {
-        return TagFieldService::setTags();
+        return TagFieldService::setTags($dehydrated);
     }
 
     public static function description()

@@ -7,14 +7,38 @@ use App\Services\DefenderApplyService;
 use App\Services\DefenderRevokeService;
 use App\Services\FilamentTableService;
 use App\Services\FingerprintService;
+use App\Services\NotificationService;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
 
 class GroupAction
 {
+    public static function refreshTable()
+    {
+        $action = function($livewire)
+        {
+            $livewire->dispatch('refreshGroupTable');
+            NotificationService::notify('success', 'Refreshed', 'Group table has been refreshed');
+        };
+        return Action::make('refresh')
+        ->label('Refresh Group')
+        ->action($action)
+        ->color('success')
+        ->icon('heroicon-o-arrow-path');
+    }
+
     public static function actionGroup()
     {
         return FilamentTableService::actionGroup();
+    }
+
+    private static function editGroup()
+    {
+        $url = fn($record) => route('filament.manager.resources.groups.edit', $record->id);
+        return EditAction::make()
+        ->url($url)
+        ->openUrlInNewTab();
     }
 
     public static function deleteBulkAction()
@@ -22,16 +46,22 @@ class GroupAction
         return DeleteBulkAction::make();
     }
 
-    public static function operationActionGroup()
+    public static function operationActionGroup($custom = false)
     {
+        $actions = [];
+        if ($custom)
+        {
+            $actions[] = self::editGroup();
+        }
+        $actions = array_merge($actions, [
+            self::apply(),
+            self::revoke(),
+        ]);
         return FilamentTableService::actionGroup(
             true,
+            !$custom ? true : false,
             true,
-            true,
-            [
-                self::apply(),
-                self::revoke(),
-            ],
+            $actions,
         );
     }
 

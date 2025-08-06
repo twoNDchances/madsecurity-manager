@@ -62,9 +62,14 @@ class DecisionTable
         return FilamentTableService::text('getOwner.email', 'Created by');
     }
 
-    public static function actionGroup()
+    public static function refreshRelationManagerTable()
     {
-        return self::$action::actionGroup();
+        return self::$action::refreshTable();
+    }
+
+    public static function actionGroup($custom = false)
+    {
+        return self::$action::actionGroup($custom);
     }
 
     public static function deleteBulkAction()
@@ -72,8 +77,8 @@ class DecisionTable
         return self::$action::deleteBulkAction();
     }
 
-    public static function operationActionGroup()
+    public static function operationActionGroup($custom = false)
     {
-        return self::$action::operationActionGroup();
+        return self::$action::operationActionGroup($custom);
     }
 }

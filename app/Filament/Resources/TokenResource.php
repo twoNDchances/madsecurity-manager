@@ -58,7 +58,7 @@ class TokenResource extends Resource
     {
         return Forms\Components\Section::make('Token Scope')
         ->schema([
-            self::$form::users($user, $dehydrated),
+            self::$form::users($user)->dehydrated($dehydrated),
         ]);
     }
 

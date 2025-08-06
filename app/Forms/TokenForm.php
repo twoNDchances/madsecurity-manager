@@ -83,17 +83,20 @@ class TokenForm
         if ($form)
         {
             $former = [
-                UserResource::main(false, false),
+                UserResource::main(false, false, true),
             ];
             $creator = function(array $data)
             {
                 $user = CreateUser::callByStatic($data);
-                TagFieldService::syncTags($data, $user);
-                if (isset($form['policies']))
+                if (isset($data['tags']))
+                {
+                    $user->tags()->sync($data['tags']);
+                }
+                if (isset($data['policies']))
                 {
                     $user->policies()->sync($data['policies']);
                 }
-                if (isset($form['tokens']))
+                if (isset($data['tokens']))
                 {
                     $user->tokens()->sync($data['tokens']);
                 }

@@ -46,7 +46,7 @@ class PolicyResource extends Resource
         return Forms\Components\Section::make('Policy Information')
         ->schema([
             self::$form::name(),
-            self::$form::permissions($permission),
+            self::$form::permissions($permission)->dehydrated($dehydrated),
             self::$form::tags($dehydrated)->columnSpanFull(),
             self::$form::description()->columnSpanFull(),
         ]);

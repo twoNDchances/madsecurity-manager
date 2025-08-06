@@ -32,22 +32,22 @@ class DecisionResource extends Resource
         ]);
     }
 
-    public static function main($defender = true)
+    public static function main($defender = true, $dehydrated = false)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::information()->columnSpan(1),
+            self::information($dehydrated)->columnSpan(1),
             self::definition($defender)->columnSpan(2),
         ]);
     }
 
-    private static function information()
+    private static function information($dehydrated = false)
     {
         return Forms\Components\Section::make('Decision Information')
         ->schema([
             self::$form::score(),
             self::$form::phaseType(),
-            self::$form::tags(),
+            self::$form::tags($dehydrated),
         ])
         ->columns(1);
     }

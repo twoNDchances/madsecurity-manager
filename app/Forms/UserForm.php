@@ -3,6 +3,7 @@
 namespace App\Forms;
 
 use App\Filament\Resources\PolicyResource;
+use App\Filament\Resources\PolicyResource\Pages\CreatePolicy;
 use App\Filament\Resources\TokenResource;
 use App\Filament\Resources\TokenResource\Pages\CreateToken;
 use App\Forms\Actions\UserAction;
@@ -91,7 +92,7 @@ class UserForm
         if ($form)
         {
             $former = [
-                PolicyResource::main(false, false),
+                PolicyResource::main(false, false, true),
             ];
             $policyField = $policyField
             ->createOptionForm($former);
@@ -149,11 +150,15 @@ class UserForm
             $creator = function(array $data)
             {
                 $token = CreateToken::callByStatic($data);
-                TagFieldService::syncTags($data, $token);
+                if (isset($data['tags']))
+                {
+                    $token->tags()->sync($data['tags']);
+                }
                 if (isset($data['users']))
                 {
                     $token->users()->sync($data['users']);
                 }
+                return $token->id;
             };
             $tokenField = $tokenField
             ->createOptionForm($former)

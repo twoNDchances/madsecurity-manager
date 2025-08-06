@@ -32,22 +32,22 @@ class WordlistResource extends Resource
         ]);
     }
 
-    public static function main()
+    public static function main($dehydrated = false)
     {
         return Forms\Components\Grid::make(2)
         ->schema([
-            self::information()->columns(2)->columnSpan(1),
+            self::information($dehydrated)->columns(2)->columnSpan(1),
             self::definition()->columnSpan(1),
         ]);
     }
 
-    public static function information()
+    public static function information($dehydrated = false)
     {
         return Forms\Components\Section::make('Wordlist Information')
         ->schema([
             self::$form::name(),
             self::$form::alias(),
-            self::$form::tags()->columnSpanFull(),
+            self::$form::tags($dehydrated)->columnSpanFull(),
             self::$form::description()->columnSpanFull(),
         ]);
     }

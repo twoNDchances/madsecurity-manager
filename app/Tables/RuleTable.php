@@ -120,9 +120,14 @@ class RuleTable
         return FilamentTableService::text('getOwner.email', 'Created by');
     }
 
-    public static function actionGroup()
+    public static function refreshRelationManagerTable()
     {
-        return self::$action::actionGroup();
+        return self::$action::refreshTable();
+    }
+
+    public static function actionGroup($custom = false)
+    {
+        return self::$action::actionGroup($custom);
     }
 
     public static function deleteBulkAction()

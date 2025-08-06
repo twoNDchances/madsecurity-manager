@@ -3,6 +3,7 @@
 namespace App\Forms;
 
 use App\Filament\Resources\DecisionResource;
+use App\Filament\Resources\DecisionResource\Pages\CreateDecision;
 use App\Filament\Resources\GroupResource;
 use App\Forms\Actions\DefenderAction;
 use App\Services\FilamentFormService;
@@ -89,9 +90,9 @@ class DefenderForm
         ->selectablePlaceholder(false);
     }
 
-    public static function tags()
+    public static function tags($dehydrated = false)
     {
-        return TagFieldService::setTags();
+        return TagFieldService::setTags($dehydrated);
     }
 
     public static function description()
@@ -118,10 +119,20 @@ class DefenderForm
         if ($form)
         {
             $former = [
-                DecisionResource::main(false),
+                DecisionResource::main(false, true),
             ];
+            $creator = function(array $data)
+            {
+                $decision = CreateDecision::callByStatic($data);
+                if (isset($data['tags']))
+                {
+                    $decision->tags()->sync($data['tags']);
+                }
+                return $decision->id;
+            };
             $decisionField = $decisionField
-            ->createOptionForm($former);
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
         }
         return $decisionField;
     }

@@ -32,16 +32,16 @@ class RuleResource extends Resource
         ]);
     }
 
-    public static function main($group = true)
+    public static function main($group = true, $dehydrated = false)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::core($group)->columns(2)->columnSpan(2),
+            self::core($group, $dehydrated)->columns(2)->columnSpan(2),
             self::logistic()->columns(2)->columnSpan(1),
         ]);
     }
 
-    public static function core($group = true)
+    public static function core($group = true, $dehydrated = false)
     {
         return Forms\Components\Wizard::make([
             Forms\Components\Wizard\Step::make('Information')
@@ -70,8 +70,8 @@ class RuleResource extends Resource
 
             Forms\Components\Wizard\Step::make('Completion')
             ->schema([
-                self::$form::groups($group)->columnSpan(1),
-                self::$form::tags()->columnSpan(1),
+                self::$form::groups($group)->dehydrated($dehydrated)->columnSpan(1),
+                self::$form::tags($dehydrated)->columnSpan(1),
                 self::$form::description()->columnSpanFull(),
             ]),
         ]);

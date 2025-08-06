@@ -32,16 +32,16 @@ class TargetResource extends Resource
         ]);
     }
 
-    public static function main()
+    public static function main($dehydrated = false)
     {
         return Forms\Components\Grid::make(3)
         ->schema([
-            self::definition()->columns(2)->columnSpan(2),
+            self::definition($dehydrated)->columns(2)->columnSpan(2),
             self::information()->columnSpan(1),
         ]);
     }
 
-    private static function definition()
+    private static function definition($dehydrated = false)
     {
         return Forms\Components\Section::make('Target Definition')
         ->schema([
@@ -63,7 +63,7 @@ class TargetResource extends Resource
                 self::$form::number(),
                 self::$form::hash(),
             ])->columnSpanFull(),
-            self::$form::tags(),
+            self::$form::tags($dehydrated),
             self::$form::description(),
         ]);
     }

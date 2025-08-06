@@ -29,7 +29,6 @@ class CreateWordlist extends CreateRecord
             'name' => $data['name'],
             'alias' => $data['alias'],
             'description' => $data['description'],
-            'user_id' => $data['user_id'],
         ]);
         $now = now();
         foreach ($data['content'] as $chunk)

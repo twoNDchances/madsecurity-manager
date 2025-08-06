@@ -42,10 +42,10 @@ class DecisionsRelationManager extends RelationManager
             //
         ])
         ->headerActions([
-            //
+            self::$tableRelationship::refreshRelationManagerTable(),
         ])
         ->actions([
-            self::$tableRelationship::operationActionGroup(),
+            self::$tableRelationship::operationActionGroup(true),
         ])
         ->bulkActions([
             self::$tableRelationship::deleteBulkAction(),

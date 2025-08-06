@@ -37,9 +37,9 @@ class PermissionForm
         ->searchable();
     }
 
-    public static function tags()
+    public static function tags($dehydrated = false)
     {
-        return TagFieldService::setTags();
+        return TagFieldService::setTags($dehydrated);
     }
 
     public static function description()

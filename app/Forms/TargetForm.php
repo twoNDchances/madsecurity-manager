@@ -3,6 +3,7 @@
 namespace App\Forms;
 
 use App\Filament\Resources\WordlistResource;
+use App\Filament\Resources\WordlistResource\Pages\CreateWordlist;
 use App\Models\Target;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
@@ -110,8 +111,17 @@ class TargetForm
     {
         $condition = fn($get) => $get('datatype') == 'array' && !$get('target_id');
         $former = [
-            WordlistResource::main(),
+            WordlistResource::main(true),
         ];
+        $creator = function(array $data)
+        {
+            $wordlist = CreateWordlist::callByStatic($data);
+            if (isset($data['tags']))
+            {
+                $wordlist->tags()->sync($data['tags']);
+            }
+            return $wordlist->id;
+        };
         return FilamentFormService::select(
             'wordlist_id',
             'Wordlist',
@@ -123,6 +133,7 @@ class TargetForm
         ->searchable()
         ->preload()
         ->createOptionForm($former)
+        ->createOptionUsing($creator)
         ->helperText('The Array datatype can use a Wordlist');
     }
 
@@ -215,9 +226,9 @@ class TargetForm
         ->visible($condition);
     }
 
-    public static function tags()
+    public static function tags($dehydrated = false)
     {
-        return TagFieldService::setTags();
+        return TagFieldService::setTags($dehydrated);
     }
 
     public static function description()

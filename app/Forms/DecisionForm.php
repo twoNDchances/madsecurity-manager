@@ -4,6 +4,7 @@ namespace App\Forms;
 
 use App\Filament\Resources\DefenderResource;
 use App\Filament\Resources\WordlistResource;
+use App\Filament\Resources\WordlistResource\Pages\CreateWordlist;
 use App\Services\FilamentFormService;
 use App\Services\TagFieldService;
 use App\Validators\GUI\DecisionValidator;
@@ -47,9 +48,9 @@ class DecisionForm
         ->reactive();
     }
 
-    public static function tags()
+    public static function tags($dehydrated = false)
     {
-        return TagFieldService::setTags();
+        return TagFieldService::setTags($dehydrated);
     }
 
     public static function description()
@@ -88,7 +89,7 @@ class DecisionForm
         if ($form)
         {
             $former = [
-                DefenderResource::main(false),
+                DefenderResource::main(false, false),
             ];
             $defenderField = $defenderField
             ->createOptionForm($former);
@@ -178,8 +179,17 @@ class DecisionForm
             ['tag', 'warn'],
         );
         $former = [
-            WordlistResource::main(),
+            WordlistResource::main(true),
         ];
+        $creator = function(array $data)
+        {
+            $wordlist = CreateWordlist::callByStatic($data);
+            if (isset($data['tags']))
+            {
+                $wordlist->tags()->sync($data['tags']);
+            }
+            return $wordlist->id;
+        };
         return FilamentFormService::select(
             'getWordlist',
             'Wordlist Alias',
@@ -190,6 +200,7 @@ class DecisionForm
         ->preload()
         ->required($condition)
         ->visible($condition)
-        ->createOptionForm($former);
+        ->createOptionForm($former)
+        ->createOptionUsing($creator);
     }
 }

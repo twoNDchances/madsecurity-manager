@@ -6,6 +6,7 @@ use App\Filament\Resources\RuleResource;
 use App\Tables\RuleTable;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 
 class RulesRelationManager extends RelationManager
@@ -13,6 +14,8 @@ class RulesRelationManager extends RelationManager
     protected static string $relationship = 'rules';
 
     private static $tableRelationship = RuleTable::class;
+
+    protected $listeners = ['refreshRuleTable' => '$refresh'];
 
     public function form(Form $form): Form
     {
@@ -42,10 +45,10 @@ class RulesRelationManager extends RelationManager
             //
         ])
         ->headerActions([
-            //
+            self::$tableRelationship::refreshRelationManagerTable(),
         ])
         ->actions([
-            self::$tableRelationship::actionGroup(),
+            self::$tableRelationship::actionGroup(true),
         ])
         ->bulkActions([
             self::$tableRelationship::deleteBulkAction(),

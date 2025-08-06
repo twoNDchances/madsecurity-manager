@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\RuleResource\Pages;
 
 use App\Filament\Resources\RuleResource;
+use App\Models\Rule;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class EditRule extends EditRecord
 {
@@ -33,6 +35,13 @@ class EditRule extends EditRecord
             };
         }
         return $data;
+    }
+
+    public static function callByStatic(array $data): Model
+    {
+        $form = (new static())->mutateFormDataBeforeSave($data);
+        $rule = Rule::findOrFail($data['id']);
+        return (new static())->handleRecordUpdate($rule, $form);
     }
 
     protected function mutateFormDataBeforeFill(array $data): array

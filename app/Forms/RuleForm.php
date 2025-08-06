@@ -4,7 +4,9 @@ namespace App\Forms;
 
 use App\Filament\Resources\GroupResource;
 use App\Filament\Resources\TargetResource;
+use App\Filament\Resources\TargetResource\Pages\CreateTarget;
 use App\Filament\Resources\WordlistResource;
+use App\Filament\Resources\WordlistResource\Pages\CreateWordlist;
 use App\Forms\Actions\RuleAction;
 use App\Models\Target;
 use App\Services\FilamentFormService;
@@ -105,10 +107,20 @@ class RuleForm
         if ($form)
         {
             $former = [
-                TargetResource::main(),
+                TargetResource::main(true),
             ];
+            $creator = function(array $data)
+            {
+                $target = CreateTarget::callByStatic($data);
+                if (isset($data['tags']))
+                {
+                    $target->tags()->sync($data['tags']);
+                }
+                return $target;
+            };
             $targetField = $targetField
-            ->createOptionForm($former);
+            ->createOptionForm($former)
+            ->createOptionUsing($creator);
         }
         return $targetField;
     }
@@ -269,8 +281,17 @@ class RuleForm
             ],
         );
         $former = [
-            WordlistResource::main(),
+            WordlistResource::main(true),
         ];
+        $creator = function(array $data)
+        {
+            $wordlist = CreateWordlist::callByStatic($data);
+            if (isset($data['tags']))
+            {
+                $wordlist->tags()->sync($data['tags']);
+            }
+            return $wordlist->id;
+        };
         return FilamentFormService::select(
             'getWordlist',
             'Wordlist Alias',
@@ -281,7 +302,8 @@ class RuleForm
         ->relationship('getWordlist', 'alias')
         ->preload()
         ->searchable()
-        ->createOptionForm($former);
+        ->createOptionForm($former)
+        ->createOptionUsing($creator);
     }
 
     public static function action()
@@ -480,9 +502,9 @@ class RuleForm
         return $groupField;
     }
 
-    public static function tags()
+    public static function tags($dehydrated = false)
     {
-        return TagFieldService::setTags();
+        return TagFieldService::setTags($dehydrated);
     }
 
     public static function description()
