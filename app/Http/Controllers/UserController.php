@@ -17,37 +17,16 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    private function relationships($user)
+    private function relationships()
     {
         return [
             'decision' => 'getDecisions',
             'defender' => [
-                'getDefenders' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'getDefenders' => IdentificationService::important(),
             ],
             'user' => [
-                'getSuperior' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
-                'getSubordinates' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'getSuperior' => IdentificationService::important(),
+                'getSubordinates' => IdentificationService::important(),
             ],
             'permission' => 'getPermissions',
             'policy' => [
@@ -90,9 +69,9 @@ class UserController extends Controller
         $currentUser = IdentificationService::get();
         if ($user->important && !$currentUser->important)
         {
-            abort(404);
+            abort(403);
         }
-        IdentificationService::load($user, $this->relationships($currentUser));
+        IdentificationService::load($user, $this->relationships());
         return $user;
     }
 
@@ -107,8 +86,6 @@ class UserController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $currentUser = IdentificationService::get();
-        $validated['user_id'] = $currentUser->id;
         if ($validated['verification'])
         {
             $validated['token'] = Str::uuid();
@@ -141,7 +118,7 @@ class UserController extends Controller
             $user->tokens()->sync($validated['policy_ids']);
         }
         TagFieldService::syncTags($validated, $user);
-        IdentificationService::load($user, $this->relationships($currentUser));
+        IdentificationService::load($user, $this->relationships());
         return $user;
     }
 
@@ -179,7 +156,7 @@ class UserController extends Controller
             $user->tokens()->sync($validated['policy_ids']);
         }
         TagFieldService::syncTags($validated, $user);
-        IdentificationService::load($user, $this->relationships($currentUser));
+        IdentificationService::load($user, $this->relationships());
         return $user;
     }
 

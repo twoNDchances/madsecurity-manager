@@ -27,6 +27,7 @@ class TagValidator
             'required',
             'string',
             'size:7',
+            'starts_with:#'
         ];
     }
 

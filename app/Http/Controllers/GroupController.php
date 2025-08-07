@@ -11,30 +11,16 @@ use Illuminate\Support\Facades\Validator;
 
 class GroupController extends Controller
 {
-    private function relationships($user)
+    private function relationships()
     {
         return [
             'defender' => [
-                'defenders' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'defenders' => IdentificationService::important(),
             ],
             'rule' => 'rules',
             'tag' => 'tags',
             'user' => [
-                'getOwner' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'getOwner' => IdentificationService::important(),
             ],
         ];
     }
@@ -53,10 +39,7 @@ class GroupController extends Controller
     public function show($id)
     {
         $group = Group::findOrFail($id);
-        IdentificationService::load(
-            $group,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($group, $this->relationships());
         return $group;
     }
 
@@ -71,8 +54,6 @@ class GroupController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $user = IdentificationService::get();
-        $validated['user_id'] = $user->id;
         $group = Group::create($validated);
         if (isset($validated['defender_ids']))
         {
@@ -83,7 +64,7 @@ class GroupController extends Controller
             $group->rules()->sync($validated['rule_ids']);
         }
         TagFieldService::syncTags($validated, $group);
-        IdentificationService::load($group, $this->relationships($user));
+        IdentificationService::load($group, $this->relationships());
         return $group;
     }
 
@@ -112,10 +93,7 @@ class GroupController extends Controller
             $group->rules()->sync($validated['rule_ids']);
         }
         TagFieldService::syncTags($validated, $group);
-        IdentificationService::load(
-            $group,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($group, $this->relationships());
         return $group;
     }
 

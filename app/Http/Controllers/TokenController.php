@@ -13,26 +13,12 @@ use Illuminate\Support\Str;
 
 class TokenController extends Controller
 {
-    private function relationships($user)
+    private function relationships()
     {
         return [
             'user' => [
-                'getOwner' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
-                'users' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'getOwner' => IdentificationService::important(),
+                'users' => IdentificationService::important(),
             ],
             'tag' => 'tags',
         ];
@@ -52,10 +38,7 @@ class TokenController extends Controller
     public function show($id)
     {
         $token = Token::findOrFail($id);
-        IdentificationService::load(
-            $token,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($token, $this->relationships());
         return $token;
     }
 
@@ -70,8 +53,6 @@ class TokenController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $user = IdentificationService::get();
-        $validated['user_id'] = $user->id;
         $value = null;
         while (true)
         {
@@ -97,14 +78,17 @@ class TokenController extends Controller
             $token->users()->sync($validated['user_ids']);
         }
         TagFieldService::syncTags($validated, $token);
-        IdentificationService::load($token, $this->relationships($user));
+        IdentificationService::load($token, $this->relationships());
         return collect($token)->merge(['token' => $value]);
     }
 
     public function update(Request $request, $id)
     {
         $token = Token::findOrFail($id);
-        $validator = Validator::make($request->all(), TokenValidator::build());
+        $validator = Validator::make($request->all(), TokenValidator::build(
+            false,
+            $token->id,
+        ));
         if ($validator->fails())
         {
             return response()->json([
@@ -141,10 +125,7 @@ class TokenController extends Controller
             $token->users()->sync($validated['user_ids']);
         }
         TagFieldService::syncTags($validated, $token);
-        IdentificationService::load(
-            $token,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($token, $this->relationships());
         return $value ? collect($token)->merge(['token' => $value]) : collect($token);
     }
 

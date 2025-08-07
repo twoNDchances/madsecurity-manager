@@ -11,27 +11,13 @@ use Illuminate\Support\Facades\Validator;
 
 class PolicyController extends Controller
 {
-    private function relationships($user)
+    private function relationships()
     {
         return [
             'permission' => 'permissions',
             'user' => [
-                'users' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
-                'getOwner' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'users' => IdentificationService::important(),
+                'getOwner' => IdentificationService::important(),
             ],
             'tag' => 'tags',
         ];
@@ -51,10 +37,7 @@ class PolicyController extends Controller
     public function show($id)
     {
         $policy = Policy::findOrFail($id);
-        IdentificationService::load(
-            $policy,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($policy, $this->relationships());
         return $policy;
     }
 
@@ -69,8 +52,6 @@ class PolicyController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $user = IdentificationService::get();
-        $validated['user_id'] = $user->id;
         $policy = Policy::create($validated);
         if (isset($validated['permission_ids']))
         {
@@ -81,7 +62,7 @@ class PolicyController extends Controller
             $policy->users()->sync($validated['user_ids']);
         }
         TagFieldService::syncTags($validated, $policy);
-        IdentificationService::load($policy, $this->relationships($user));
+        IdentificationService::load($policy, $this->relationships());
         return $policy;
     }
 
@@ -110,10 +91,7 @@ class PolicyController extends Controller
             $policy->users()->sync($validated['user_ids']);
         }
         TagFieldService::syncTags($validated, $policy);
-        IdentificationService::load(
-            $policy,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($policy, $this->relationships());
         return $policy;
     }
 

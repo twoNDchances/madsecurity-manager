@@ -77,4 +77,17 @@ class IdentificationService
             $resource->load($fields);
         }
     }
+
+    public static function important()
+    {
+        $user = self::get();
+        return function($query) use ($user)
+        {
+            if (!$user->important)
+            {
+                $query = $query->where('important', false);
+            }
+            return $query;
+        };
+    }
 }

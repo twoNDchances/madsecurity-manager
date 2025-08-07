@@ -12,21 +12,14 @@ use Illuminate\Support\Facades\Validator;
 
 class WordlistController extends Controller
 {
-    private function relationships($user)
+    private function relationships()
     {
         return [
             'target' => 'targets',
             'rule' => 'rules',
             'decision' => 'decisions',
             'user' => [
-                'getOwner' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'getOwner' => IdentificationService::important(),
             ],
             'tag' => 'tags',
         ];
@@ -46,10 +39,7 @@ class WordlistController extends Controller
     public function show($id)
     {
         $wordlist = Wordlist::findOrFail($id);
-        IdentificationService::load(
-            $wordlist,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($wordlist, $this->relationships());
         $wordlist->load('words');
         return $wordlist;
     }
@@ -65,8 +55,6 @@ class WordlistController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $user = IdentificationService::get();
-        $validated['user_id'] = $user->id;
         $wordlist = Wordlist::create($validated);
         if (isset($validated['words']))
         {
@@ -88,7 +76,7 @@ class WordlistController extends Controller
             }
         }
         TagFieldService::syncTags($validated, $wordlist);
-        IdentificationService::load($wordlist, $this->relationships($user));
+        IdentificationService::load($wordlist, $this->relationships());
         $wordlist->load('words');
         return $wordlist;
     }
@@ -133,10 +121,7 @@ class WordlistController extends Controller
             }
         }
         TagFieldService::syncTags($validated, $wordlist);
-        IdentificationService::load(
-            $wordlist,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($wordlist, $this->relationships());
         $wordlist->load('words');
         return $wordlist;
     }

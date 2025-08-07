@@ -7,6 +7,8 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TagController;
+use App\Http\Controllers\TargetController;
 use App\Http\Controllers\TokenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WordlistController;
@@ -98,6 +100,28 @@ Route::middleware(['auth.token', 'auth.capability'])
             Route::post('create', [PolicyController::class, 'create'])->name('create');
             Route::patch('update/{id}', [PolicyController::class, 'update'])->name('update');
             Route::delete('delete/{id}', [PolicyController::class, 'delete'])->name('delete');
+        });
+
+        Route::prefix('tags')
+        ->name('tags.')
+        ->group(function()
+        {
+            Route::get('list', [TagController::class, 'list'])->name('list');
+            Route::get('show/{id}', [TagController::class, 'show'])->name('show');
+            Route::post('create', [TagController::class, 'create'])->name('create');
+            Route::patch('update/{id}', [TagController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [TagController::class, 'delete'])->name('delete');
+        });
+
+        Route::prefix('targets')
+        ->name('targets.')
+        ->group(function()
+        {
+            Route::get('list', [TargetController::class, 'list'])->name('list');
+            Route::get('show/{id}', [TargetController::class, 'show'])->name('show');
+            Route::post('create', [TargetController::class, 'create'])->name('create');
+            Route::patch('update/{id}', [TargetController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [TargetController::class, 'delete'])->name('delete');
         });
 
         Route::prefix('tokens')

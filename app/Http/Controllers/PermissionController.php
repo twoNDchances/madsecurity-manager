@@ -11,20 +11,13 @@ use Illuminate\Support\Facades\Validator;
 
 class PermissionController extends Controller
 {
-    private function relationships($user)
+    private function relationships()
     {
         return [
             'policy' => 'policies',
             'tag' => 'tags',
             'user' => [
-                'getOwner' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'getOwner' => IdentificationService::important(),
             ],
         ];
     }
@@ -43,10 +36,7 @@ class PermissionController extends Controller
     public function show($id)
     {
         $permission = Permission::findOrFail($id);
-        IdentificationService::load(
-            $permission,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($permission, $this->relationships());
         return $permission;
     }
 
@@ -61,15 +51,13 @@ class PermissionController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $user = IdentificationService::get();
-        $validated['user_id'] = $user->id;
         $permission = Permission::create($validated);
         if (isset($validated['policy_ids']))
         {
             $permission->policies()->sync($validated['policy_ids']);
         }
         TagFieldService::syncTags($validated, $permission);
-        IdentificationService::load($permission, $this->relationships($user));
+        IdentificationService::load($permission, $this->relationships());
         return $permission;
     }
 
@@ -94,10 +82,7 @@ class PermissionController extends Controller
             $permission->policies()->sync($validated['policy_ids']);
         }
         TagFieldService::syncTags($validated, $permission);
-        IdentificationService::load(
-            $permission,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($permission, $this->relationships());
         return $permission;
     }
 

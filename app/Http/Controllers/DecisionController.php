@@ -11,30 +11,16 @@ use Illuminate\Support\Facades\Validator;
 
 class DecisionController extends Controller
 {
-    private function relationships($user)
+    private function relationships()
     {
         return [
             'defender' => [
-                'defenders' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'defenders' => IdentificationService::important(),
             ],
             'wordlist' => 'getWordlist',
             'tag' => 'tags',
             'user' => [
-                'getOwner' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'getOwner' => IdentificationService::important(),
             ],
         ];
     }
@@ -53,10 +39,7 @@ class DecisionController extends Controller
     public function show($id)
     {
         $decision = Decision::findOrFail($id);
-        IdentificationService::load(
-            $decision,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($decision, $this->relationships());
         return $decision;
     }
 
@@ -71,15 +54,13 @@ class DecisionController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $user = IdentificationService::get();
-        $validated['user_id'] = $user->id;
         $decision = Decision::create($validated);
         if (isset($validated['defender_ids']))
         {
             $decision->defenders()->sync($validated['defender_ids']);
         }
         TagFieldService::syncTags($validated, $decision);
-        IdentificationService::load($decision, $this->relationships($user));
+        IdentificationService::load($decision, $this->relationships());
         return $decision;
     }
 
@@ -105,10 +86,7 @@ class DecisionController extends Controller
             $decision->defenders()->sync($validated['defender_ids']);
         }
         TagFieldService::syncTags($validated, $decision);
-        IdentificationService::load(
-            $decision,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($decision, $this->relationships());
         return $decision;
     }
 

@@ -4,26 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Target;
 use App\Services\IdentificationService;
+use App\Services\TagFieldService;
 use App\Validators\API\TargetValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class TargetController extends Controller
 {
-    private function relationships($user)
+    private function relationships()
     {
         return [
             'rule' => 'rules',
             'wordlist' => 'getWordlist',
             'user' => [
-                'getOwner' => function($query) use ($user)
-                {
-                    if (!$user->important)
-                    {
-                        $query = $query->where('important', false);
-                    }
-                    return $query;
-                },
+                'getOwner' => IdentificationService::important(),
             ],
             'tag' => 'tags',
         ];
@@ -43,10 +37,7 @@ class TargetController extends Controller
     public function show($id)
     {
         $target = Target::findOrFail($id);
-        IdentificationService::load(
-            $target,
-            $this->relationships(IdentificationService::get()),
-        );
+        IdentificationService::load($target, $this->relationships());
         return $target;
     }
 
@@ -61,8 +52,58 @@ class TargetController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $user = IdentificationService::get();
-        $validated['user_id'] = $user->id;
-        
+        $validated['final_datatype'] = match ($validated['engine']) {
+            'indexOf' => 'string',
+            'length' => 'number',
+            default => $validated['datatype'],
+        };
+        $target = Target::create($validated);
+        TagFieldService::syncTags($validated, $target);
+        IdentificationService::load($target, $this->relationships());
+        return $target;
+    }
+
+    public function update(Request $request, $id)
+    {
+        $target = Target::findOrFail($id);
+        if ($target->immutable)
+        {
+            abort(404);
+        }
+        $validator = Validator::make($request->all(), TargetValidator::build(
+            $request,
+            false,
+            $target->id,
+        ));
+        if ($validator->fails())
+        {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+        $validated = $validator->validated();
+        $validated['final_datatype'] = match ($validated['engine']) {
+            'indexOf' => 'string',
+            'length' => 'number',
+            default => $validated['datatype'],
+        };
+        $target->update($validated);
+        TagFieldService::syncTags($validated, $target);
+        IdentificationService::load($target, $this->relationships());
+        return $target;
+    }
+
+    public function delete($id)
+    {
+        $target = Target::findOrFail($id);
+        if ($target->immutable)
+        {
+            abort(404);
+        }
+        $target->delete();
+        return response()->json([
+            'message'=> "Target $target->id deleted",
+        ]);
     }
 }
