@@ -10,6 +10,13 @@ class FingerprintTable
 {
     private static $action = FingerprintAction::class;
 
+    public static function createdAt()
+    {
+        return FilamentTableService::text('created_at', 'Performed at')
+        ->dateTime()
+        ->timezone(config('app.timezone', 'Asian/Ho_Chi_Minh'));
+    }
+
     public static function owner()
     {
         return FilamentTableService::text('getOwner.email', 'Performed by');

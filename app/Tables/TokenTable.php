@@ -32,7 +32,7 @@ class TokenTable
         ->dateTime()
         ->badge()
         ->color($colors)
-        ->timezone('Asia/Ho_Chi_Minh');
+        ->timezone(config('app.timezone', 'Asian/Ho_Chi_Minh'));
     }
 
     public static function users()

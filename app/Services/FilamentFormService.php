@@ -94,12 +94,12 @@ class FilamentFormService
         ->schema($schema);
     }
 
-    public static function dateTimePicker($name, $label = null, $rules = [], $timezone = 'Asia/Ho_Chi_Minh')
+    public static function dateTimePicker($name, $label = null, $rules = [])
     {
         return DateTimePicker::make($name)
         ->label($label)
         ->rules($rules)
-        ->timezone($timezone)
+        ->timezone(config('app.timezone', 'Asian/Ho_Chi_Minh'))
         ->displayFormat('H:i:s d/m/Y');
     }
 }

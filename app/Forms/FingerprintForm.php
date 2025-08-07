@@ -89,4 +89,12 @@ class FingerprintForm
         ->suffixAction(self::$action::openResource())
         ->afterStateHydrated($state);
     }
+
+    public static function at()
+    {
+        return FilamentFormService::dateTimePicker(
+            'created_at',
+            'Performed at',
+        );
+    }
 }

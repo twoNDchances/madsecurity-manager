@@ -11,7 +11,7 @@ class TargetValidator
     public static function build($request, $required = true, $id = null)
     {
         return [
-            'name' => self::name($required, $id),
+            'name' => self::name($required),
             'alias' => self::alias($required, $id),
             'datatype' => self::datatype($required),
             'wordlist_id' => self::wordlistId(),
@@ -94,7 +94,7 @@ class TargetValidator
         'sha512' => 'SHA512',
     ];
 
-    private static function name($required = true, $id = null)
+    private static function name($required = true)
     {
         return ($required ? 'required' : 'sometimes') . '|string|max:255';
     }
@@ -219,7 +219,7 @@ class TargetValidator
                 }
                 if (!array_key_exists($value, self::$types[$phase]))
                 {
-                    $fail("Invalid $attribute selected for phase '$phase'.");
+                    $fail("Invalid $attribute selected for Phase '$phase'.");
                     return;
                 }
             },

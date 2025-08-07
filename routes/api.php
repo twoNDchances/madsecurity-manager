@@ -7,6 +7,7 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RuleController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TargetController;
 use App\Http\Controllers\TokenController;
@@ -25,10 +26,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
 
 Route::middleware(['auth.token', 'auth.capability'])
 ->name('api.')
@@ -58,6 +55,8 @@ Route::middleware(['auth.token', 'auth.capability'])
             Route::post('create', [DefenderController::class, 'create'])->name('create');
             Route::patch('update/{id}', [DefenderController::class, 'update'])->name('update');
             Route::delete('delete/{id}', [DefenderController::class, 'delete'])->name('delete');
+            Route::post('health/{id}', [DefenderController::class, 'health'])->name('health');
+            Route::post('collect/{id}', [DefenderController::class, 'collect'])->name('collect');
         });
 
         Route::prefix('fingerprints')
@@ -100,6 +99,17 @@ Route::middleware(['auth.token', 'auth.capability'])
             Route::post('create', [PolicyController::class, 'create'])->name('create');
             Route::patch('update/{id}', [PolicyController::class, 'update'])->name('update');
             Route::delete('delete/{id}', [PolicyController::class, 'delete'])->name('delete');
+        });
+
+        Route::prefix('rules')
+        ->name('rules.')
+        ->group(function()
+        {
+            Route::get('list', [RuleController::class, 'list'])->name('list');
+            Route::get('show/{id}', [RuleController::class, 'show'])->name('show');
+            Route::post('create', [RuleController::class, 'create'])->name('create');
+            Route::patch('update/{id}', [RuleController::class, 'update'])->name('update');
+            Route::delete('delete/{id}', [RuleController::class, 'delete'])->name('delete');
         });
 
         Route::prefix('tags')

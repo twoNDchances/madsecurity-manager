@@ -23,6 +23,7 @@ class CreateRule extends CreateRecord
             {
                 'request' => implode(',', [$data['request_method'], $data['request_url']]),
                 'setVariable' => implode(',', [$data['key_variable'], $data['value_variable']]),
+                'setHeader' => implode(',', [$data['key_header'], $data['value_header']]),
                 default => $data['action_configuration'] ?? null,
             };
         }

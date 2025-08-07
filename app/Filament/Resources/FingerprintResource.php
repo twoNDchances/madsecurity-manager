@@ -45,7 +45,8 @@ class FingerprintResource extends Resource
     {
         return Forms\Components\Section::make('Fingerprint Identification')
         ->schema([
-            self::$form::owner(),
+            self::$form::owner()->columnSpanFull(),
+            self::$form::at(),
             self::$form::ipAddress(),
             self::$form::userAgent()->columnSpanFull(),
         ]);
@@ -66,6 +67,7 @@ class FingerprintResource extends Resource
     {
         return $table
         ->columns([
+            self::$table::createdAt(),
             self::$table::owner(),
             self::$table::ipAddress(),
             self::$table::httpMethod(),

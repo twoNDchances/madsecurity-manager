@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Defender;
+use App\Services\FingerprintService;
 use App\Services\IdentificationService;
 use App\Services\TagFieldService;
 use App\Validators\API\DefenderValidator;
@@ -113,5 +114,53 @@ class DefenderController extends Controller
         return response()->json([
             'message' => "Defender $defender->id deleted"
         ]);
+    }
+
+    public function health($id)
+    {
+        return response()->json([]);
+    }
+
+    public function collect($id)
+    {
+        $defender = Defender::findOrFail($id);
+        $relationship = [
+            'decision' => 'decisions',
+            'group' => 'groups',
+            'rule' => 'groups.rules',
+            'target' => 'groups.rules.getTarget',
+            'wordlist' => [
+                'groups.rules.getWordlist',
+                'groups.rules.getWordlist.words',
+                'groups.rules.getTarget.getWordlist',
+                'groups.rules.getTarget.getWordlist.words',
+            ],
+        ];
+        IdentificationService::load($defender, $relationship);
+        $data = json_encode($defender->toArray(), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        FingerprintService::generate($defender, 'Collect All');
+        return response($data)
+        ->header('Content-Type', 'application/json')
+        ->header('Content-Disposition', "attachment; filename=\"defender_$defender->id.json\"");
+    }
+
+    public function apply($id)
+    {
+        //
+    }
+
+    public function revoke($id)
+    {
+        //
+    }
+
+    public function implement($id)
+    {
+        //
+    }
+
+    public function suspend($id)
+    {
+        //
     }
 }

@@ -16,17 +16,11 @@ class AuthDefenderCollect
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $query = $request->query('id');
-        if (!$query)
-        {
-            abort(404);
-        }
-        $user = IdentificationService::get();
-        if (!$user)
-        {
-            abort(404);
-        }
-        $can = IdentificationService::can($user, 'defender', 'collect');
+        $can = IdentificationService::can(
+            IdentificationService::get(),
+            'defender',
+            'collect',
+        );
         if (!$can)
         {
             abort(404);

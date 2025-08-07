@@ -37,7 +37,7 @@ class DefenderAction
 
     public static function collect()
     {
-        $url = fn($record) => route('manager.collection') . '?id='. $record->id;
+        $url = fn($record) => route('manager.collection', ['id' => $record->id]);
         return Action::make('collect')
         ->icon('heroicon-o-arrow-down-on-square-stack')
         ->color('teal')
