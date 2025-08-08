@@ -29,9 +29,6 @@ class EnvironmentProvider extends ServiceProvider
             'MANAGER_PATH_PREFIX' => env('MANAGER_PATH_PREFIX', 'manager'),
             'MANAGER_HTTP_USER_AGENT' => env('MANAGER_HTTP_USER_AGENT', 'M&DSecurity@Manager'),
 
-            'MANAGER_VERIFICATION_ROUTE' => env('MANAGER_VERIFICATION_ROUTE', 'verify'),
-            'MANAGER_COLLECTION_ROUTE' => env('MANAGER_COLLECTION_ROUTE', 'collect'),
-
             'MANAGER_TOKEN_KEY' => env('MANAGER_TOKEN_KEY', 'X-Manager-Token'),
         ];
 
