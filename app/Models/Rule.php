@@ -53,8 +53,8 @@ class Rule extends Model
     ];
 
     protected $hidden = [
-        // 'target_id',
-        // 'wordlist_id',
+        'target_id',
+        'wordlist_id',
         'user_id',
     ];
 

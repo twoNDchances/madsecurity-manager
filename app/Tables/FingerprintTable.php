@@ -5,6 +5,7 @@ namespace App\Tables;
 use App\Services\FilamentTableService;
 use App\Tables\Actions\FingerprintAction;
 use Illuminate\Support\Str;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class FingerprintTable
 {
@@ -74,7 +75,15 @@ class FingerprintTable
         $url = function($record)
         {
             $resourceName = Str::lower(class_basename($record->resource_type));
-            return route('filament.manager.resources.' . Str::plural($resourceName) . '.edit', ['record' => $record->resource_id]);
+            $routeName = 'filament.manager.resources.' . Str::plural($resourceName);
+            try
+            {
+                return route("$routeName.edit", ['record' => $record->resource_id]);
+            }
+            catch (RouteNotFoundException $exception)
+            {
+                return route("$routeName.index");
+            }
         };
         return FilamentTableService::text('resource_type', 'Resource')
         ->formatStateUsing($state)

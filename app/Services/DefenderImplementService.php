@@ -96,7 +96,7 @@ class DefenderImplementService extends DefenderPreActionService
             self::detail('emergency', $message, $defender, 'failure');
             return;
         }
-        $words = $wordlist->words()->get()->toArray();
+        $words = $wordlist->words()->get()->each->makeVisible('wordlist_id')->toArray();
         foreach ($words as $word) {
             self::$requestApiForm['words'][] = self::clean($word);
         }

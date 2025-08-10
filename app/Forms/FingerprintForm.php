@@ -5,6 +5,7 @@ namespace App\Forms;
 use App\Forms\Actions\FingerprintAction;
 use App\Services\FilamentFormService;
 use Illuminate\Support\Str;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 
 class FingerprintForm
 {
@@ -80,7 +81,16 @@ class FingerprintForm
         $state = function($record, $set)
         {
             $resourceName = Str::lower(class_basename($record->resource_type));
-            $set('resource', route('filament.manager.resources.' . Str::plural($resourceName) . '.edit', ['record' => $record->resource_id]));
+            $routeName = 'filament.manager.resources.' . Str::plural($resourceName);
+            try
+            {
+                $routeName = route("$routeName.edit", ['record' => $record->resource_id]);
+            }
+            catch (RouteNotFoundException $exception)
+            {
+                $routeName = route("$routeName.index");
+            }
+            $set('resource', $routeName);
         };
         return FilamentFormService::textInput(
             'resource',

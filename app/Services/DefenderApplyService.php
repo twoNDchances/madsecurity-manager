@@ -87,7 +87,7 @@ class DefenderApplyService extends DefenderPreActionService
                 self::detail('warning', $message, $defender, 'warning');
                 continue;
             }
-            foreach ($group->rules->toArray() as $rule)
+            foreach ($group->rules->each->makeVisible(['target_id', 'wordlist_id'])->toArray() as $rule)
             {
                 $rules[] = $rule;
             }
@@ -137,7 +137,7 @@ class DefenderApplyService extends DefenderPreActionService
                 ['pivot'],
             );
         }
-        $targets = Target::whereIn('id', $targets)->get()->toArray();
+        $targets = Target::whereIn('id', $targets)->get()->each->makeVisible('wordlist_id')->toArray();
         return $targets;
     }
 
@@ -146,7 +146,7 @@ class DefenderApplyService extends DefenderPreActionService
         if (in_array($targetId, $visited)) {
             return [];
         }
-        $target = Target::find($targetId);
+        $target = Target::find($targetId)->makeVisible('wordlist_id');
         if (!$target) {
             return [];
         }
@@ -223,7 +223,7 @@ class DefenderApplyService extends DefenderPreActionService
             self::detail('emergency', $message, $defender, 'failure');
             return false;
         }
-        $words = $wordlist->words()->get()->toArray();
+        $words = $wordlist->words()->get()->each->makeVisible('wordlist_id')->toArray();
         foreach ($words as $word) {
             self::$requestApiForm['words'][] = self::clean($word);
         }
