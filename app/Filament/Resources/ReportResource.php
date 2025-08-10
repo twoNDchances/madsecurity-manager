@@ -121,6 +121,7 @@ class ReportResource extends Resource
             self::$table::clientIp(),
             self::$table::path(),
             self::$table::rule(),
+            self::$table::owner(),
         ])
         ->filters([
             //

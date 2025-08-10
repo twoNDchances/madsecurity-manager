@@ -19,6 +19,7 @@ class Report extends Model
         'path',
         'target_ids',
         'rule_id',
+        'user_id',
     ];
 
     protected $casts = [
@@ -29,9 +30,15 @@ class Report extends Model
     protected $hidden = [
         'defender_id',
         'rule_id',
+        'user_id',
     ];
 
     // Belongs
+    public function getOwner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function getDefender()
     {
         return $this->belongsTo(Defender::class, 'defender_id');

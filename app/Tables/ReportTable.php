@@ -40,6 +40,11 @@ class ReportTable
         ->description($description);
     }
 
+    public static function owner()
+    {
+        return FilamentTableService::text('getOwner.email', 'Created by');
+    }
+
     public static function actionGroup()
     {
         return self::$action::actionGroup();

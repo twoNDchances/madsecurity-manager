@@ -4,9 +4,22 @@ namespace App\Observers;
 
 use App\Models\Report;
 use App\Services\FingerprintService;
+use App\Services\IdentificationService;
 
 class ReportObserver
 {
+    /**
+     * Handle the Policy "creating" event.
+     */
+    public function creating(Report $report): void
+    {
+        if ($report::$skipObserver)
+        {
+            return;
+        }
+        $report->user_id = IdentificationService::get()->id;
+    }
+
     /**
      * Handle the Report "created" event.
      */

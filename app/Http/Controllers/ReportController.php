@@ -18,6 +18,9 @@ class ReportController extends Controller
                 'getDefender' => IdentificationService::important(),
             ],
             'rule' => 'getRule',
+            'user' => [
+                'getOwner' => IdentificationService::important(),
+            ],
         ];
     }
 
