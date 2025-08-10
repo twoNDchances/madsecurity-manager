@@ -5,6 +5,7 @@ namespace App\Forms\Actions;
 use App\Services\HttpRequestService;
 use App\Services\NotificationService;
 use Filament\Forms\Components\Actions\Action;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 class DefenderAction
 {
@@ -17,6 +18,20 @@ class DefenderAction
                 NotificationService::notify('info', 'Info', 'Please enter a valid URL');
                 return;
             }
+            $certification = $get('certification');
+            $certificationPath = null;
+            if (is_array($certification))
+            {
+                $certificationPath = reset($certification);
+                if ($certificationPath instanceof TemporaryUploadedFile)
+                {
+                    $certificationPath = $certificationPath->path();
+                }
+                else
+                {
+                    $certificationPath = storage_path("app/$certificationPath");
+                }
+            }
             if ($get('protection'))
             {
                 HttpRequestService::perform(
@@ -26,6 +41,7 @@ class DefenderAction
                     true,
                     $get('username'),
                     $get('password'),
+                    $certificationPath,
                 );
                 return;
             }
@@ -36,6 +52,7 @@ class DefenderAction
                 true,
                 null,
                 null,
+                $certificationPath,
             );
         };
         return Action::make('check_health')

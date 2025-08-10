@@ -30,6 +30,7 @@ class Defender extends Model
         'suspend_method',
         'output',
         'description',
+        'certification',
         'protection',
         'username',
         'password',
@@ -44,6 +45,7 @@ class Defender extends Model
     ];
 
     protected $hidden = [
+        'certification',
         'user_id',
     ];
 

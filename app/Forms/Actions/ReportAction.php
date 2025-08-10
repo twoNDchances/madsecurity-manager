@@ -21,6 +21,7 @@ class ReportAction
                     true,
                     $defender->username,
                     $defender->password,
+                    $defender->certification ? storage_path("app/$defender->certification") : null,
                 );
                 return;
             }
@@ -31,6 +32,7 @@ class ReportAction
                 true,
                 null,
                 null,
+                $defender->certification ? storage_path("app/$defender->certification") : null,
             );
         };
         return Action::make('ping_defender')

@@ -42,7 +42,7 @@ class ReportPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $this->getResource($user, 'create');
     }
 
     /**

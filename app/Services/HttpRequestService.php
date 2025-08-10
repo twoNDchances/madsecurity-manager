@@ -17,7 +17,7 @@ class HttpRequestService
         'delete',
     ];
 
-    public static function perform($method, $url, $body = null, $notify = true, $username = null, $password = null): Response|string
+    public static function perform($method, $url, $body = null, $notify = true, $username = null, $password = null, $certification = null): Response|string
     {
         if (!self::methodExists($method))
         {
@@ -30,7 +30,12 @@ class HttpRequestService
             );
             return $body;
         }
-        $request = Http::managerSetUp()->withHeader('Content-Type', 'application/json');
+        $request = Http::managerSetUp();
+        if ($certification)
+        {
+            $request = $request->withOptions(['verify' => $certification]);
+        }
+        $request = $request->withHeader('Content-Type', 'application/json');
         if ($username && $password)
         {
             $request = $request->withBasicAuth($username, $password);

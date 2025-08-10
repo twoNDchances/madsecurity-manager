@@ -97,6 +97,7 @@ class DefenderPreActionService
                 false,
                 $defender->protection ? $defender->username : null,
                 $defender->protection ? $defender->password : null,
+                $defender->certification ? storage_path("app/$defender->certification") : null
             );
             if (!is_string($response))
             {

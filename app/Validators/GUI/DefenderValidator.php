@@ -2,6 +2,8 @@
 
 namespace App\Validators\GUI;
 
+use App\Rules\CertificateValidation;
+
 class DefenderValidator
 {
     public static array $methods = [
@@ -85,6 +87,26 @@ class DefenderValidator
         return [
             'required',
             'boolean',
+        ];
+    }
+
+    public static function certification()
+    {
+        $mimetypes = [
+            'application/x-x509-ca-cert',
+            'application/pkix-cert',
+            'application/x-x509-user-cert',
+            'application/pem-certificate-chain',
+            'text/plain',
+            'application/octet-stream',
+        ];
+        return [
+            'nullable',
+            'file',
+            'max:64',
+            'mimetypes:' . implode(',', $mimetypes),
+            'mimes:crt,pem,cer,der',
+            new CertificateValidation,
         ];
     }
 

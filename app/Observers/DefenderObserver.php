@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Defender;
 use App\Services\FingerprintService;
 use App\Services\IdentificationService;
+use Illuminate\Support\Facades\Storage;
 
 class DefenderObserver
 {
@@ -31,9 +32,43 @@ class DefenderObserver
     /**
      * Handle the Defender "updated" event.
      */
+    public function updating(Defender $defender): void
+    {
+        if ($defender::$skipObserver)
+        {
+            return;
+        }
+        if ($defender->isDirty('certification'))
+        {
+            $oldCertificationPath = $defender->getOriginal('certification');
+            if ($oldCertificationPath && Storage::disk('local')->exists($oldCertificationPath))
+            {
+                Storage::disk('local')->delete($oldCertificationPath);
+            }
+        }
+    }
+
+    /**
+     * Handle the Defender "updated" event.
+     */
     public function updated(Defender $defender): void
     {
         FingerprintService::controlObserver($defender, 'Update');
+    }
+
+    /**
+     * Handle the Defender "deleting" event.
+     */
+    public function deleting(Defender $defender): void
+    {
+        if ($defender::$skipObserver)
+        {
+            return;
+        }
+        if ($defender->certification && Storage::disk('local')->exists($defender->certification))
+        {
+            Storage::disk('local')->delete($defender->certification);
+        }
     }
 
     /**

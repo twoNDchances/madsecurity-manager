@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ReportResource\Pages;
 
 use App\Actions\ReportAction;
 use App\Filament\Resources\ReportResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListReports extends ListRecords

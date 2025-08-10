@@ -159,6 +159,18 @@ class DefenderForm
         ->helperText('Automatic periodic Health check');
     }
 
+    public static function certification()
+    {
+        return FilamentFormService::fileUpload(
+            'certification',
+            null,
+            self::$validator::certification(),
+        )
+        ->visibility('private')
+        ->directory('tls')
+        ->helperText('For HTTPS self-signed Defender server');
+    }
+
     public static function protection()
     {
         return FilamentFormService::toggle(

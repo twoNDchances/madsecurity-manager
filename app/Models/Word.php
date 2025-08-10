@@ -15,7 +15,7 @@ class Word extends Model
     ];
 
     protected $hidden = [
-        'wordlist_id',
+        // 'wordlist_id',
     ];
 
     // Belongs

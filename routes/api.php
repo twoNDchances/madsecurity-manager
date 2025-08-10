@@ -101,6 +101,16 @@ Route::middleware(['auth.token', 'auth.capability'])
             Route::delete('delete/{id}', [PolicyController::class, 'delete'])->name('delete');
         });
 
+        Route::prefix('reports')
+        ->name('reports.')
+        ->group(function()
+        {
+            Route::get('list', [ReportController::class, 'list'])->name('list');
+            Route::get('show/{id}', [ReportController::class, 'show'])->name('show');
+            Route::post('create', [ReportController::class, 'create'])->name('create');
+            Route::delete('delete/{id}', [ReportController::class, 'delete'])->name('delete');
+        });
+
         Route::prefix('rules')
         ->name('rules.')
         ->group(function()
@@ -168,6 +178,3 @@ Route::middleware(['auth.token', 'auth.capability'])
         });
     });
 });
-
-Route::middleware('auth.defender.report')
-->post('/report/create', [ReportController::class, 'create']);

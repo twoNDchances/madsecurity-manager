@@ -151,6 +151,7 @@ class DefenderResource extends Resource
         $condition = fn($livewire) => $livewire instanceof EditRecord;
         return Forms\Components\Section::make('Defender Authentication')
         ->schema([
+            self::$form::certification(),
             self::$form::protection(),
             Forms\Components\Fieldset::make('Credential')
             ->schema([

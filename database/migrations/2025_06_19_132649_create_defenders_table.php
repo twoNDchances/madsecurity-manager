@@ -30,6 +30,7 @@ return new class extends Migration
             $table->string('suspend_method')->default('delete');
             $table->longText('output')->nullable();
             $table->longText('description')->nullable();
+            $table->string('certification')->nullable();
             $table->boolean('protection')->default(false);
             $table->string('username')->nullable();
             $table->string('password')->nullable();

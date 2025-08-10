@@ -32,7 +32,7 @@ class Target extends Model
     ];
 
     protected $hidden = [
-        'wordlist_id',
+        // 'wordlist_id',
         'user_id',
     ];
 

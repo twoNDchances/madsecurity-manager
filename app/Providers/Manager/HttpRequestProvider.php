@@ -23,7 +23,7 @@ class HttpRequestProvider extends ServiceProvider
         Http::macro('managerSetUp', function()
         {
             $request = Http::withUserAgent(env('MANAGER_HTTP_USER_AGENT'));
-            return $request->withoutVerifying();
+            return $request;
         });
     }
 }

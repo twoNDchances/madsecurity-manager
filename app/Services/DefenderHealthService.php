@@ -17,10 +17,16 @@ class DefenderHealthService extends DefenderPreActionService
                 true,
                 $record->username,
                 $record->password,
+                $record->certification ? storage_path("app/$record->certification") : null
             ),
             false => HttpRequestService::perform(
                 $record->health_method,
-                "$record->url$record->health"
+                "$record->url$record->health",
+                null,
+                true,
+                null,
+                null,
+                $record->certification ? storage_path("app/$record->certification") : null
             ),
         };
         $lastStatus = false;

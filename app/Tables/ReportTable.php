@@ -17,12 +17,10 @@ class ReportTable
 
     public static function defender()
     {
-        $url = fn($state) => $state;
-        $description = fn($record) => $record->getDefender->name;
-        return FilamentTableService::text('getDefender.url', 'Defender')
+        $url = fn($record) => $record->getDefender->url . $record->getDefender->health;
+        return FilamentTableService::text('getDefender.name', 'Defender')
         ->url($url)
-        ->openUrlInNewTab()
-        ->description($description);
+        ->openUrlInNewTab();
     }
 
     public static function clientIp()
