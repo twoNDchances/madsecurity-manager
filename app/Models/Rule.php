@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Services\FingerprintService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -88,9 +87,9 @@ class Rule extends Model
         ->orderBy('position');
     }
 
-    public function records()
+    public function reports()
     {
-        return $this->hasMany(Record::class, 'rule_id');
+        return $this->hasMany(Report::class, 'rule_id');
     }
 
     public function fingerprints()

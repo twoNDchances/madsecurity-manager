@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Record;
+use App\Models\Report;
 use App\Services\IdentificationService;
 use App\Services\NotificationService;
-use App\Validators\API\RecordValidator;
+use App\Validators\API\ReportValidator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class RecordController extends Controller
+class ReportController extends Controller
 {
     private function relationships()
     {
@@ -23,25 +23,25 @@ class RecordController extends Controller
 
     public function list(Request $request)
     {
-        $records = Record::query();
+        $reports = Report::query();
         if ($request->boolean('all'))
         {
-            return $records->get();
+            return $reports->get();
         }
         $pageSize = $request->integer('pageSize', 10);
-        return $records->paginate($pageSize);
+        return $reports->paginate($pageSize);
     }
 
     public function show($id)
     {
-        $record = Record::findOrFail($id);
-        IdentificationService::load($record, $this->relationships());
-        return $record;
+        $report = Report::findOrFail($id);
+        IdentificationService::load($report, $this->relationships());
+        return $report;
     }
 
     public function create(Request $request)
     {
-        $validator = Validator::make($request->all(), RecordValidator::build());
+        $validator = Validator::make($request->all(), ReportValidator::build());
         if ($validator->fails())
         {
             return response()->json([
@@ -55,23 +55,23 @@ class RecordController extends Controller
             true => $validated['output'],
             false => [$validated['output']],
         };
-        $record = Record::create($validated);
-        IdentificationService::load($record, $this->relationships());
+        $report = Report::create($validated);
+        IdentificationService::load($report, $this->relationships());
         NotificationService::announce(
             'warning',
-            'Record',
+            'Report',
             'Defender ' . $validated['defender_id'] . ': Rule ' . $validated['rule_id'] . ' just received',
             true,
         );
-        return $record;
+        return $report;
     }
 
     public function delete($id)
     {
-        $record = Record::findOrFail($id);
-        $record->delete();
+        $report = Report::findOrFail($id);
+        $report->delete();
         return response()->json([
-            'message' => "Record $record->id deleted",
+            'message' => "Report $report->id deleted",
         ]);
     }
 }

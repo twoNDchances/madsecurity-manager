@@ -2,7 +2,7 @@
 
 namespace App\Validators\API;
 
-class RecordValidator
+class ReportValidator
 {
     public static function build()
     {

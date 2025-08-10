@@ -87,6 +87,7 @@ class GroupForm
                 {
                     $rule->tags()->sync($data['tags']);
                 }
+                return $rule->id;
             };
             $ruleField = $ruleField
             ->createOptionForm($former)

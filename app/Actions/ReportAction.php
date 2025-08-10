@@ -5,13 +5,13 @@ namespace App\Actions;
 use App\Services\NotificationService;
 use Filament\Actions\Action;
 
-class RecordAction
+class ReportAction
 {
     public static function refresh()
     {
         $action = function($livewire)
         {
-            $livewire->dispatch('refreshRecordTable');
+            $livewire->dispatch('refreshReportTable');
             NotificationService::notify('success', 'Refreshed');
         };
         return Action::make('refresh')

@@ -6,14 +6,13 @@ use App\Http\Controllers\FingerprintController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PolicyController;
-use App\Http\Controllers\RecordController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RuleController;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\TargetController;
 use App\Http\Controllers\TokenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WordlistController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -101,14 +100,14 @@ Route::middleware(['auth.token', 'auth.capability'])
             Route::delete('delete/{id}', [PolicyController::class, 'delete'])->name('delete');
         });
 
-        Route::prefix('records')
-        ->name('records.')
+        Route::prefix('reports')
+        ->name('reports.')
         ->group(function()
         {
-            Route::get('list', [RecordController::class, 'list'])->name('list');
-            Route::get('show/{id}', [RecordController::class, 'show'])->name('show');
-            Route::post('create', [RecordController::class, 'create'])->name('create');
-            Route::delete('delete/{id}', [RecordController::class, 'delete'])->name('delete');
+            Route::get('list', [ReportController::class, 'list'])->name('list');
+            Route::get('show/{id}', [ReportController::class, 'show'])->name('show');
+            Route::post('create', [ReportController::class, 'create'])->name('create');
+            Route::delete('delete/{id}', [ReportController::class, 'delete'])->name('delete');
         });
 
         Route::prefix('rules')

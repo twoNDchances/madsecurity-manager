@@ -7,7 +7,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\ViewAction;
 
-class RecordAction
+class ReportAction
 {
     public static function actionGroup()
     {

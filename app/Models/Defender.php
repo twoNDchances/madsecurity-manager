@@ -2,9 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Scopes\ImportantScope;
-use App\Services\FingerprintService;
-use App\Services\IdentificationService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -73,9 +70,9 @@ class Defender extends Model
         ->withPivot('status');
     }
 
-    public function records()
+    public function reports()
     {
-        return $this->hasMany(Record::class, 'defender_id');
+        return $this->hasMany(Report::class, 'defender_id');
     }
 
     public function fingerprints()

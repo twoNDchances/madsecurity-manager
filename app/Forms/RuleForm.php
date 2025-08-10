@@ -316,7 +316,7 @@ class RuleForm
             'request' => 'Make an HTTP request and continue investigation',
             'setScore' => 'Reset total Score',
             'setLevel' => 'Reset default Rule enforcement Level',
-            'record' => 'Send violation details to Manager and continue investigation',
+            'report' => 'Send violation details to Manager and continue investigation',
             'setVariable' => 'Assigns a value to a variable and can be called back by Target until the end of the request\'s lifecycle',
             'setHeader' => 'Set a Header for Request/Response',
             default => 'No action',
