@@ -21,10 +21,7 @@ Route::name('manager.')
 ->prefix(env('MANAGER_PATH_PREFIX', 'manager'))
 ->group(function ()
 {
-    $verificationPrefix = env('MANAGER_VERIFICATION_ROUTE', 'verify');
-    Route::get("$verificationPrefix/{token}", [UserController::class, 'verify'])->name('verification');
-
-    $collectionPrefix = env('MANAGER_COLLECTION_ROUTE', 'collect');
+    Route::get("verification/{token}", [UserController::class, 'verify'])->name('verification');
     Route::middleware(['auth' ,'auth.defender.collect'])
-    ->get("$collectionPrefix/{id}", [DefenderController::class, 'collect'])->name('collection');
+    ->get("collection/{id}", [DefenderController::class, 'collect'])->name('collection');
 });
