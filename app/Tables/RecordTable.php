@@ -3,11 +3,11 @@
 namespace App\Tables;
 
 use App\Services\FilamentTableService;
-use App\Tables\Actions\ReportAction;
+use App\Tables\Actions\RecordAction;
 
-class ReportTable
+class RecordTable
 {
-    private static $action = ReportAction::class;
+    private static $action = RecordAction::class;
 
     public static function time()
     {

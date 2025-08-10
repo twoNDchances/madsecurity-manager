@@ -5,7 +5,7 @@ namespace App\Forms\Actions;
 use App\Services\HttpRequestService;
 use Filament\Forms\Components\Actions\Action;
 
-class ReportAction
+class RecordAction
 {
     public static function pingDefender()
     {

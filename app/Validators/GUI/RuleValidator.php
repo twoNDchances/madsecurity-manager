@@ -47,7 +47,7 @@ class RuleValidator
         'request' => 'Request',
         'setScore' => 'Set Score',
         'setLevel' => 'Set Level',
-        'report' => 'Report',
+        'record' => 'Record',
         'setVariable' => 'Set Variable',
         'setHeader' => 'Set Header',
     ];

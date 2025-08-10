@@ -7,7 +7,7 @@ use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\ViewAction;
 
-class ReportAction
+class RecordAction
 {
     public static function actionGroup()
     {
@@ -16,12 +16,12 @@ class ReportAction
             edit: false,
             delete: true,
             more: [
-                self::viewReport(),
+                self::viewRecord(),
             ],
         );
     }
 
-    private static function viewReport()
+    private static function viewRecord()
     {
         return ViewAction::make()
         ->modalWidth(MaxWidth::SevenExtraLarge);

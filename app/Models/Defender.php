@@ -73,9 +73,9 @@ class Defender extends Model
         ->withPivot('status');
     }
 
-    public function reports()
+    public function records()
     {
-        return $this->hasMany(Report::class, 'defender_id');
+        return $this->hasMany(Record::class, 'defender_id');
     }
 
     public function fingerprints()

@@ -15,7 +15,7 @@ class RuleController extends Controller
     {
         return [
             'group' => 'groups',
-            'report' => 'reports',
+            'record' => 'records',
             'target' => 'getTarget',
             'wordlist' => 'getWordlist',
             'user' => [

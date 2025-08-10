@@ -7,7 +7,7 @@ use App\Models\Defender;
 use App\Models\Group;
 use App\Models\Permission;
 use App\Models\Policy;
-use App\Models\Report;
+use App\Models\Record;
 use App\Models\Rule;
 use App\Models\Tag;
 use App\Models\Token;
@@ -51,7 +51,7 @@ class EventServiceProvider extends ServiceProvider
         Group::observe(GroupObserver::class);
         Permission::observe(PermissionObserver::class);
         Policy::observe(PolicyObserver::class);
-        Report::observe(Report::class);
+        Record::observe(Record::class);
         Rule::observe(RuleObserver::class);
         Tag::observe(TagObserver::class);
         Token::observe(TokenObserver::class);

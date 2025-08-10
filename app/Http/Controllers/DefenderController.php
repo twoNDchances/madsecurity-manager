@@ -17,7 +17,7 @@ class DefenderController extends Controller
         return [
             'decision' => 'decisions',
             'group' => 'groups',
-            'report' => 'reports',
+            'record' => 'records',
             'tag' => 'tags',
             'user' => [
                 'getOwner' => IdentificationService::important(),

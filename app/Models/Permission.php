@@ -61,8 +61,7 @@ class Permission extends Model
     ];
 
     private static array $exclusionList = [
-        'report' => [
-            'create',
+        'record' => [
             'update',
         ],
         'fingerprint' => [

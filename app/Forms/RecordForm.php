@@ -2,14 +2,14 @@
 
 namespace App\Forms;
 
-use App\Forms\Actions\ReportAction;
+use App\Forms\Actions\RecordAction;
 use App\Models\Target;
 use App\Services\FilamentFormService;
 use Filament\Forms\Components\Fieldset;
 
-class ReportForm
+class RecordForm
 {
-    private static $action = ReportAction::class;
+    private static $action = RecordAction::class;
 
     public static function defenderName()
     {

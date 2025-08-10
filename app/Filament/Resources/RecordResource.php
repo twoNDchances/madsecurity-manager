@@ -2,27 +2,27 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ReportResource\Pages;
-use App\Forms\ReportForm;
-use App\Models\Report;
-use App\Tables\ReportTable;
+use App\Filament\Resources\RecordResource\Pages;
+use App\Forms\RecordForm;
+use App\Models\Record;
+use App\Tables\RecordTable;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
-class ReportResource extends Resource
+class RecordResource extends Resource
 {
-    protected static ?string $model = Report::class;
+    protected static ?string $model = Record::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-flag';
 
     protected static ?string $navigationGroup = 'Audits';
 
-    private static $form = ReportForm::class;
+    private static $form = RecordForm::class;
 
-    private static $table = ReportTable::class;
+    private static $table = RecordTable::class;
 
     public static function form(Form $form): Form
     {
@@ -116,20 +116,20 @@ class ReportResource extends Resource
     {
         return $table
         ->columns([
-            // self::$table::time(),
-            // self::$table::defender(),
-            // self::$table::clientIp(),
-            // self::$table::path(),
-            // self::$table::rule(),
+            self::$table::time(),
+            self::$table::defender(),
+            self::$table::clientIp(),
+            self::$table::path(),
+            self::$table::rule(),
         ])
         ->filters([
             //
         ])
         ->actions([
-            // self::$table::actionGroup(),
+            self::$table::actionGroup(),
         ])
         ->bulkActions([
-            // self::$table::deleteBulkAction(),
+            self::$table::deleteBulkAction(),
         ]);
     }
 
@@ -143,44 +143,44 @@ class ReportResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListReports::route('/'),
+            'index' => Pages\ListRecords::route('/'),
         ];
     }
 
-    // public static function getNavigationBadge(): ?string
-    // {
-    //     return static::getModel()::count();
-    // }
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
-    // public static function getNavigationBadgeColor(): ?string
-    // {
-    //     return static::getModel()::count() > 0 ? 'danger' : 'primary';
-    // }
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return static::getModel()::count() > 0 ? 'danger' : 'primary';
+    }
 
-    // public static function getGloballySearchableAttributes(): array
-    // {
-    //     return [
-    //         'time',
-    //         'output',
-    //         'user_agent',
-    //         'client_ip',
-    //         'method',
-    //         'path',
-    //         'getDefender.name',
-    //         'getRule.alias',
-    //     ];
-    // }
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'time',
+            'output',
+            'user_agent',
+            'client_ip',
+            'method',
+            'path',
+            'getDefender.name',
+            'getRule.alias',
+        ];
+    }
 
-    // public static function getGlobalSearchResultTitle(Model $record): string
-    // {
-    //     return $record->getDefender->name;
-    // }
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->getDefender->name;
+    }
 
-    // public static function getGlobalSearchResultDetails(Model $record): array
-    // {
-    //     return [
-    //         'Defender' => $record->getDefender->name,
-    //         'Rule' => $record->getRule->alias,
-    //     ];
-    // }
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Defender' => $record->getDefender->name,
+            'Rule' => $record->getRule->alias,
+        ];
+    }
 }

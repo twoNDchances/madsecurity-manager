@@ -88,9 +88,9 @@ class Rule extends Model
         ->orderBy('position');
     }
 
-    public function reports()
+    public function records()
     {
-        return $this->hasMany(Report::class, 'rule_id');
+        return $this->hasMany(Record::class, 'rule_id');
     }
 
     public function fingerprints()

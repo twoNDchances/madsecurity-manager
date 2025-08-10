@@ -16,12 +16,12 @@ class FingerprintAction
             edit: false,
             delete: true,
             more: [
-                self::viewReport(),
+                self::viewFingerprint(),
             ],
         );
     }
 
-    private static function viewReport()
+    private static function viewFingerprint()
     {
         return ActionsViewAction::make()
         ->modalWidth(MaxWidth::SevenExtraLarge);
