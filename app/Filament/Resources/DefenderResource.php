@@ -92,7 +92,9 @@ class DefenderResource extends Resource
                 Forms\Components\Fieldset::make('General')
                 ->schema([
                     self::$form::path('health'),
+                    self::$form::path('inspect'),
                     self::$form::method('health', 'post'),
+                    self::$form::method('inspect', 'post'),
                 ])->columns(2),
 
                 Forms\Components\Fieldset::make('Groups & Rules')
@@ -199,6 +201,7 @@ class DefenderResource extends Resource
             self::$table::lastStatus(),
             self::$table::groups(),
             self::$table::health(),
+            // self::
             self::$table::apply(),
             self::$table::revoke(),
             self::$table::implement(),

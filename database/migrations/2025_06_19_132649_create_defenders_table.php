@@ -20,6 +20,8 @@ return new class extends Migration
             $table->boolean('last_status')->default(false);
             $table->text('health');
             $table->string('health_method')->default('post');
+            $table->text('inspect');
+            $table->string('inspect_method')->default('post');
             $table->text('apply');
             $table->string('apply_method')->default('patch');
             $table->text('revoke');

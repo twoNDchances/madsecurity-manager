@@ -20,6 +20,7 @@ class EditDefender extends EditRecord
         return [
             $action::checkHealth(),
             $action::collect(),
+            $action::inspect(),
             $action::apply(),
             $action::revoke(),
             $action::implement(),
@@ -46,7 +47,8 @@ class EditDefender extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $defender = Defender::find($data['id']);
+        $defender = Defender::find($data['id'])->makeVisible('certification');
+        $data['certification'] = $defender->certification;
         $data['total_groups'] = $defender->groups->count();
         $data['current_applied'] = $defender->groups()->wherePivot('status', true)->count();
         return $data;

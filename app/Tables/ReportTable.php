@@ -17,7 +17,7 @@ class ReportTable
 
     public static function defender()
     {
-        $url = fn($record) => $record->getDefender->url . $record->getDefender->health;
+        $url = fn($record) =>$record->getDefender ? $record->getDefender->url . $record->getDefender->health : null;
         return FilamentTableService::text('getDefender.name', 'Defender')
         ->url($url)
         ->openUrlInNewTab();
@@ -35,7 +35,7 @@ class ReportTable
 
     public static function rule()
     {
-        $description = fn($record) => $record->getRule->alias;
+        $description = fn($record) => $record->getRule ? $record->getRule->alias : null;
         return FilamentTableService::text('getRule.name', 'Rule')
         ->description($description);
     }

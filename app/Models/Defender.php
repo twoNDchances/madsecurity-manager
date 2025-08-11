@@ -17,6 +17,8 @@ class Defender extends Model
         'last_status',
         'health',
         'health_method',
+        'inspect',
+        'inspect_method',
         'apply',
         'apply_method',
         'revoke',

@@ -58,6 +58,7 @@ class FingerprintTable
             'Delete' => 'danger',
             'Check Health' => 'slate',
             'Collect All' => 'teal',
+            'Inspect All' => 'primary',
             'Apply', 'Apply All' => 'sky',
             'Revoke', 'Revoke All' => 'pink',
             'Implement', 'Implement All' => 'orange',

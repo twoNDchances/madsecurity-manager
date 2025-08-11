@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Services\DefenderInspectionService;
 use App\Services\IdentificationService;
 use App\Services\DefenderApplyService;
 use App\Services\DefenderHealthService;
@@ -10,6 +11,8 @@ use App\Services\DefenderRevokeService;
 use App\Services\DefenderSuspendService;
 use App\Services\FingerprintService;
 use Filament\Actions\Action;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\HtmlString;
 
 class DefenderAction
 {
@@ -44,6 +47,28 @@ class DefenderAction
         ->url($url)
         ->openUrlInNewTab()
         ->authorize(self::can('collect'));
+    }
+
+    public static function inspect()
+    {
+        $content = function($record, $livewire)
+        {
+            $body = DefenderInspectionService::perform($record);
+            $livewire->dispatch('refreshDefenderForm');
+            $html = '<pre class="p-4 rounded-lg text-lg font-mono whitespace-pre overflow-x-auto">'
+. e($body)
+. '</pre>';
+            FingerprintService::generate($record, 'Inspect All');
+            return new HtmlString($html);
+        };
+        return Action::make('inspect')
+        ->icon('heroicon-o-bug-ant')
+        ->color('primary')
+        ->modalContent($content)
+        ->modalSubmitAction(false)
+        ->modalCancelAction(false)
+        ->modalWidth(MaxWidth::SevenExtraLarge)
+        ->authorize(self::can('inspect'));
     }
 
     public static function apply()

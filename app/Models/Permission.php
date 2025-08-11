@@ -53,6 +53,7 @@ class Permission extends Model
         'deleteAny' => 'Multi-Delete',
         'health' => 'Health-Check',
         'collect' => 'Collect-Data',
+        'inspect' => 'Inspect-Data',
         'apply' => 'Apply-Data',
         'revoke' => 'Revoke-Data',
         'implement' => 'Implement-Data',

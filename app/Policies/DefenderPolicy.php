@@ -43,7 +43,7 @@ class DefenderPolicy
      */
     public function view(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'view');
+        return $this->operate($user, $defender, 'view');
     }
 
     /**
@@ -59,7 +59,7 @@ class DefenderPolicy
      */
     public function update(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'update');
+        return $this->operate($user, $defender, 'update');
     }
 
     /**
@@ -75,7 +75,7 @@ class DefenderPolicy
      */
     public function delete(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'delete');
+        return $this->operate($user, $defender, 'delete');
     }
 
     /**
@@ -83,7 +83,7 @@ class DefenderPolicy
      */
     public function health(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'health');
+        return $this->operate($user, $defender, 'health');
     }
 
     /**
@@ -91,7 +91,15 @@ class DefenderPolicy
      */
     public function collect(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'collect');
+        return $this->operate($user, $defender, 'collect');
+    }
+
+    /**
+     * Determine whether the user can inspect data from the Defender.
+     */
+    public function inspect(User $user, Defender $defender): bool
+    {
+        return $this->operate($user, $defender, 'inspect');
     }
 
     /**
@@ -99,7 +107,7 @@ class DefenderPolicy
      */
     public function apply(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'apply');
+        return $this->operate($user, $defender, 'apply');
     }
 
     /**
@@ -107,7 +115,7 @@ class DefenderPolicy
      */
     public function revoke(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'revoke');
+        return $this->operate($user, $defender, 'revoke');
     }
 
     /**
@@ -115,7 +123,7 @@ class DefenderPolicy
      */
     public function implement(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'implement');
+        return $this->operate($user, $defender, 'implement');
     }
 
     /**
@@ -123,7 +131,7 @@ class DefenderPolicy
      */
     public function suspend(User $user, Defender $defender): bool
     {
-        return $this->operate($user, $defender,'suspend');
+        return $this->operate($user, $defender, 'suspend');
     }
 
     /**

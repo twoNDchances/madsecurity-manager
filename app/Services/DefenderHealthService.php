@@ -4,31 +4,19 @@ namespace App\Services;
 
 use App\Models\Defender;
 
-class DefenderHealthService extends DefenderPreActionService
+class DefenderHealthService
 {
-    public static function perform(Defender $record): Defender
+    public static function perform(Defender $defender): Defender
     {
-        $response = match ($record->protection)
-        {
-            true => HttpRequestService::perform(
-                $record->health_method,
-                "$record->url$record->health",
-                null,
-                true,
-                $record->username,
-                $record->password,
-                $record->certification ? storage_path("app/$record->certification") : null
-            ),
-            false => HttpRequestService::perform(
-                $record->health_method,
-                "$record->url$record->health",
-                null,
-                true,
-                null,
-                null,
-                $record->certification ? storage_path("app/$record->certification") : null
-            ),
-        };
+        $response = HttpRequestService::perform(
+            $defender->inspect_method,
+            "$defender->url$defender->inspect",
+            null,
+            true,
+            $defender->protection ? $defender->username : null,
+            $defender->protection ? $defender->password : null,
+            $defender->certification ? storage_path("app/$defender->certification") : null,
+        );
         $lastStatus = false;
 
         $output = null;
@@ -50,7 +38,7 @@ class DefenderHealthService extends DefenderPreActionService
             }
         }
         DefenderConsoleService::updateOutput(
-            $record,
+            $defender,
             $output,
             ['last_status' => $lastStatus],
         );
@@ -60,6 +48,6 @@ class DefenderHealthService extends DefenderPreActionService
             $status = 'failure';
         }
         NotificationService::announce($status, 'Health checked', $output);
-        return $record;
+        return $defender;
     }
 }
