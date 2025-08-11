@@ -27,6 +27,7 @@ class DefenderInspectionService extends DefenderPreActionService
             $bodyReturned = '{}';
             $message = "Defender [$defender->id][$defender->name] inspect failed";
             self::detail('warning', $message, $defender, 'warning');
+            NotificationService::notify('warning', self::$actionName, $response);
         }
         else
         {
@@ -40,6 +41,7 @@ class DefenderInspectionService extends DefenderPreActionService
                 $bodyReturned = '{}';
                 $body = 'Status Code: ' . $response->status() . ' | Body: ' . $response->body();
                 self::detail('warning', $body, $defender, 'warning');
+                NotificationService::notify('warning', self::$actionName, $body);
             }
         }
         return $bodyReturned;
