@@ -10,7 +10,7 @@ class DefenderInspectionService extends DefenderPreActionService
 
     protected static ?string $actionName = 'Data Inspection';
 
-    public static function perform(Defender $defender): string
+    public static function perform(Defender $defender, $notify = true): string
     {
         $response = HttpRequestService::perform(
             $defender->inspect_method,
@@ -27,7 +27,10 @@ class DefenderInspectionService extends DefenderPreActionService
             $bodyReturned = '{}';
             $message = "Defender [$defender->id][$defender->name] inspect failed";
             self::detail('warning', $message, $defender, 'warning');
-            NotificationService::notify('warning', self::$actionName, $response);
+            if ($notify)
+            {
+                NotificationService::notify('warning', self::$actionName, $response);
+            }
         }
         else
         {
@@ -41,7 +44,10 @@ class DefenderInspectionService extends DefenderPreActionService
                 $bodyReturned = '{}';
                 $body = 'Status Code: ' . $response->status() . ' | Body: ' . $response->body();
                 self::detail('warning', $body, $defender, 'warning');
-                NotificationService::notify('warning', self::$actionName, $body);
+                if ($notify)
+                {
+                    NotificationService::notify('warning', self::$actionName, $body);
+                }
             }
         }
         return $bodyReturned;

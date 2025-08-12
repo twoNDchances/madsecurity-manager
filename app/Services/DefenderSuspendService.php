@@ -18,7 +18,7 @@ class DefenderSuspendService extends DefenderPreActionService
 
     protected static ?string $actionName = 'Data Suspension';
 
-    public static function performAll(Defender $defender): Defender
+    public static function performAll(Defender $defender, $notify = true): Defender
     {
         self::getDecisions($defender->decisions, $defender);
         self::generalAction(
@@ -26,11 +26,12 @@ class DefenderSuspendService extends DefenderPreActionService
             $defender->id,
             $defender->name,
             $defender,
+            $notify,
         );
         return $defender;
     }
 
-    public static function performEach($decision, Defender $defender): Defender
+    public static function performEach($decision, Defender $defender, $notify = true): Defender
     {
         self::getDecisions([$decision], $defender);
         self::generalAction(
@@ -38,11 +39,12 @@ class DefenderSuspendService extends DefenderPreActionService
             $decision->id,
             $decision->name,
             $defender,
+            $notify,
         );
         return $defender;
     }
 
-    private static function generalAction($type, $id, $name, $defender)
+    private static function generalAction($type, $id, $name, $defender, $notify = true)
     {
         if (empty(self::$requestApiForm['decisions']))
         {
@@ -50,7 +52,13 @@ class DefenderSuspendService extends DefenderPreActionService
             self::detail('warning', $message, $defender, 'warning');
             return;
         }
-        $result = self::send($defender, $defender->suspend_method, "$defender->url$defender->suspend", false);
+        $result = self::send(
+            $defender,
+            $defender->suspend_method,
+            "$defender->url$defender->suspend",
+            false,
+            $notify,
+        );
         if ($result['status'])
         {
             $message = "$type [$id][$name] has been suspended";

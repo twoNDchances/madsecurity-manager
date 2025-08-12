@@ -22,7 +22,7 @@ class DefenderApplyService extends DefenderPreActionService
 
     protected static ?string $actionName = 'Data Application';
 
-    public static function performAll(Defender $defender): Defender
+    public static function performAll(Defender $defender, $notify = true): Defender
     {
         $rules = self::getGroupsAndReturnRules($defender->groups, $defender);
         self::generalAction(
@@ -31,11 +31,12 @@ class DefenderApplyService extends DefenderPreActionService
             $defender->name,
             $defender,
             $rules,
+            $notify
         );
         return $defender;
     }
 
-    public static function performEach(Group $group, Defender $defender): Defender
+    public static function performEach(Group $group, Defender $defender, $notify = true): Defender
     {
         $rules = self::getGroupsAndReturnRules([$group], $defender);
         self::generalAction(
@@ -44,11 +45,12 @@ class DefenderApplyService extends DefenderPreActionService
             $group->name,
             $defender,
             $rules,
+            $notify,
         );
         return $defender;
     }
 
-    private static function generalAction($type, $id, $name, $defender, $rules)
+    private static function generalAction($type, $id, $name, $defender, $rules, $notify = true)
     {
         $targets = self::getRulesAndReturnTargets($rules, $defender);
         if (empty($rules) || empty($targets))
@@ -64,7 +66,13 @@ class DefenderApplyService extends DefenderPreActionService
             self::detail('warning', $message, $defender, 'warning');
             return;
         }
-        $result = self::send($defender, $defender->apply_method, "$defender->url$defender->apply");
+        $result = self::send(
+            $defender,
+            $defender->apply_method,
+            "$defender->url$defender->apply",
+            true,
+            $notify,
+        );
         if ($result['status'])
         {
             $message = "$type [$id][$name] has been applied";

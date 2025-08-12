@@ -13,7 +13,7 @@ class ReportForm
 
     public static function defenderName()
     {
-        $state = fn($record, $set) => $set('defender_name', $record->getDefender->name);
+        $state = fn($record, $set) => $set('defender_name', $record->getDefender?->name);
         return FilamentFormService::textInput(
             'defender_name',
             'Defender Name',
@@ -23,7 +23,7 @@ class ReportForm
 
     public static function defenderUrl()
     {
-        $state = fn($record, $set) => $set('defender_url', $record->getDefender->url . $record->getDefender->health);
+        $state = fn($record, $set) => $set('defender_url', $record->getDefender?->url . $record->getDefender?->health);
         $actions = [
             self::$action::pingDefender(),
         ];

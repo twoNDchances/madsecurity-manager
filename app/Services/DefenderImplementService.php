@@ -18,7 +18,7 @@ class DefenderImplementService extends DefenderPreActionService
 
     protected static ?string $actionName = 'Data Implementation';
 
-    public static function performAll(Defender $defender): Defender
+    public static function performAll(Defender $defender, $notify = true): Defender
     {
         self::getDecisions($defender->decisions, $defender);
         self::generalAction(
@@ -26,11 +26,12 @@ class DefenderImplementService extends DefenderPreActionService
             $defender->id,
             $defender->name,
             $defender,
+            $notify,
         );
         return $defender;
     }
 
-    public static function performEach($decision, Defender $defender)
+    public static function performEach($decision, Defender $defender, $notify = true)
     {
         self::getDecisions([$decision], $defender);
         self::generalAction(
@@ -38,10 +39,12 @@ class DefenderImplementService extends DefenderPreActionService
             $decision->id,
             $decision->name,
             $defender,
+            $notify,
         );
+        return $defender;
     }
 
-    private static function generalAction($type, $id, $name, Defender $defender)
+    private static function generalAction($type, $id, $name, Defender $defender, $notify = true)
     {
         if (empty(self::$requestApiForm['decisions']))
         {
@@ -49,7 +52,13 @@ class DefenderImplementService extends DefenderPreActionService
             self::detail('warning', $message, $defender, 'warning');
             return;
         }
-        $result = self::send($defender, $defender->implement_method, "$defender->url$defender->implement", false);
+        $result = self::send(
+            $defender,
+            $defender->implement_method,
+            "$defender->url$defender->implement",
+            false,
+            $notify,
+        );
         if ($result['status'])
         {
             $message = "$type [$id][$name] has been implemented";

@@ -6,13 +6,13 @@ use App\Models\Defender;
 
 class DefenderHealthService
 {
-    public static function perform(Defender $defender): Defender
+    public static function perform(Defender $defender, $notify = true): Defender
     {
         $response = HttpRequestService::perform(
-            $defender->inspect_method,
-            "$defender->url$defender->inspect",
+            $defender->health_method,
+            "$defender->url$defender->health",
             null,
-            true,
+            $notify,
             $defender->protection ? $defender->username : null,
             $defender->protection ? $defender->password : null,
             $defender->certification ? storage_path("app/$defender->certification") : null,

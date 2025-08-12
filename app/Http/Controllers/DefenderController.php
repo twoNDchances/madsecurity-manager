@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Defender;
+use App\Services\DefenderApplyService;
+use App\Services\DefenderHealthService;
+use App\Services\DefenderImplementService;
+use App\Services\DefenderRevokeService;
+use App\Services\DefenderSuspendService;
 use App\Services\FingerprintService;
 use App\Services\IdentificationService;
 use App\Services\TagFieldService;
@@ -116,9 +121,24 @@ class DefenderController extends Controller
         ]);
     }
 
+    private function returnOutput(Defender $defender)
+    {
+        return response()->json([
+            'output' => array_filter(
+                array_map(
+                    'trim',
+                    explode("\n", $defender->output),
+                ),
+            ),
+        ]);
+    }
+
     public function health($id)
     {
-        return response()->json([]);
+        $defender = Defender::findOrFail($id);
+        $defender = DefenderHealthService::perform($defender, false);
+        FingerprintService::generate($defender, 'Check Health');
+        return $this->returnOutput($defender);
     }
 
     public function collect($id)
@@ -144,23 +164,115 @@ class DefenderController extends Controller
         ->header('Content-Disposition', "attachment; filename=\"defender_$defender->id.json\"");
     }
 
-    public function apply($id)
+    public function apply(Request $request, $id)
     {
-        //
+        $defender = Defender::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'group_id' => 'sometimes|exists:groups,id',
+        ]);
+        if ($validator->fails())
+        {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+        $validated = $validator->validated();
+        if (isset($validated['group_id']))
+        {
+            $group = $defender->groups()->find($validated['group_id']);
+            $defender = DefenderApplyService::performEach($group, $defender, false);
+            FingerprintService::generate($defender, 'Apply');
+        }
+        else
+        {
+            $defender = DefenderApplyService::performAll($defender, false);
+            FingerprintService::generate($defender, 'Apply All');
+        }
+        return $this->returnOutput($defender);
     }
 
-    public function revoke($id)
+    public function revoke(Request $request, $id)
     {
-        //
+        $defender = Defender::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'group_id' => 'sometimes|exists:groups,id',
+        ]);
+        if ($validator->fails())
+        {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+        $validated = $validator->validated();
+        if (isset($validated['group_id']))
+        {
+            $group = $defender->groups()->find($validated['group_id']);
+            $defender = DefenderRevokeService::performEach($group, $defender, false);
+            FingerprintService::generate($defender, 'Revoke');
+        }
+        else
+        {
+            $defender = DefenderRevokeService::performAll($defender, false);
+            FingerprintService::generate($defender, 'Revoke All');
+        }
+        return $this->returnOutput($defender);
     }
 
-    public function implement($id)
+    public function implement(Request $request, $id)
     {
-        //
+        $defender = Defender::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'decision_id' => 'sometimes|exists:decisions,id',
+        ]);
+        if ($validator->fails())
+        {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+        $validated = $validator->validated();
+        if (isset($validated['decision_id']))
+        {
+            $decision = $defender->decisions()->find($validated['decision_id']);
+            $defender = DefenderImplementService::performEach($decision, $defender, false);
+            FingerprintService::generate($defender, 'Implement');
+        }
+        else
+        {
+            $defender = DefenderImplementService::performAll($defender, false);
+            FingerprintService::generate($defender, 'Implement All');
+        }
+        return $this->returnOutput($defender);
     }
 
-    public function suspend($id)
+    public function suspend(Request $request, $id)
     {
-        //
+        $defender = Defender::findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'decision_id' => 'sometimes|exists:decisions,id',
+        ]);
+        if ($validator->fails())
+        {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors(),
+            ], 400);
+        }
+        $validated = $validator->validated();
+        if (isset($validated['decision_id']))
+        {
+            $decision = $defender->decisions()->find($validated['decision_id']);
+            $defender = DefenderSuspendService::performEach($decision, $defender, false);
+            FingerprintService::generate($defender, 'Suspend');
+        }
+        else
+        {
+            $defender = DefenderSuspendService::performAll($defender, false);
+            FingerprintService::generate($defender, 'Suspend All');
+        }
+        return $this->returnOutput($defender);
     }
 }

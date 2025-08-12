@@ -56,7 +56,7 @@ class DefenderPreActionService
         NotificationService::announce($status, static::$actionName, $output);
     }
 
-    protected static function send(Defender $defender, $method, $url, $forGroupApi = true): array
+    protected static function send(Defender $defender, $method, $url, $forGroupApi = true, $completionNotice = true): array
     {
         $batchMinSize = 10000;
         $batchMaxSize = 100000;
@@ -137,7 +137,10 @@ class DefenderPreActionService
                 $status['fall']++;
             }
         }
-        NotificationService::notify(null, static::$actionName, implode("\n", $result));
+        if ($completionNotice)
+        {
+            NotificationService::notify(null, static::$actionName, implode("\n", $result));
+        }
         return match ($status['pass'] > 0)
         {
             true => [
