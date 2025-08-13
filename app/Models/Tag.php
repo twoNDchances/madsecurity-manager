@@ -77,6 +77,11 @@ class Tag extends Model
         return $this->morphMany(Token::class, 'taggable');
     }
 
+    public function assets()
+    {
+        return $this->morphMany(Asset::class, 'taggable');
+    }
+
     // Businesses
     public static bool $skipObserver = false;
 }

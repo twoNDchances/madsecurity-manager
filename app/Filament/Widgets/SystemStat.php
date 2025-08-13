@@ -29,7 +29,7 @@ class SystemStat extends BaseWidget
         $activationDefenders = Defender::where('last_status', true)->count();
         $changedToday = Defender::whereDate('updated_at', Carbon::today())->count();
         return self::$widget::stat(
-            'Activation Defenders',
+            'Defenders Activated',
             "$activationDefenders/$totalDefenders",
             'heroicon-o-server-stack',
             "$changedToday changes today",
@@ -43,7 +43,7 @@ class SystemStat extends BaseWidget
         $applicationGroups = DB::table('defenders_groups')->where('status', true)->count();
         $changedToday = DB::table('defenders_groups')->whereDate('updated_at', Carbon::today())->count();
         return self::$widget::stat(
-            'Application Groups',
+            'Groups Applied',
             "$applicationGroups/$totalAssignmentGroups",
             'heroicon-o-rectangle-stack',
             "$changedToday changes today"
@@ -57,7 +57,7 @@ class SystemStat extends BaseWidget
         $applicationDecisions = DB::table('defenders_decisions')->where('status', true)->count();
         $changedToday = DB::table('defenders_decisions')->whereDate('updated_at', Carbon::today())->count();
         return self::$widget::stat(
-            'Implementation Decisions ',
+            'Decisions Implemented',
             "$applicationDecisions/$totalAssignmentDecisions",
             'heroicon-o-scale',
             "$changedToday changes today"

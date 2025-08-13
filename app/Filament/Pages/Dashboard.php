@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\SystemLineChart;
 use App\Filament\Widgets\SystemStat;
 use App\Services\IdentificationService;
 use Filament\Pages\Page;
@@ -12,10 +13,13 @@ class Dashboard extends Page
 
     protected static string $view = 'filament.pages.dashboard';
 
+    protected ?string $subheading = 'Manager - v1.0.0';
+
     protected function getHeaderWidgets(): array
     {
         return IdentificationService::render([
             SystemStat::class,
+            SystemLineChart::class,
         ]);
     }
 }
