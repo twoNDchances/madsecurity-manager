@@ -168,7 +168,8 @@ class DefenderController extends Controller
     {
         $defender = Defender::findOrFail($id);
         $validator = Validator::make($request->all(), [
-            'group_id' => 'sometimes|exists:groups,id',
+            'group_ids' => 'sometimes|array',
+            'group_ids.*' => 'exists:groups,id',
         ]);
         if ($validator->fails())
         {
@@ -178,10 +179,10 @@ class DefenderController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        if (isset($validated['group_id']))
+        if (isset($validated['group_ids']))
         {
-            $group = $defender->groups()->find($validated['group_id']);
-            $defender = DefenderApplyService::performEach($group, $defender, false);
+            $groups = $defender->groups()->whereIn('id', $validated['group_ids']);
+            $defender = DefenderApplyService::performSpecific($groups, $defender, false);
             FingerprintService::generate($defender, 'Apply');
         }
         else
@@ -196,7 +197,8 @@ class DefenderController extends Controller
     {
         $defender = Defender::findOrFail($id);
         $validator = Validator::make($request->all(), [
-            'group_id' => 'sometimes|exists:groups,id',
+            'group_ids' => 'sometimes|array',
+            'group_ids.*' => 'exists:groups,id',
         ]);
         if ($validator->fails())
         {
@@ -206,10 +208,10 @@ class DefenderController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        if (isset($validated['group_id']))
+        if (isset($validated['group_ids']))
         {
-            $group = $defender->groups()->find($validated['group_id']);
-            $defender = DefenderRevokeService::performEach($group, $defender, false);
+            $groups = $defender->groups()->whereIn('id', $validated['group_ids']);
+            $defender = DefenderRevokeService::performSpecific($groups, $defender, false);
             FingerprintService::generate($defender, 'Revoke');
         }
         else
@@ -224,7 +226,8 @@ class DefenderController extends Controller
     {
         $defender = Defender::findOrFail($id);
         $validator = Validator::make($request->all(), [
-            'decision_id' => 'sometimes|exists:decisions,id',
+            'decision_ids' => 'sometimes|array',
+            'decision_ids.*' => 'exists:decisions,id',
         ]);
         if ($validator->fails())
         {
@@ -234,10 +237,10 @@ class DefenderController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        if (isset($validated['decision_id']))
+        if (isset($validated['decision_ids']))
         {
-            $decision = $defender->decisions()->find($validated['decision_id']);
-            $defender = DefenderImplementService::performEach($decision, $defender, false);
+            $decisions = $defender->decisions()->whereIn('id', $validated['decision_ids']);
+            $defender = DefenderImplementService::performSpecific($decisions, $defender, false);
             FingerprintService::generate($defender, 'Implement');
         }
         else
@@ -252,7 +255,8 @@ class DefenderController extends Controller
     {
         $defender = Defender::findOrFail($id);
         $validator = Validator::make($request->all(), [
-            'decision_id' => 'sometimes|exists:decisions,id',
+            'decision_ids' => 'sometimes|array',
+            'decision_ids.*' => 'exists:decisions,id',
         ]);
         if ($validator->fails())
         {
@@ -262,10 +266,10 @@ class DefenderController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        if (isset($validated['decision_id']))
+        if (isset($validated['decision_ids']))
         {
-            $decision = $defender->decisions()->find($validated['decision_id']);
-            $defender = DefenderSuspendService::performEach($decision, $defender, false);
+            $decisions = $defender->decisions()->whereIn('id', $validated['decision_ids']);
+            $defender = DefenderSuspendService::performSpecific($decisions, $defender, false);
             FingerprintService::generate($defender, 'Suspend');
         }
         else

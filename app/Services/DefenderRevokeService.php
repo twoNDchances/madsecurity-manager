@@ -36,6 +36,20 @@ class DefenderRevokeService extends DefenderPreActionService
         return $defender;
     }
 
+    public static function performSpecific($groups, Defender $defender, $notify = true): Defender
+    {
+        $rules = self::getGroupsAndReturnRules($groups, $defender);
+        self::generalAction(
+            'Defender',
+            $defender->id,
+            $defender->name,
+            $defender,
+            $rules,
+            $notify,
+        );
+        return $defender;
+    }
+
     public static function performEach(Group $group, Defender $defender, $notify = true): Defender
     {
         $rules = self::getGroupsAndReturnRules([$group], $defender);

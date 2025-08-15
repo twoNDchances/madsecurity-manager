@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Decision;
 use App\Models\Defender;
 use App\Models\Wordlist;
 use Illuminate\Support\Carbon;
@@ -31,7 +32,20 @@ class DefenderSuspendService extends DefenderPreActionService
         return $defender;
     }
 
-    public static function performEach($decision, Defender $defender, $notify = true): Defender
+    public static function performSpecific($decisions, Defender $defender, $notify = true): Defender
+    {
+        self::getDecisions($decisions, $defender);
+        self::generalAction(
+            'Defender',
+            $defender->id,
+            $defender->name,
+            $defender,
+            $notify,
+        );
+        return $defender;
+    }
+
+    public static function performEach(Decision $decision, Defender $defender, $notify = true): Defender
     {
         self::getDecisions([$decision], $defender);
         self::generalAction(
