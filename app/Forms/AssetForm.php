@@ -44,4 +44,47 @@ class AssetForm
     {
         return TagFieldService::setTags();
     }
+
+    public static function totalAsset()
+    {
+        return FilamentFormService::textInput(
+            'total_asset',
+            'Total Asset',
+            'Asset Counter',
+        )
+        ->disabled()
+        ->integer();
+    }
+
+    public static function totalResource()
+    {
+        return FilamentFormService::textInput(
+            'total_resource',
+            'Total Resource',
+            'Resource Counter',
+        )
+        ->disabled()
+        ->integer();
+    }
+
+    public static function failResource()
+    {
+        return FilamentFormService::textInput(
+            'fail_resource',
+            'Fail Resource',
+            'Fail Counter',
+        )
+        ->disabled()
+        ->integer();
+    }
+
+    public static function output()
+    {
+        return FilamentFormService::textarea(
+            'output',
+            'Analysis Results',
+        )
+        ->rows(12)
+        ->disabled();
+    }
 }

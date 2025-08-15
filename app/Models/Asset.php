@@ -13,6 +13,16 @@ class Asset extends Model
         'name',
         'path',
         'output',
+        'total_asset',
+        'total_resource',
+        'fail_resource',
+        'user_id'
+    ];
+
+    protected $casts = [
+        'total_asset' => 'integer',
+        'total_resource' => 'integer',
+        'fail_resource' => 'integer',
     ];
 
     // Belongs

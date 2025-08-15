@@ -17,36 +17,42 @@ class YamlValidation implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (!($value instanceof UploadedFile)) {
-            $fail('Tệp không hợp lệ.');
+        if (!($value instanceof UploadedFile))
+        {
+            $fail("{$attribute} invalid.");
             return;
         }
 
         $contents = @file_get_contents($value->getRealPath());
-        if ($contents === false || $contents === '') {
-            $fail('Không thể đọc nội dung YAML hoặc tệp rỗng.');
+        if ($contents === false || $contents === '')
+        {
+            $fail("Can't read the content of {$attribute}");
             return;
         }
 
-        if (!mb_check_encoding($contents, 'UTF-8')) {
-            $fail('Tệp YAML phải là UTF-8 hợp lệ.');
+        if (!mb_check_encoding($contents, 'UTF-8'))
+        {
+            $fail("{$attribute} have UTF-8 valid");
             return;
         }
 
-        // Hạn chế anchor/alias để tránh YAML bomb
-        // $anchorCount = substr_count($contents, '&') + substr_count($contents, '*');
-        // if ($anchorCount > $this->maxAnchors) {
-        //     $fail('Tệp YAML có quá nhiều anchor/alias.');
-        //     return;
-        // }
+        $anchorCount = substr_count($contents, '&') + substr_count($contents, '*');
+        if ($anchorCount > 100)
+        {
+            $fail("{$attribute} has too much anchor/alias, 100 is maximum.");
+            return;
+        }
 
-        try {
-            $data = Yaml::parse(
+        try
+        {
+            Yaml::parse(
                 $contents,
                 Yaml::PARSE_EXCEPTION_ON_INVALID_TYPE | Yaml::PARSE_DATETIME
             );
-        } catch (ParseException $e) {
-            $fail('YAML không hợp lệ: '.$e->getMessage());
+        }
+        catch (ParseException $exception)
+        {
+            $fail('YAML không hợp lệ: '.$exception->getMessage());
             return;
         }
     }

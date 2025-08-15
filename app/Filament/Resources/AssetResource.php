@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class AssetResource extends Resource
 {
@@ -56,7 +57,14 @@ class AssetResource extends Resource
     {
         return Forms\Components\Section::make('Asset Information')
         ->schema([
-
+            Forms\Components\Fieldset::make('Counter')
+            ->schema([
+                self::$form::totalAsset(),
+                self::$form::totalResource(),
+                self::$form::failResource(),
+            ])
+            ->columns(3),
+            self::$form::output(),
         ])
         ->columns(1);
     }
@@ -91,6 +99,38 @@ class AssetResource extends Resource
             'index' => Pages\ListAssets::route('/'),
             'create' => Pages\CreateAsset::route('/create'),
             'edit' => Pages\EditAsset::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return [
+            'name',
+            'total_asset',
+            'total_resource',
+            'fail_resource',
+            'getOwner.name',
+            'tags.name',
+        ];
+    }
+
+    public static function getGlobalSearchResultTitle(Model $record): string
+    {
+        return $record->name;
+    }
+
+    public static function getGlobalSearchResultDetails(Model $record): array
+    {
+        return [
+            'Name' => $record->name,
+            'Total Asset' => $record->total_asset,
+            'Total Resource' => $record->total_resource,
+            'Fail Resource' => $record->fail_resource,
         ];
     }
 }
