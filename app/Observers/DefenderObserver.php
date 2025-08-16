@@ -30,7 +30,7 @@ class DefenderObserver
     }
 
     /**
-     * Handle the Defender "updated" event.
+     * Handle the Defender "updating" event.
      */
     public function updating(Defender $defender): void
     {

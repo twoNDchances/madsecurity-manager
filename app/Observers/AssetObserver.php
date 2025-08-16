@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Asset;
 use App\Services\FingerprintService;
 use App\Services\IdentificationService;
+use Illuminate\Support\Facades\Storage;
 
 class AssetObserver
 {
@@ -29,11 +30,45 @@ class AssetObserver
     }
 
     /**
+     * Handle the Asset "updating" event.
+     */
+    public function updating(Asset $asset): void
+    {
+        if ($asset::$skipObserver)
+        {
+            return;
+        }
+        if ($asset->isDirty('path'))
+        {
+            $oldAssetPath = $asset->getOriginal('path');
+            if ($oldAssetPath && Storage::disk('local')->exists($oldAssetPath))
+            {
+                Storage::disk('local')->delete($oldAssetPath);
+            }
+        }
+    }
+
+    /**
      * Handle the Asset "updated" event.
      */
     public function updated(Asset $asset): void
     {
         FingerprintService::controlObserver($asset, 'Update');
+    }
+
+    /**
+     * Handle the Asset "deleting" event.
+     */
+    public function deleting(Asset $asset): void
+    {
+        if ($asset::$skipObserver)
+        {
+            return;
+        }
+        if ($asset->path && Storage::disk('local')->exists($asset->path))
+        {
+            Storage::disk('local')->delete($asset->path);
+        }
     }
 
     /**
