@@ -54,6 +54,10 @@ class DecisionController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
+        if ($validated['action'] == 'kill')
+        {
+            $validated['action_configuration'] = implode(',', [$validated['kill_header'], $validated['kill_path']]);
+        }
         $decision = Decision::create($validated);
         if (isset($validated['defender_ids']))
         {
@@ -80,6 +84,18 @@ class DecisionController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
+        if (in_array($validated['action'], ['deny', 'tag', 'warn']))
+        {
+            $validated['action_configuration'] = null;
+        }
+        if (in_array($validated['action'], ['deny', 'redirect', 'kill']))
+        {
+            $validated['wordlist_id'] = null;
+        }
+        if ($validated['action'] == 'kill')
+        {
+            $validated['action_configuration'] = implode(',', [$validated['kill_header'], $validated['kill_path']]);
+        }
         $decision->update($validated);
         if (isset($validated['defender_ids']))
         {

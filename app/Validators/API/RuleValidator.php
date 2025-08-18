@@ -129,7 +129,7 @@ class RuleValidator
             'integer',
             function ($attribute, $value, $fail) use ($request)
             {
-                $phase = (int) $request->input('phase');
+                $phase = (int) is_array($request) ? $request['phase'] : $request->input('phase');
                 if (!isset(self::$phases[$phase]))
                 {
                     $fail("Invalid $attribute selected.");
@@ -152,7 +152,7 @@ class RuleValidator
             'starts_with:@',
             function ($attribute, $value, $fail) use ($request)
             {
-                $targetId = (int) $request->input('target_id');
+                $targetId = (int) is_array($request) ? $request['target_id'] : $request->input('target_id');
                 $finalDatatype = Target::find($targetId)?->final_datatype;
                 if ($finalDatatype)
                 {
@@ -173,7 +173,7 @@ class RuleValidator
 
     private static function value($request)
     {
-        $comparator = $request->input('comparator');
+        $comparator = is_array($request) ? $request['comparator'] : $request->input('comparator');
         if (in_array($comparator, [
             '@equal',
             '@lessThan',

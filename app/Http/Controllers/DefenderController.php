@@ -98,6 +98,17 @@ class DefenderController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
+        if ($validated['output'])
+        {
+            $validated['output'] = array_values(array_filter(array_map(
+                'trim',
+                explode("\n", $validated['output'])
+            )));
+        }
+        if (!$validated['protection'])
+        {
+            $validated['username'] = $validated['password'] = null;
+        }
         $defender->update($validated);
         if (isset($validated['group_ids']))
         {

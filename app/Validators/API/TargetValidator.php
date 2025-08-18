@@ -124,7 +124,7 @@ class TargetValidator
             'string',
             function ($attribute, $value, $fail) use ($request)
             {
-                $datatype = $request->input('datatype');
+                $datatype = is_array($request) ? $request['datatype'] : $request->input('datatype');
                 if (!isset(self::$engines[$datatype]))
                 {
                     $fail("Invalid $attribute selected.");
@@ -147,7 +147,7 @@ class TargetValidator
             'min:0',
             function ($attribute, $value, $fail) use ($request)
             {
-                $targetId = $request->input('target_id');
+                $targetId = is_array($request) ? $request['target_id'] : $request->input('target_id');
                 $wordlist = null;
                 if ($targetId)
                 {
@@ -211,7 +211,7 @@ class TargetValidator
             'string',
             function ($attribute, $value, $fail) use ($request)
             {
-                $phase = (int) $request->input('phase');
+                $phase = (int) is_array($request) ? $request['phase'] : $request->input('phase');
                 if (!isset(self::$types[$phase]))
                 {
                     $fail("Invalid $attribute selected.");
@@ -239,7 +239,7 @@ class TargetValidator
                     $fail("The {$attribute} is invalid");
                     return;
                 }
-                $phase = (int) $request->input('phase');
+                $phase = (int) is_array($request) ? $request['phase'] : $request->input('phase');
                 if ($target->phase != $phase)
                 {
                     $fail("The phase of {$attribute} mismatch");

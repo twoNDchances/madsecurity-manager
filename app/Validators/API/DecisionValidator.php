@@ -78,7 +78,7 @@ class DecisionValidator
             'string',
             function ($attribute, $value, $fail) use ($request)
             {
-                $phaseType = $request->input('phase_type');
+                $phaseType = is_array($request) ? $request['phase_type'] : $request->input('phase_type');
                 if (!isset(self::$actions[$phaseType]))
                 {
                     $fail("Invalid $attribute selected.");
