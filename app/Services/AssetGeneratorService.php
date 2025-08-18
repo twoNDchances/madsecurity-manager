@@ -293,6 +293,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, TagValidator::build());
@@ -302,6 +303,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -310,6 +312,7 @@ class AssetGeneratorService
             'status' => true,
             'id' => $tag->id,
             'errors' => null,
+            'relationships' => null,
         ];
     }
 
@@ -323,6 +326,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, TargetValidator::build($data));
@@ -332,6 +336,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -342,10 +347,23 @@ class AssetGeneratorService
         };
         $target = Target::create($validated);
         TagFieldService::syncTags($validated, $target);
+        $relationships = [];
+        if (isset($data['tags']))
+        {
+            foreach ($data['tags'] as $tag)
+            {
+                $relationships['tags'][] = self::generateTag($tag);
+            }
+        }
+        if (isset($data['wordlist']))
+        {
+            $relationships['wordlist'][] = self::generateWordlist($data['wordlist']);
+        }
         return [
             'status' => true,
             'id' => $target->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 
@@ -359,6 +377,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, TokenValidator::build());
@@ -368,6 +387,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -396,10 +416,26 @@ class AssetGeneratorService
             $token->users()->sync($validated['user_ids']);
         }
         TagFieldService::syncTags($validated, $token);
+        $relationships = [];
+        if (isset($data['tags']))
+        {
+            foreach ($data['tags'] as $tag)
+            {
+                $relationships['tags'][] = self::generateTag($tag);
+            }
+        }
+        if (isset($data['users']))
+        {
+            foreach ($data['users'] as $user)
+            {
+                $relationships['users'][] = self::generateUser($user);
+            }
+        }
         return [
             'status' => true,
             'id' => $token->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 
@@ -413,6 +449,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, UserValidator::build());
@@ -422,6 +459,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -457,10 +495,33 @@ class AssetGeneratorService
             $user->tokens()->sync($validated['policy_ids']);
         }
         TagFieldService::syncTags($validated, $user);
+        $relationships = [];
+        if (isset($data['policies']))
+        {
+            foreach ($data['policies'] as $policy)
+            {
+                $relationships['policies'][] = self::generatePolicy($policy);
+            }
+        }
+        if (isset($data['tags']))
+        {
+            foreach ($data['tags'] as $tag)
+            {
+                $relationships['tags'][] = self::generateTag($tag);
+            }
+        }
+        if (isset($data['tokens']))
+        {
+            foreach ($data['tokens'] as $token)
+            {
+                $relationships['tokens'][] = self::generateToken($token);
+            }
+        }
         return [
             'status' => true,
             'id' => $user->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 
