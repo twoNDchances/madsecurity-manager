@@ -502,6 +502,11 @@ class AssetGeneratorService
             {
                 $relationships['policies'][] = self::generatePolicy($policy);
             }
+            $policyIds = array_values(array_filter(
+                $relationships['policies'],
+                fn($item) => $item['id'] != null,
+            ));
+            $user->policies()->sync($policyIds);
         }
         if (isset($data['tags']))
         {
