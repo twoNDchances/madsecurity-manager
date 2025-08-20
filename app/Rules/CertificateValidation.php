@@ -32,7 +32,7 @@ class CertificateValidation implements ValidationRule
         $x509 = @openssl_x509_read($content);
         if ($x509 == false)
         {
-            $fail("Content of {$attribute} ");
+            $fail("The {$attribute} field must contain a valid certificate (PEM base64).");
             return;
         }
     }

@@ -11,7 +11,6 @@ use App\Models\Policy;
 use App\Models\Rule;
 use App\Models\Tag;
 use App\Models\Target;
-use App\Models\Token;
 use App\Models\User;
 use App\Models\Word;
 use App\Models\Wordlist;
@@ -23,10 +22,10 @@ use App\Validators\API\PolicyValidator;
 use App\Validators\API\RuleValidator;
 use App\Validators\API\TagValidator;
 use App\Validators\API\TargetValidator;
-use App\Validators\API\TokenValidator;
 use App\Validators\API\UserValidator;
 use App\Validators\API\WordlistValidator;
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -43,7 +42,27 @@ class AssetGeneratorService
         );
     }
 
-    public static function generateDecision(array $data)
+    private static function sync(Model $resource, array $data, array &$relationships, string $name, callable $callback)
+    {
+        if (isset($data[$name]) && $data[$name] != null)
+        {
+            if (!isset($relationships[$name]))
+            {
+                $relationships[$name] = [];
+            }
+            foreach ($data[$name] as $resource)
+            {
+                $relationships[$name][] = $callback($resource, false);
+            }
+            $ids = array_values(array_filter(
+                $relationships[$name],
+                fn($item) => $item['id'] != null,
+            ));
+            $resource->$name()->sync($ids);
+        }
+    }
+
+    public static function generateDecision(array $data, bool $recursive = true)
     {
         if (!self::bypass('decision', 'create'))
         {
@@ -53,6 +72,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, DecisionValidator::build($data));
@@ -62,6 +82,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -69,20 +90,43 @@ class AssetGeneratorService
         {
             $validated['action_configuration'] = implode(',', [$validated['kill_header'], $validated['kill_path']]);
         }
+        $relationships = [];
+        if ($recursive)
+        {
+            if (isset($data['wordlist']) && $data['wordlist'] != null)
+            {
+                if (isset($relationships['wordlist']))
+                {
+                    $relationships['wordlist'] = [];
+                }
+                $result = self::generateWordlist($data['wordlist'], false);
+                $relationships['wordlist'][] = $result;
+                if ($result['id'] != null)
+                {
+                    $validated['wordlist_id'] = $result['id'];
+                }
+            }
+        }
         $decision = Decision::create($validated);
         if (isset($validated['defender_ids']))
         {
             $decision->defenders()->sync($validated['defender_ids']);
         }
         TagFieldService::syncTags($validated, $decision);
+        if ($recursive)
+        {
+            self::sync($decision, $data, $relationships, 'defenders', [self::class, 'generateDefender']);
+            self::sync($decision, $data, $relationships, 'tags', [self::class, 'generateTag']);
+        }
         return [
             'status' => true,
             'id' => $decision->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 
-    public static function generateDefender(array $data)
+    public static function generateDefender(array $data, bool $recursive = true)
     {
         if (!self::bypass('defender', 'create'))
         {
@@ -92,6 +136,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, DefenderValidator::build());
@@ -101,6 +146,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -114,14 +160,22 @@ class AssetGeneratorService
             $defender->decisions()->sync($validated['decision_ids']);
         }
         TagFieldService::syncTags($validated, $defender);
+        $relationships = [];
+        if ($recursive)
+        {
+            self::sync($defender, $data, $relationships, 'decisions', [self::class, 'generateDecision']);
+            self::sync($defender, $data, $relationships, 'groups', [self::class, 'generateGroup']);
+            self::sync($defender, $data, $relationships, 'tags', [self::class, 'generateTag']);
+        }
         return [
             'status' => true,
             'id' => $defender->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 
-    public static function generateGroup(array $data)
+    public static function generateGroup(array $data, bool $recursive = true)
     {
         if (!self::bypass('group', 'create'))
         {
@@ -131,6 +185,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, GroupValidator::build());
@@ -140,6 +195,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -153,14 +209,22 @@ class AssetGeneratorService
             $group->rules()->sync($validated['rule_ids']);
         }
         TagFieldService::syncTags($validated, $group);
+        $relationships = [];
+        if ($recursive)
+        {
+            self::sync($group, $data, $relationships, 'defenders', [self::class, 'generateDefender']);
+            self::sync($group, $data, $relationships, 'rules', [self::class, 'generateRule']);
+            self::sync($group, $data, $relationships, 'tags', [self::class, 'generateTag']);
+        }
         return [
             'status' => true,
             'id' => $group->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 
-    public static function generatePermission(array $data)
+    public static function generatePermission(array $data, bool $recursive = true)
     {
         if (!self::bypass('permission', 'create'))
         {
@@ -170,6 +234,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, PermissionValidator::build());
@@ -179,6 +244,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -188,14 +254,21 @@ class AssetGeneratorService
             $permission->policies()->sync($validated['policy_ids']);
         }
         TagFieldService::syncTags($validated, $permission);
+        $relationships = [];
+        if ($recursive)
+        {
+            self::sync($permission, $data, $relationships, 'policies', [self::class, 'generatePolicy']);
+            self::sync($permission, $data, $relationships, 'tags', [self::class, 'generateTag']);
+        }
         return [
             'status' => true,
             'id' => $permission->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 
-    public static function generatePolicy(array $data)
+    public static function generatePolicy(array $data, bool $recursive = true)
     {
         if (!self::bypass('policy', 'create'))
         {
@@ -205,6 +278,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, PolicyValidator::build());
@@ -214,6 +288,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -227,14 +302,22 @@ class AssetGeneratorService
             $policy->users()->sync($validated['user_ids']);
         }
         TagFieldService::syncTags($validated, $policy);
+        $relationships = [];
+        if ($recursive)
+        {
+            self::sync($policy, $data, $relationships, 'permissions', [self::class, 'generatePermission']);
+            self::sync($policy, $data, $relationships, 'users', [self::class, 'generateUser']);
+            self::sync($policy, $data, $relationships, 'tags', [self::class, 'generateTag']);
+        }
         return [
             'status' => true,
             'id' => $policy->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 
-    public static function generateRule(array $data)
+    public static function generateRule(array $data, bool $recursive = true)
     {
         if (!self::bypass('rule', 'create'))
         {
@@ -244,6 +327,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, RuleValidator::build($data));
@@ -253,6 +337,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -270,20 +355,43 @@ class AssetGeneratorService
                 default => $validated['action_configuration'] ?? null,
             };
         }
+        $relationships = [];
+        if ($recursive)
+        {
+            if (isset($data['wordlist']) && $data['wordlist'] != null)
+            {
+                if (isset($relationships['wordlist']))
+                {
+                    $relationships['wordlist'] = [];
+                }
+                $result = self::generateWordlist($data['wordlist'], false);
+                $relationships['wordlist'][] = $result;
+                if ($result['id'] != null)
+                {
+                    $validated['wordlist_id'] = $result['id'];
+                }
+            }
+        }
         $rule = Rule::create($validated);
         if (isset($validated['group_ids']))
         {
             $rule->groups()->sync($validated['group_ids']);
         }
         TagFieldService::syncTags($validated, $rule);
+        if ($recursive)
+        {
+            self::sync($rule, $data, $relationships, 'groups', [self::class, 'generateGroup']);
+            self::sync($rule, $data, $relationships, 'tags', [self::class, 'generateTag']);
+        }
         return [
             'status' => true,
             'id' => $rule->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 
-    public static function generateTag(array $data)
+    public static function generateTag(array $data, bool $recursive = true)
     {
         if (!self::bypass('tag', 'create'))
         {
@@ -316,7 +424,7 @@ class AssetGeneratorService
         ];
     }
 
-    public static function generateTarget(array $data)
+    public static function generateTarget(array $data, bool $recursive = true)
     {
         if (!self::bypass('target', 'create'))
         {
@@ -345,19 +453,28 @@ class AssetGeneratorService
             'length' => 'number',
             default => $validated['datatype'],
         };
-        $target = Target::create($validated);
-        TagFieldService::syncTags($validated, $target);
         $relationships = [];
-        if (isset($data['tags']))
+        if ($recursive)
         {
-            foreach ($data['tags'] as $tag)
+            if (isset($data['wordlist']) && $data['wordlist'] != null)
             {
-                $relationships['tags'][] = self::generateTag($tag);
+                if (isset($relationships['wordlist']))
+                {
+                    $relationships['wordlist'] = [];
+                }
+                $result = self::generateWordlist($data['wordlist'], false);
+                $relationships['wordlist'][] = $result;
+                if ($result['id'] != null)
+                {
+                    $validated['wordlist_id'] = $result['id'];
+                }
             }
         }
-        if (isset($data['wordlist']))
+        $target = Target::create($validated);
+        TagFieldService::syncTags($validated, $target);
+        if ($recursive)
         {
-            $relationships['wordlist'][] = self::generateWordlist($data['wordlist']);
+            self::sync($target, $data, $relationships, 'tags', [self::class, 'generateTag']);
         }
         return [
             'status' => true,
@@ -367,79 +484,7 @@ class AssetGeneratorService
         ];
     }
 
-    public static function generateToken(array $data)
-    {
-        if (!self::bypass('user', 'create'))
-        {
-            return [
-                'status' => false,
-                'id' => null,
-                'errors' => [
-                    'permission' => 'action denied',
-                ],
-                'relationships' => null,
-            ];
-        }
-        $validator = Validator::make($data, TokenValidator::build());
-        if ($validator->fails())
-        {
-            return [
-                'status' => false,
-                'id' => null,
-                'errors' => $validator->errors()->toArray(),
-                'relationships' => null,
-            ];
-        }
-        $validated = $validator->validated();
-        $value = null;
-        while (true)
-        {
-            $value = Str::random(48);
-            $alreadyExists = false;
-            Token::cursor()->each(function ($token) use (&$alreadyExists, $value)
-            {
-                if (Hash::check($value, $token->value))
-                {
-                    $alreadyExists = true;
-                    return false;
-                }
-            });
-            if (!$alreadyExists)
-            {
-                break;
-            }
-        }
-        $validated['value'] = Hash::make($value);
-        $token = Token::create($validated);
-        if (isset($validated['user_ids']))
-        {
-            $token->users()->sync($validated['user_ids']);
-        }
-        TagFieldService::syncTags($validated, $token);
-        $relationships = [];
-        if (isset($data['tags']))
-        {
-            foreach ($data['tags'] as $tag)
-            {
-                $relationships['tags'][] = self::generateTag($tag);
-            }
-        }
-        if (isset($data['users']))
-        {
-            foreach ($data['users'] as $user)
-            {
-                $relationships['users'][] = self::generateUser($user);
-            }
-        }
-        return [
-            'status' => true,
-            'id' => $token->id,
-            'errors' => null,
-            'relationships' => $relationships,
-        ];
-    }
-
-    public static function generateUser(array $data)
+    public static function generateUser(array $data, bool $recursive = true)
     {
         if (!self::bypass('user', 'create'))
         {
@@ -496,31 +541,10 @@ class AssetGeneratorService
         }
         TagFieldService::syncTags($validated, $user);
         $relationships = [];
-        if (isset($data['policies']))
+        if ($recursive)
         {
-            foreach ($data['policies'] as $policy)
-            {
-                $relationships['policies'][] = self::generatePolicy($policy);
-            }
-            $policyIds = array_values(array_filter(
-                $relationships['policies'],
-                fn($item) => $item['id'] != null,
-            ));
-            $user->policies()->sync($policyIds);
-        }
-        if (isset($data['tags']))
-        {
-            foreach ($data['tags'] as $tag)
-            {
-                $relationships['tags'][] = self::generateTag($tag);
-            }
-        }
-        if (isset($data['tokens']))
-        {
-            foreach ($data['tokens'] as $token)
-            {
-                $relationships['tokens'][] = self::generateToken($token);
-            }
+            self::sync($user, $data, $relationships, 'policies', [self::class, 'generatePolicy']);
+            self::sync($user, $data, $relationships, 'tags', [self::class, 'generateTag']);
         }
         return [
             'status' => true,
@@ -530,7 +554,7 @@ class AssetGeneratorService
         ];
     }
 
-    public static function generateWordlist(array $data): array
+    public static function generateWordlist(array $data, bool $recursive = true)
     {
         if (!self::bypass('wordlist', 'create'))
         {
@@ -540,6 +564,7 @@ class AssetGeneratorService
                 'errors' => [
                     'permission' => 'action denied',
                 ],
+                'relationships' => null,
             ];
         }
         $validator = Validator::make($data, WordlistValidator::build());
@@ -549,6 +574,7 @@ class AssetGeneratorService
                 'status' => false,
                 'id' => null,
                 'errors' => $validator->errors()->toArray(),
+                'relationships' => null,
             ];
         }
         $validated = $validator->validated();
@@ -573,10 +599,16 @@ class AssetGeneratorService
             }
         }
         TagFieldService::syncTags($validated, $wordlist);
+        $relationships = [];
+        if ($recursive)
+        {
+            self::sync($wordlist, $data, $relationships, 'tags', [self::class, 'generateTag']);
+        }
         return [
             'status' => true,
             'id' => $wordlist->id,
             'errors' => null,
+            'relationships' => $relationships,
         ];
     }
 }

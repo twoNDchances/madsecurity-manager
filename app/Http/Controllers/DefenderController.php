@@ -12,8 +12,11 @@ use App\Services\FingerprintService;
 use App\Services\IdentificationService;
 use App\Services\TagFieldService;
 use App\Validators\API\DefenderValidator;
+use Illuminate\Http\File;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class DefenderController extends Controller
 {
@@ -69,6 +72,28 @@ class DefenderController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
+        if (isset($validated['certification']))
+        {
+            $b64 = $validated['certification'];
+            if (is_string($b64) && str_contains($b64, 'base64,')) {
+                $b64 = explode('base64,', $b64, 2)[1];
+            }
+
+            $pem = base64_decode($b64, true);
+
+            $tmpName = Str::uuid() . '.crt';
+            $tmpPath = 'livewire-tmp/' . $tmpName;
+
+            Storage::disk('local')->put($tmpPath, $pem);
+
+            $storedPath = Storage::disk('local')->put(
+                'tls',
+                new File(storage_path('app/' . $tmpPath))
+            );
+
+            Storage::disk('local')->delete($tmpPath);
+            $validated['certification'] = $storedPath;
+        }
         $defender = Defender::create($validated);
         if (isset($validated['group_ids']))
         {

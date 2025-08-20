@@ -15,6 +15,8 @@ class DefenderValidator
             'url' => self::url($required, $id),
             'health' => self::path($required),
             'health_method' => self::method($required),
+            'inspect' => self::path($required),
+            'inspect_method' => self::method($required),
             'apply' => self::path($required),
             'apply_method' => self::method($required),
             'revoke' => self::path($required),
@@ -28,6 +30,7 @@ class DefenderValidator
             'description' => self::description(),
             'important' => self::important($required),
             'periodic' => self::periodic($required),
+            'certification' => self::certification(),
             'protection' => self::protection($required),
             'username' => self::username(),
             'password' => self::password(),
@@ -89,6 +92,39 @@ class DefenderValidator
     private static function periodic($required = true)
     {
         return ($required ? 'required' : 'sometimes') . '|boolean';
+    }
+
+    private static function certification()
+    {
+        return [
+            'nullable',
+            'string',
+            function (string $attribute, mixed $value, \Closure $fail) {
+                if (is_string($value) && str_contains($value, 'base64,')) {
+                    $value = explode('base64,', $value, 2)[1];
+                }
+
+                $decoded = base64_decode((string) $value, true);
+                if ($decoded === false) {
+                    return $fail("{$attribute} is invalid base64.");
+                }
+                $content = $decoded;
+                $looksLikePEM = str_contains($content, '-----BEGIN CERTIFICATE-----');
+                if (!$looksLikePEM)
+                {
+                    $pem = "-----BEGIN CERTIFICATE-----\n"
+                        . chunk_split(base64_encode($content), 64, "\n")
+                        . "-----END CERTIFICATE-----\n";
+                    $content = $pem;
+                }
+                $x509 = @openssl_x509_read($content);
+                if ($x509 == false)
+                {
+                    $fail("The {$attribute} field must contain a valid certificate (PEM base64).");
+                    return;
+                }
+            },
+        ];
     }
 
     private static function protection($required = true)
