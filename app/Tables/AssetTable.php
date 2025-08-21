@@ -10,6 +10,36 @@ class AssetTable
 {
     private static $action = AssetAction::class;
 
+    public static function name()
+    {
+        return FilamentTableService::text('name');
+    }
+
+    public static function totalAsset()
+    {
+        return FilamentTableService::text('total_asset', 'Total Asset')
+        ->badge()
+        ->color('primary')
+        ->numeric();
+    }
+
+    public static function totalResource()
+    {
+        return FilamentTableService::text('total_resource', 'Total Resource')
+        ->badge()
+        ->color('purple')
+        ->numeric();
+    }
+
+    public static function failResource()
+    {
+        $color = fn($state) => $state == 0 ? 'success' : 'danger';
+        return FilamentTableService::text('fail_resource', 'Fail Resource')
+        ->badge()
+        ->color($color)
+        ->numeric();
+    }
+
     public static function tags()
     {
         return TagFieldService::getTags();

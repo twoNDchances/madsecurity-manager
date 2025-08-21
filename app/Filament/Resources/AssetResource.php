@@ -73,7 +73,12 @@ class AssetResource extends Resource
     {
         return $table
         ->columns([
-            //
+            self::$table::name(),
+            self::$table::totalAsset(),
+            self::$table::totalResource(),
+            self::$table::failResource(),
+            self::$table::tags(),
+            self::$table::owner(),
         ])
         ->filters([
             //

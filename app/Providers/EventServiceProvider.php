@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Asset;
 use App\Models\Decision;
 use App\Models\Defender;
 use App\Models\Group;
@@ -13,6 +14,7 @@ use App\Models\Tag;
 use App\Models\Token;
 use App\Models\User;
 use App\Models\Wordlist;
+use App\Observers\AssetObserver;
 use App\Observers\DecisionObserver;
 use App\Observers\DefenderObserver;
 use App\Observers\GroupObserver;
@@ -46,6 +48,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Asset::observe(AssetObserver::class);
         Decision::observe(DecisionObserver::class);
         Defender::observe(DefenderObserver::class);
         Group::observe(GroupObserver::class);

@@ -5,7 +5,7 @@ namespace App\Tables\Actions;
 use App\Services\FilamentTableService;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\ViewAction as ActionsViewAction;
+use Filament\Tables\Actions\ViewAction;
 
 class FingerprintAction
 {
@@ -23,7 +23,7 @@ class FingerprintAction
 
     private static function viewFingerprint()
     {
-        return ActionsViewAction::make()
+        return ViewAction::make()
         ->modalWidth(MaxWidth::SevenExtraLarge);
     }
 
