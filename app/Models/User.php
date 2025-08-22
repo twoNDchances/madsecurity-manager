@@ -106,6 +106,11 @@ class User extends Authenticatable
         return $this->hasMany(Defender::class, 'user_id');
     }
 
+    public function getFingerprints()
+    {
+        return $this->hasMany(Fingerprint::class, 'user_id');
+    }
+
     // Relationships
     public function policies()
     {
