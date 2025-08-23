@@ -16,7 +16,7 @@ class SystemLineChart extends ChartWidget
     protected function getData(): array
     {
         return [
-            'datasets' => $this->getUserWithRecordCountsLast(),
+            'datasets' => $this->getUserWithRecordCounts(),
             'labels' => TimeService::getArrayLastFormatDates($this->filter),
         ];
     }
@@ -30,7 +30,7 @@ class SystemLineChart extends ChartWidget
         ];
     }
 
-    private function getUserWithRecordCountsLast()
+    private function getUserWithRecordCounts()
     {
         $data = [];
         $users = User::all();
@@ -38,7 +38,7 @@ class SystemLineChart extends ChartWidget
         {
             $build = [
                 'label' => $user->email,
-                'data' => $this->getRecordCountsLast($user->id),
+                'data' => $this->getRecordCounts($user->id),
             ];
             $tag = $user->tags()->first();
             if ($tag)
@@ -51,7 +51,7 @@ class SystemLineChart extends ChartWidget
         return $data;
     }
 
-    private function getRecordCountsLast($userId)
+    private function getRecordCounts($userId)
     {
         $period = TimeService::getLastDates($this->filter);
         $data = [];

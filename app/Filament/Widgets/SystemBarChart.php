@@ -16,7 +16,7 @@ class SystemBarChart extends ChartWidget
     protected function getData(): array
     {
         return [
-            'datasets' => $this->getDefenderWithRecordCountsLast(),
+            'datasets' => $this->getDefenderWithRecordCounts(),
             'labels' => TimeService::getArrayLastFormatDates($this->filter),
         ];
     }
@@ -31,7 +31,7 @@ class SystemBarChart extends ChartWidget
         ];
     }
 
-    private function getDefenderWithRecordCountsLast()
+    private function getDefenderWithRecordCounts()
     {
         $data = [];
         $defenders = Defender::all();
@@ -39,7 +39,7 @@ class SystemBarChart extends ChartWidget
         {
             $build = [
                 'label' => $defender->name,
-                'data' => $this->getRecordCountsLast($defender->id),
+                'data' => $this->getRecordCounts($defender->id),
             ];
             $tag = $defender->tags()->first();
             if ($tag)
@@ -52,7 +52,7 @@ class SystemBarChart extends ChartWidget
         return $data;
     }
 
-    private function getRecordCountsLast($defenderId)
+    private function getRecordCounts($defenderId)
     {
         $period = TimeService::getLastDates($this->filter);
         $data = [];

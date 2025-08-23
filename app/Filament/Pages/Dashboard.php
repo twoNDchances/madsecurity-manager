@@ -3,8 +3,8 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\SystemBarChart;
+use App\Filament\Widgets\SystemDoughnutChart;
 use App\Filament\Widgets\SystemLineChart;
-use App\Filament\Widgets\SystemPieChart;
 use App\Filament\Widgets\SystemRadarChart;
 use App\Filament\Widgets\SystemStat;
 use App\Services\IdentificationService;
@@ -24,7 +24,7 @@ class Dashboard extends Page
             SystemStat::class,
             SystemBarChart::class,
             SystemLineChart::class,
-            SystemPieChart::class,
+            SystemDoughnutChart::class,
             SystemRadarChart::class,
         ]);
     }
