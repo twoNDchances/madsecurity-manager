@@ -2,21 +2,21 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Fingerprint;
-use App\Models\User;
+use App\Models\Defender;
+use App\Models\Report;
 use App\Services\TimeService;
 use Filament\Widgets\ChartWidget;
 
-class SystemLineChart extends ChartWidget
+class SystemBarChart extends ChartWidget
 {
-    protected static ?string $heading = 'User Activity Line Chart';
+    protected static ?string $heading = 'Defender Report Bar Chart';
 
     public ?string $filter = '3';
 
     protected function getData(): array
     {
         return [
-            'datasets' => $this->getUserWithRecordCountsLast(),
+            'datasets' => $this->getDefenderWithRecordCountsLast(),
             'labels' => TimeService::getArrayLastFormatDates($this->filter),
         ];
     }
@@ -24,23 +24,24 @@ class SystemLineChart extends ChartWidget
     protected function getFilters(): array|null
     {
         return [
+            0 => 'Today',
             3 => 'Last 3 days',
             7 => 'Last week',
             14 => 'Last 2 weeks',
         ];
     }
 
-    private function getUserWithRecordCountsLast()
+    private function getDefenderWithRecordCountsLast()
     {
         $data = [];
-        $users = User::all();
-        foreach ($users as $user)
+        $defenders = Defender::all();
+        foreach ($defenders as $defender)
         {
             $build = [
-                'label' => $user->email,
-                'data' => $this->getRecordCountsLast($user->id),
+                'label' => $defender->name,
+                'data' => $this->getRecordCountsLast($defender->id),
             ];
-            $tag = $user->tags()->first();
+            $tag = $defender->tags()->first();
             if ($tag)
             {
                 $build['backgroundColor'] = $tag->color;
@@ -51,13 +52,13 @@ class SystemLineChart extends ChartWidget
         return $data;
     }
 
-    private function getRecordCountsLast($userId)
+    private function getRecordCountsLast($defenderId)
     {
         $period = TimeService::getLastDates($this->filter);
         $data = [];
         foreach ($period as $date) {
-            $count = Fingerprint::query()->where('user_id', $userId)->whereDate(
-                'created_at',
+            $count = Report::query()->where('defender_id', $defenderId)->whereDate(
+                'time',
                 $date->timezone(config('app.timezone', 'Asia/Ho_Chi_Minh')),
             )->count();
             $data[] = $count;
@@ -67,6 +68,6 @@ class SystemLineChart extends ChartWidget
 
     protected function getType(): string
     {
-        return 'line';
+        return 'bar';
     }
 }

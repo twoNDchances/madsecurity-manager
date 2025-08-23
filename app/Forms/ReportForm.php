@@ -37,7 +37,8 @@ class ReportForm
 
     public static function time()
     {
-        return FilamentFormService::textInput('time');
+        return FilamentFormService::dateTimePicker('time')
+        ->timezone(config('app.timezone', 'Asia/Ho_Chi_Minh'));
     }
 
     public static function userAgent()

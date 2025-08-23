@@ -12,7 +12,8 @@ class ReportTable
     public static function time()
     {
         return FilamentTableService::text('time', 'At')
-        ->dateTime('H:i:s - d/m/Y');
+        ->dateTime('H:i:s - d/m/Y')
+        ->timezone(config('app.timezone', 'Asia/Ho_Chi_Minh'));
     }
 
     public static function defender()

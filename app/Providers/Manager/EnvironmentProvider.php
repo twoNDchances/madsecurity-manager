@@ -3,6 +3,7 @@
 namespace App\Providers\Manager;
 
 use App\Exceptions\EnvironmentException;
+use DateTimeZone;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,6 +31,8 @@ class EnvironmentProvider extends ServiceProvider
             'MANAGER_HTTP_USER_AGENT' => env('MANAGER_HTTP_USER_AGENT', 'M&DSecurity@Manager'),
 
             'MANAGER_TOKEN_KEY' => env('MANAGER_TOKEN_KEY', 'X-Manager-Token'),
+
+            'MANAGER_TIMEZONE' => env('MANAGER_TIMEZONE', 'Asia/Ho_Chi_Minh'),
         ];
 
         $errors = [];
@@ -59,6 +62,14 @@ class EnvironmentProvider extends ServiceProvider
                     if (strlen($value) < 4)
                     {
                         $errors[] = "{$key} length must greater than or equal 4";
+                    }
+                }
+
+                if ($key == 'MANAGER_TIMEZONE')
+                {
+                    if (!in_array($value, DateTimeZone::listIdentifiers()))
+                    {
+                        $errors[] = "Invalid timezone";
                     }
                 }
             }

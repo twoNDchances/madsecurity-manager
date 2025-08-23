@@ -4,19 +4,11 @@ namespace App\Services;
 
 use App\Models\Defender;
 
-class DefenderHealthService
+class DefenderHealthService extends DefenderPreActionService
 {
     public static function perform(Defender $defender, $notify = true): Defender
     {
-        $response = HttpRequestService::perform(
-            $defender->health_method,
-            "$defender->url$defender->health",
-            null,
-            $notify,
-            $defender->protection ? $defender->username : null,
-            $defender->protection ? $defender->password : null,
-            $defender->certification ? storage_path("app/$defender->certification") : null,
-        );
+        $response = self::request($defender, $notify);
         $lastStatus = false;
 
         $output = null;

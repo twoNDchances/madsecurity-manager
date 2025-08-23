@@ -10,7 +10,7 @@ class FingerprintService
     {
         $user = IdentificationService::get();
         return Fingerprint::create([
-            'user_id' => $user->id,
+            'user_id' => $user?->id,
             'ip_address' => request()->getClientIp(),
             'user_agent' => request()->userAgent(),
             'http_method' => request()->method(),

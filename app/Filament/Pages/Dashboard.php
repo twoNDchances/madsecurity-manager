@@ -2,7 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Widgets\SystemBarChart;
 use App\Filament\Widgets\SystemLineChart;
+use App\Filament\Widgets\SystemPieChart;
+use App\Filament\Widgets\SystemRadarChart;
 use App\Filament\Widgets\SystemStat;
 use App\Services\IdentificationService;
 use Filament\Pages\Page;
@@ -19,7 +22,10 @@ class Dashboard extends Page
     {
         return IdentificationService::render([
             SystemStat::class,
+            SystemBarChart::class,
             SystemLineChart::class,
+            SystemPieChart::class,
+            SystemRadarChart::class,
         ]);
     }
 }

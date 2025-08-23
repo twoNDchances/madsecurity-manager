@@ -12,15 +12,7 @@ class DefenderInspectionService extends DefenderPreActionService
 
     public static function perform(Defender $defender, $notify = true): string
     {
-        $response = HttpRequestService::perform(
-            $defender->inspect_method,
-            "$defender->url$defender->inspect",
-            null,
-            false,
-            $defender->protection ? $defender->username : null,
-            $defender->protection ? $defender->password : null,
-            $defender->certification ? storage_path("app/$defender->certification") : null,
-        );
+        $response = self::request($defender, false);
         $bodyReturned = null;
         if (is_string($response))
         {

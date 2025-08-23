@@ -56,6 +56,19 @@ class DefenderPreActionService
         NotificationService::announce($status, static::$actionName, $output);
     }
 
+    public static function request(Defender $defender, $notify = true)
+    {
+        return HttpRequestService::perform(
+            $defender->health_method,
+            "$defender->url$defender->health",
+            null,
+            $notify,
+            $defender->protection ? $defender->username : null,
+            $defender->protection ? $defender->password : null,
+            $defender->certification ? storage_path("app/$defender->certification") : null,
+        );
+    }
+
     protected static function send(Defender $defender, $method, $url, $forGroupApi = true, $completionNotice = true): array
     {
         $batchMinSize = 10000;
@@ -90,15 +103,7 @@ class DefenderPreActionService
                 'wordlists' => $batches['wordlists'][$i] ?? [],
                 'words' => $batches['words'][$i] ?? [],
             ];
-            $response = HttpRequestService::perform(
-                $method,
-                $url,
-                $apiBatch,
-                false,
-                $defender->protection ? $defender->username : null,
-                $defender->protection ? $defender->password : null,
-                $defender->certification ? storage_path("app/$defender->certification") : null
-            );
+            $response = self::request($defender, false);
             if (!is_string($response))
             {
                 $message = implode(' | ', [

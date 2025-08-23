@@ -105,6 +105,7 @@ class FingerprintForm
         return FilamentFormService::dateTimePicker(
             'created_at',
             'Performed at',
-        );
+        )
+        ->timezone(config('app.timezone', 'Asia/Ho_Chi_Minh'));
     }
 }

@@ -34,7 +34,8 @@ class TokenForm
             'expired_at',
             'Expired At',
             self::$validator::expiredAt(),
-        );
+        )
+        ->timezone(config('app.timezone', 'Asia/Ho_Chi_Minh'));
     }
 
     public static function value()

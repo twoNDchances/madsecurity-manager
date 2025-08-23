@@ -25,9 +25,9 @@ class SystemStat extends BaseWidget
 
     private static function getActivationDefenders()
     {
-        $totalDefenders = Defender::count();
+        $totalDefenders = Defender::all()->count();
         $activationDefenders = Defender::where('last_status', true)->count();
-        $changedToday = Defender::whereDate('updated_at', Carbon::today())->count();
+        $changedToday = Defender::query()->whereDate('updated_at', Carbon::today())->count();
         return self::$widget::stat(
             'Defenders Activated',
             "$activationDefenders/$totalDefenders",
@@ -67,7 +67,7 @@ class SystemStat extends BaseWidget
 
     private static function getReportsRecieved()
     {
-        $reports = Report::where('created_at', Carbon::today())->count();
+        $reports = Report::query()->whereDate('created_at', Carbon::today())->count();
         return self::$widget::stat(
             'Reports Recieved',
             $reports,
