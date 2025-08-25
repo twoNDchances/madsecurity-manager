@@ -1,0 +1,127 @@
+FROM ubuntu:latest
+
+WORKDIR /manager
+
+COPY . .
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+ARG MAIN_DIR=/var/www/manager
+
+RUN apt-get update && \
+    apt-get install -y \
+        ca-certificates \
+        curl \
+        software-properties-common \
+        unzip && \
+    add-apt-repository -y ppa:ondrej/php && \
+    apt-get update && \
+    apt-get install -y \
+        php8.4 \
+        php8.4-curl \
+        php8.4-fileinfo \
+        php8.4-gettext \
+        php8.4-intl \
+        php8.4-mbstring \
+        php8.4-exif \
+        php8.4-mysqli \
+        php8.4-pdo-mysql \
+        php8.4-pdo-sqlite \
+        php8.4-xml \
+        php8.4-zip \
+        apache2 \
+        libapache2-mod-php8.4 \
+        nano && \
+    rm -rf /var/lib/apt/lists/* && \
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    # php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }" && \
+    php composer-setup.php && \
+    php -r "unlink('composer-setup.php');" && \
+    mv composer.phar /usr/local/bin/composer && \
+    cp ./default-ssl.conf /etc/apache2/sites-available/default-ssl.conf && \
+    cd / && \
+    mv /manager /var/www/. && \
+    rm -r /var/www/html && \
+    a2dissite 000-default && \
+    a2ensite default-ssl && \
+    a2enmod rewrite ssl && \
+    cd ${MAIN_DIR} && \
+    composer install && \
+    chmod +x ${MAIN_DIR}/entrypoint.sh
+
+WORKDIR ${MAIN_DIR}
+
+ENV APP_NAME="M&DSecurity/Manager" \
+    APP_ENV=production \
+    APP_KEY= \
+    APP_DEBUG=false \
+    APP_URL=https://localhost \
+    \
+    LOG_CHANNEL=stack \
+    LOG_DEPRECATIONS_CHANNEL=null \
+    LOG_LEVEL=debug \
+    \
+    DB_CONNECTION=mysql \
+    DB_HOST=127.0.0.1 \
+    DB_PORT=3306 \
+    DB_DATABASE="madsecurity-manager" \
+    DB_USERNAME=root \
+    DB_PASSWORD= \
+    \
+    BROADCAST_DRIVER=log \
+    CACHE_DRIVER=file \
+    FILESYSTEM_DISK=local \
+    QUEUE_CONNECTION=sync \
+    SESSION_DRIVER=file \
+    SESSION_LIFETIME=120 \
+    \
+    MEMCACHED_HOST=127.0.0.1 \
+    \
+    REDIS_HOST=127.0.0.1 \
+    REDIS_PASSWORD=null \
+    REDIS_PORT=6379 \
+    \
+    MAIL_MAILER=smtp \
+    MAIL_HOST=smtp.gmail.com \
+    MAIL_PORT=587 \
+    MAIL_USERNAME=null \
+    MAIL_PASSWORD=null \
+    MAIL_ENCRYPTION=tls \
+    MAIL_FROM_ADDRESS=$MAIL_USERNAME \
+    MAIL_FROM_NAME=$APP_NAME \
+    \
+    AWS_ACCESS_KEY_ID= \
+    AWS_SECRET_ACCESS_KEY= \
+    AWS_DEFAULT_REGION=us-east-1 \
+    AWS_BUCKET= \
+    AWS_USE_PATH_STYLE_ENDPOINT=false \
+    \
+    PUSHER_APP_ID= \
+    PUSHER_APP_KEY= \
+    PUSHER_APP_SECRET= \
+    PUSHER_HOST= \
+    PUSHER_PORT=443 \
+    PUSHER_SCHEME=https \
+    PUSHER_APP_CLUSTER=mt1 \
+    \
+    VITE_APP_NAME=$APP_NAME \
+    VITE_PUSHER_APP_KEY=$PUSHER_APP_KEY \
+    VITE_PUSHER_HOST=$PUSHER_HOST \
+    VITE_PUSHER_PORT=$PUSHER_PORT \
+    VITE_PUSHER_SCHEME=$PUSHER_SCHEME \
+    VITE_PUSHER_APP_CLUSTER=$PUSHER_APP_CLUSTER \
+    \
+    MANAGER_USER_NAME=root \
+    MANAGER_USER_MAIL=root@madsecurity.2ndproject.site \
+    MANAGER_USER_PASS=root \
+    \
+    MANAGER_PATH_PREFIX=manager \
+    MANAGER_HTTP_USER_AGENT="M&DSecurity/Manager" \
+    \
+    MANAGER_TOKEN_KEY=X-Manager-Token \
+    \
+    MANAGER_TIMEZONE=Asia/Ho_Chi_Minh
+
+EXPOSE 443
+
+ENTRYPOINT ["./entrypoint.sh"]
