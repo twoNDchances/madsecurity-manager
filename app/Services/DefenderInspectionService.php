@@ -16,6 +16,7 @@ class DefenderInspectionService extends DefenderPreActionService
             $defender,
             $defender->inspect_method,
             "$defender->url$defender->inspect",
+            null,
             false,
         );
         $bodyReturned = null;

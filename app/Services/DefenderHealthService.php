@@ -12,6 +12,7 @@ class DefenderHealthService extends DefenderPreActionService
             $defender,
             $defender->health_method,
             "$defender->url$defender->health",
+            null,
             $notify,
         );
         $lastStatus = false;

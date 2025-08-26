@@ -43,6 +43,7 @@ class DefenderHealthCommand extends Command
                 $defender,
                 $defender->health_method,
                 "$defender->url$defender->health",
+                null,
                 false,
             );
             if (is_string($response) || !$response->successful())
