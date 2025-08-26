@@ -12,6 +12,7 @@ RUN apt-get update && \
     apt-get install -y \
         ca-certificates \
         curl \
+        cron \
         software-properties-common \
         unzip && \
     add-apt-repository -y ppa:ondrej/php && \

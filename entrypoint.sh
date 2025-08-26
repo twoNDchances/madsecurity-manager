@@ -26,6 +26,7 @@ if [[ "${APP_ENV:-production}" = "production" ]]; then
     run_as_wwwdata php artisan route:cache  || true
     run_as_wwwdata php artisan view:cache   || true
     run_as_wwwdata php artisan filament:optimize || true
+    run_as_wwwdata php artisan defender:auto true || true
 fi
 
 exec /usr/sbin/apache2ctl -D FOREGROUND
