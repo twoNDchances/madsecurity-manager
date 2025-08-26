@@ -73,8 +73,8 @@ ENV APP_NAME="M&DSecurity/Manager" \
     CACHE_DRIVER=file \
     FILESYSTEM_DISK=local \
     QUEUE_CONNECTION=sync \
-    SESSION_DRIVER=file \
-    SESSION_LIFETIME=120 \
+    SESSION_DRIVER=database \
+    SESSION_LIFETIME=60 \
     \
     MEMCACHED_HOST=127.0.0.1 \
     \

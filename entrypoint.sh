@@ -20,13 +20,10 @@ fi
 
 run_as_wwwdata php artisan migrate --force --no-interaction
 run_as_wwwdata php artisan db:seed --force --no-interaction
-
-if [[ "${APP_ENV:-production}" = "production" ]]; then
-    run_as_wwwdata php artisan config:cache || true
-    run_as_wwwdata php artisan route:cache  || true
-    run_as_wwwdata php artisan view:cache   || true
-    run_as_wwwdata php artisan filament:optimize || true
-    run_as_wwwdata php artisan defender:auto true || true
-fi
+run_as_wwwdata php artisan config:cache
+run_as_wwwdata php artisan route:cache
+run_as_wwwdata php artisan view:cache
+run_as_wwwdata php artisan filament:optimize
+run_as_wwwdata php artisan defender:auto true
 
 exec /usr/sbin/apache2ctl -D FOREGROUND
