@@ -8,7 +8,12 @@ class DefenderHealthService extends DefenderPreActionService
 {
     public static function perform(Defender $defender, $notify = true): Defender
     {
-        $response = self::request($defender, $notify);
+        $response = self::request(
+            $defender,
+            $defender->health_method,
+            "$defender->url$defender->health",
+            $notify,
+        );
         $lastStatus = false;
 
         $output = null;

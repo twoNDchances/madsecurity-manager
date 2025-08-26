@@ -31,11 +31,20 @@ class DefenderHealthCommand extends Command
         $result = [];
         foreach ($defenders as $defender)
         {
+            if (!$defender->periodic)
+            {
+                continue;
+            }
             $data = [
                 'id' => $defender->id,
                 'last_status' => true,
             ];
-            $response = DefenderPreActionService::request($defender, false);
+            $response = DefenderPreActionService::request(
+                $defender,
+                $defender->health_method,
+                "$defender->url$defender->health",
+                false,
+            );
             if (is_string($response) || !$response->successful())
             {
                 $data['last_status'] = false;

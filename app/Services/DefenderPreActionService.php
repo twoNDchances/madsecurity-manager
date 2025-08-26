@@ -56,11 +56,11 @@ class DefenderPreActionService
         NotificationService::announce($status, static::$actionName, $output);
     }
 
-    public static function request(Defender $defender, $notify = true)
+    public static function request(Defender $defender, $method, $url, $notify = true)
     {
         return HttpRequestService::perform(
-            $defender->health_method,
-            "$defender->url$defender->health",
+            $method,
+            $url,
             null,
             $notify,
             $defender->protection ? $defender->username : null,
@@ -103,7 +103,7 @@ class DefenderPreActionService
                 'wordlists' => $batches['wordlists'][$i] ?? [],
                 'words' => $batches['words'][$i] ?? [],
             ];
-            $response = self::request($defender, false);
+            $response = self::request($defender, $method, $url ,false);
             if (!is_string($response))
             {
                 $message = implode(' | ', [
