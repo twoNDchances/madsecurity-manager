@@ -1,0 +1,23 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Logs & Debug
+*.log
+
+# Dependency cache
+vendor
+
+# OS / IDE files
+.vscode
+
+# Env / secrets
+.env
+*.env.*
+
+# Tests
+tests

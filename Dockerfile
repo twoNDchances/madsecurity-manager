@@ -31,8 +31,7 @@ RUN apt-get update && \
         php8.4-xml \
         php8.4-zip \
         apache2 \
-        libapache2-mod-php8.4 \
-        nano && \
+        libapache2-mod-php8.4 && \
     rm -rf /var/lib/apt/lists/* && \
     php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     # php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }" && \
