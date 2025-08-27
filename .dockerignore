@@ -19,5 +19,9 @@ vendor
 .env
 *.env.*
 
-# Tests
+# Tests / Docs
 tests
+AUTHORS
+CHANGES
+LICENSE
+README.*
