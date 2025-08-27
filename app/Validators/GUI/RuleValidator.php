@@ -43,7 +43,7 @@ class RuleValidator
     public static array $actions = [
         'allow' => 'Allow',
         'deny' => 'Deny',
-        'inspect' => 'Inspect',
+        'suspect' => 'Suspect',
         'request' => 'Request',
         'setScore' => 'Set Score',
         'setLevel' => 'Set Level',
@@ -192,7 +192,7 @@ class RuleValidator
     public static function severity()
     {
         return [
-            'required_if:action,inspect',
+            'required_if:action,suspect',
             'string',
             'in:' . implode(
                 ',',

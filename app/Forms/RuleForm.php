@@ -312,7 +312,7 @@ class RuleForm
         {
             'allow' => 'Stop investigation and accept approval',
             'deny' => 'Stop investigation and refuse to pass',
-            'inspect' => 'Increase Score and continue investigation',
+            'suspect' => 'Increase Score and continue investigation',
             'request' => 'Make an HTTP request and continue investigation',
             'setScore' => 'Reset total Score',
             'setLevel' => 'Reset default Rule enforcement Level',
@@ -353,7 +353,7 @@ class RuleForm
         $condition = fn($get) => !in_array(
             $get('action'),
             [
-                'inspect',
+                'suspect',
                 'request',
                 'setScore',
                 'setLevel',
@@ -377,7 +377,7 @@ class RuleForm
 
     private static function severity()
     {
-        $condition = fn($get) => $get('action') == 'inspect';
+        $condition = fn($get) => $get('action') == 'suspect';
         $colors = [
             'notice' => 'info',
             'warning' => 'warning',
