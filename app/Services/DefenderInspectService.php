@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Models\Defender;
 
-class DefenderInspectionService extends DefenderPreActionService
+class DefenderInspectService extends DefenderPreActionService
 {
     protected static ?string $actionType = 'inspect';
 

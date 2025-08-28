@@ -6,13 +6,13 @@ use App\Models\Defender;
 use App\Services\DefenderApplyService;
 use App\Services\DefenderHealthService;
 use App\Services\DefenderImplementService;
+use App\Services\DefenderInspectService;
 use App\Services\DefenderRevokeService;
 use App\Services\DefenderSuspendService;
 use App\Services\FingerprintService;
 use App\Services\IdentificationService;
 use App\Services\TagFieldService;
 use App\Validators\API\DefenderValidator;
-use Illuminate\Http\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -189,6 +189,13 @@ class DefenderController extends Controller
         return response($data)
         ->header('Content-Type', 'application/json')
         ->header('Content-Disposition', "attachment; filename=\"defender_$defender->id.json\"");
+    }
+
+    public function inspect($id)
+    {
+        $defender = Defender::findOrFail($id);
+        $body = DefenderInspectService::perform($defender, false);
+        return response()->json(json_decode($body, true));
     }
 
     public function apply(Request $request, $id)

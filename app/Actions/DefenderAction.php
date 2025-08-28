@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-use App\Services\DefenderInspectionService;
+use App\Services\DefenderInspectService;
 use App\Services\IdentificationService;
 use App\Services\DefenderApplyService;
 use App\Services\DefenderHealthService;
@@ -53,7 +53,7 @@ class DefenderAction
     {
         $content = function($record, $livewire)
         {
-            $body = DefenderInspectionService::perform($record);
+            $body = DefenderInspectService::perform($record);
             $livewire->dispatch('refreshDefenderForm');
             $html = '<pre class="p-4 rounded-lg text-lg font-mono whitespace-pre overflow-x-auto">'
 . e($body)

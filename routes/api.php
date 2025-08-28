@@ -56,6 +56,7 @@ Route::middleware(['auth.token', 'auth.capability'])
             Route::delete('delete/{id}', [DefenderController::class, 'delete'])->name('delete');
             Route::post('health/{id}', [DefenderController::class, 'health'])->name('health');
             Route::post('collect/{id}', [DefenderController::class, 'collect'])->name('collect');
+            Route::post('inspect/{id}', [DefenderController::class, 'inspect'])->name('inspect');
             Route::patch('apply/{id}', [DefenderController::class, 'apply'])->name('apply');
             Route::delete('revoke/{id}', [DefenderController::class, 'revoke'])->name('revoke');
             Route::patch('implement/{id}', [DefenderController::class, 'implement'])->name('implement');
