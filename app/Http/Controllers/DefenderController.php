@@ -61,6 +61,18 @@ class DefenderController extends Controller
         return $defender;
     }
 
+    private function decodeBase64($base64)
+    {
+        if (is_string($base64) && str_contains($base64, 'base64,')) {
+            $base64 = explode('base64,', $base64, 2)[1];
+        }
+        $pem = base64_decode($base64, true);
+        $fileName = (string) Str::uuid() . '.crt';
+        $relativePath = "tls/$fileName";
+        Storage::disk('local')->put($relativePath, $pem);
+        return $relativePath;
+    }
+
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), DefenderValidator::build());
@@ -74,25 +86,7 @@ class DefenderController extends Controller
         $validated = $validator->validated();
         if (isset($validated['certification']))
         {
-            $b64 = $validated['certification'];
-            if (is_string($b64) && str_contains($b64, 'base64,')) {
-                $b64 = explode('base64,', $b64, 2)[1];
-            }
-
-            $pem = base64_decode($b64, true);
-
-            $tmpName = Str::uuid() . '.crt';
-            $tmpPath = 'livewire-tmp/' . $tmpName;
-
-            Storage::disk('local')->put($tmpPath, $pem);
-
-            $storedPath = Storage::disk('local')->put(
-                'tls',
-                new File(storage_path('app/' . $tmpPath))
-            );
-
-            Storage::disk('local')->delete($tmpPath);
-            $validated['certification'] = $storedPath;
+            $validated['certification'] = $this->decodeBase64($validated['certification']);
         }
         $defender = Defender::create($validated);
         if (isset($validated['group_ids']))
@@ -123,12 +117,9 @@ class DefenderController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        if ($validated['output'])
+        if (isset($validated['certification']) && $validated['certification'] != null)
         {
-            $validated['output'] = array_values(array_filter(array_map(
-                'trim',
-                explode("\n", $validated['output'])
-            )));
+            $validated['certification'] = $this->decodeBase64($validated['certification']);
         }
         if (!$validated['protection'])
         {
