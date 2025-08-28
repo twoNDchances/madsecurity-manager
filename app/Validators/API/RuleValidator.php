@@ -197,11 +197,6 @@ class RuleValidator
         return 'nullable';
     }
 
-    private static function anyNumber()
-    {
-        return ;
-    }
-
     private static function specificNumber()
     {
         return 'required_if:comparator,@inRange|numeric';

@@ -52,10 +52,28 @@ class TargetController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $validated['final_datatype'] = match ($validated['engine']) {
+        $validated['final_datatype'] = match ($validated['engine'])
+        {
             'indexOf' => 'string',
             'length' => 'number',
             default => $validated['datatype'],
+        };
+        $validated['engine_configuration'] = match ($validated['engine'])
+        {
+            'indexOf' => $validated['indexOf'],
+            'addition',
+            'subtraction',
+            'multiplication',
+            'division',
+            'powerOf',
+            'remainder' => $validated['number'],
+            'hash' => $validated['hash'],
+            default => null,
+        };
+        $validated['target_id'] = match ($validated['type'])
+        {
+            'target' => $validated['superior'],
+            default => null,
         };
         $target = Target::create($validated);
         TagFieldService::syncTags($validated, $target);
@@ -83,10 +101,28 @@ class TargetController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        $validated['final_datatype'] = match ($validated['engine']) {
+        $validated['final_datatype'] = match ($validated['engine'])
+        {
             'indexOf' => 'string',
             'length' => 'number',
             default => $validated['datatype'],
+        };
+        $validated['engine_configuration'] = match ($validated['engine'])
+        {
+            'indexOf' => $validated['indexOf'],
+            'addition',
+            'subtraction',
+            'multiplication',
+            'division',
+            'powerOf',
+            'remainder' => $validated['number'],
+            'hash' => $validated['hash'],
+            default => null,
+        };
+        $validated['target_id'] = match ($validated['type'])
+        {
+            'target' => $validated['superior'],
+            default => null,
         };
         $target->update($validated);
         TagFieldService::syncTags($validated, $target);

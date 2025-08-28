@@ -54,10 +54,12 @@ class DecisionController extends Controller
             ], 400);
         }
         $validated = $validator->validated();
-        if ($validated['action'] == 'kill')
+        $validated['action_configuration'] = match ($validated['action'])
         {
-            $validated['action_configuration'] = implode(',', [$validated['kill_header'], $validated['kill_path']]);
-        }
+            'kill' => implode(',', [$validated['kill_header'], $validated['kill_path']]),
+            'redirect' => $validated['redirect'],
+            default => null,
+        };
         $decision = Decision::create($validated);
         if (isset($validated['defender_ids']))
         {
@@ -92,14 +94,12 @@ class DecisionController extends Controller
         {
             $validated['wordlist_id'] = null;
         }
-        if ($validated['action'] == 'redirect')
+        $validated['action_configuration'] = match ($validated['action'])
         {
-            $validated['action_configuration'] = $validated['redirect'];
-        }
-        if ($validated['action'] == 'kill')
-        {
-            $validated['action_configuration'] = implode(',', [$validated['kill_header'], $validated['kill_path']]);
-        }
+            'kill' => implode(',', [$validated['kill_header'], $validated['kill_path']]),
+            'redirect' => $validated['redirect'],
+            default => null,
+        };
         $decision->update($validated);
         if (isset($validated['defender_ids']))
         {

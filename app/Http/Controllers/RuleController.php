@@ -63,6 +63,8 @@ class RuleController extends Controller
             $validated['action_configuration'] = match ($validated['action'])
             {
                 'request' => implode(',', [$validated['request_method'], $validated['request_url']]),
+                'setScore' => $validated['score'],
+                'setLevel' => $validated['level'],
                 'setVariable' => implode(',', [$validated['variable_key'], $validated['variable_value']]),
                 'setHeader' => implode(',', [$validated['header_key'], $validated['header_value']]),
                 default => $validated['action_configuration'] ?? null,
@@ -103,6 +105,8 @@ class RuleController extends Controller
             $validated['action_configuration'] = match ($validated['action'])
             {
                 'request' => implode(',', [$validated['request_method'], $validated['request_url']]),
+                'setScore' => $validated['score'],
+                'setLevel' => $validated['level'],
                 'setVariable' => implode(',', [$validated['variable_key'], $validated['variable_value']]),
                 'setHeader' => implode(',', [$validated['header_key'], $validated['header_value']]),
                 default => $validated['action_configuration'] ?? null,

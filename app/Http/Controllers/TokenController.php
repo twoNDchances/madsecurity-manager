@@ -98,7 +98,7 @@ class TokenController extends Controller
         }
         $validated = $validator->validated();
         $value = null;
-        if ($request->boolean('refresh'))
+        if ($request->boolean('refresh', false))
         {
             while (true)
             {
