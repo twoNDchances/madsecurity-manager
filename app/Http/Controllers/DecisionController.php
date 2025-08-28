@@ -92,6 +92,10 @@ class DecisionController extends Controller
         {
             $validated['wordlist_id'] = null;
         }
+        if ($validated['action'] == 'redirect')
+        {
+            $validated['action_configuration'] = $validated['redirect'];
+        }
         if ($validated['action'] == 'kill')
         {
             $validated['action_configuration'] = implode(',', [$validated['kill_header'], $validated['kill_path']]);
