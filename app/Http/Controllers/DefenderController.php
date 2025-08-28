@@ -195,6 +195,7 @@ class DefenderController extends Controller
     {
         $defender = Defender::findOrFail($id);
         $body = DefenderInspectService::perform($defender, false);
+        FingerprintService::generate($defender, 'Inspect All');
         return response()->json(json_decode($body, true));
     }
 
