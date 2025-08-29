@@ -84,7 +84,7 @@ class RuleValidator
     private static array $actions = [
         'allow' => 'Allow',
         'deny' => 'Deny',
-        'inspect' => 'Inspect',
+        'suspect' => 'Suspect',
         'request' => 'Request',
         'setScore' => 'Set Score',
         'setLevel' => 'Set Level',
@@ -217,7 +217,7 @@ class RuleValidator
 
     private static function severity()
     {
-        return 'required_if:action,inspect|string|in:' . implode(
+        return 'required_if:action,suspect|string|in:' . implode(
             ',',
             array_keys(self::$severities),
         );
