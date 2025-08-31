@@ -32,7 +32,11 @@ class TargetValidator
             'getter' => 'Getter',
             'header' => 'Header',
         ],
-        4 => [],
+        4 => [
+            'target' => 'Target',
+            'getter' => 'Getter',
+            'body' => 'Body',
+        ],
     ];
 
     public static array $datatypes = [
