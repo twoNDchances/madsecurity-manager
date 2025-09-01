@@ -70,11 +70,13 @@ class TargetController extends Controller
             'hash' => $validated['hash'],
             default => null,
         };
-        $validated['target_id'] = match ($validated['type'])
+        if ($validated['type'] == 'target')
         {
-            'target' => $validated['superior'],
-            default => null,
-        };
+            $target = Target::find($validated['superior']);
+            $validated['datatype'] = $target->final_datatype;
+            $validated['name'] = $target->type . '_' . $target->name . '_' . now()->timestamp;
+            $validated['target_id'] = $validated['superior'];
+        }
         $target = Target::create($validated);
         TagFieldService::syncTags($validated, $target);
         IdentificationService::load($target, $this->relationships());
@@ -119,11 +121,13 @@ class TargetController extends Controller
             'hash' => $validated['hash'],
             default => null,
         };
-        $validated['target_id'] = match ($validated['type'])
+        if (isset($validated['type']) && $validated['type'] == 'target')
         {
-            'target' => $validated['superior'],
-            default => null,
-        };
+            $target = Target::find($validated['superior']);
+            $validated['datatype'] = $target->final_datatype;
+            $validated['name'] = $target->type . '_' . $target->name . '_' . now()->timestamp;
+            $validated['target_id'] = $validated['superior'];
+        }
         $target->update($validated);
         TagFieldService::syncTags($validated, $target);
         IdentificationService::load($target, $this->relationships());
