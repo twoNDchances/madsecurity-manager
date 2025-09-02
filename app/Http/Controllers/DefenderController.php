@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Defender;
+use App\Services\DefenderAPIService;
 use App\Services\DefenderApplyService;
 use App\Services\DefenderHealthService;
 use App\Services\DefenderImplementService;
@@ -61,18 +62,6 @@ class DefenderController extends Controller
         return $defender;
     }
 
-    private function decodeBase64($base64)
-    {
-        if (is_string($base64) && str_contains($base64, 'base64,')) {
-            $base64 = explode('base64,', $base64, 2)[1];
-        }
-        $pem = base64_decode($base64, true);
-        $fileName = (string) Str::uuid() . '.crt';
-        $relativePath = "tls/$fileName";
-        Storage::disk('local')->put($relativePath, $pem);
-        return $relativePath;
-    }
-
     public function create(Request $request)
     {
         $validator = Validator::make($request->all(), DefenderValidator::build());
@@ -86,7 +75,7 @@ class DefenderController extends Controller
         $validated = $validator->validated();
         if (isset($validated['certification']))
         {
-            $validated['certification'] = $this->decodeBase64($validated['certification']);
+            $validated['certification'] = DefenderAPIService::decodeBase64($validated['certification']);
         }
         $defender = Defender::create($validated);
         if (isset($validated['group_ids']))
@@ -119,7 +108,7 @@ class DefenderController extends Controller
         $validated = $validator->validated();
         if (isset($validated['certification']) && $validated['certification'] != null)
         {
-            $validated['certification'] = $this->decodeBase64($validated['certification']);
+            $validated['certification'] = DefenderAPIService::decodeBase64($validated['certification']);
         }
         if (!$validated['protection'])
         {

@@ -150,10 +150,12 @@ class AssetGeneratorService
             ];
         }
         $validated = $validator->validated();
-        if ($validated['action'] == 'kill')
+        $validated['action_configuration'] = match ($validated['action'])
         {
-            $validated['action_configuration'] = implode(',', [$validated['kill_header'], $validated['kill_path']]);
-        }
+            'kill' => implode(',', [$validated['kill_header'], $validated['kill_path']]),
+            'redirect' => $validated['redirect'],
+            default => null,
+        };
         $relationships = [];
         if ($recursive)
         {
@@ -239,6 +241,10 @@ class AssetGeneratorService
             ];
         }
         $validated = $validator->validated();
+        if (isset($validated['certification']))
+        {
+            $validated['certification'] = DefenderAPIService::decodeBase64($validated['certification']);
+        }
         $relationships = [];
         if ($recursive)
         {
@@ -514,6 +520,8 @@ class AssetGeneratorService
             $validated['action_configuration'] = match ($validated['action'])
             {
                 'request' => implode(',', [$validated['request_method'], $validated['request_url']]),
+                'setScore' => $validated['score'],
+                'setLevel' => $validated['level'],
                 'setVariable' => implode(',', [$validated['variable_key'], $validated['variable_value']]),
                 'setHeader' => implode(',', [$validated['header_key'], $validated['header_value']]),
                 default => $validated['action_configuration'] ?? null,
@@ -640,11 +648,31 @@ class AssetGeneratorService
             ];
         }
         $validated = $validator->validated();
-        $validated['final_datatype'] = match ($validated['engine']) {
+        $validated['final_datatype'] = match ($validated['engine'])
+        {
             'indexOf' => 'string',
             'length' => 'number',
             default => $validated['datatype'],
         };
+        $validated['engine_configuration'] = match ($validated['engine'])
+        {
+            'indexOf' => $validated['indexOf'],
+            'addition',
+            'subtraction',
+            'multiplication',
+            'division',
+            'powerOf',
+            'remainder' => $validated['number'],
+            'hash' => $validated['hash'],
+            default => null,
+        };
+        if ($validated['type'] == 'target')
+        {
+            $target = Target::find($validated['superior']);
+            $validated['datatype'] = $target->final_datatype;
+            $validated['name'] = $target->type . '_' . $target->name . '_' . now()->timestamp;
+            $validated['target_id'] = $validated['superior'];
+        }
         $relationships = [];
         if ($recursive)
         {
@@ -844,7 +872,7 @@ class AssetGeneratorService
                         'updated_at' => $now,
                     ];
                 }
-                Word::insert($records);
+                Word::query()->insert($records);
             }
         }
         TagFieldService::syncTags($validated, $wordlist);
