@@ -530,6 +530,29 @@ class AssetGeneratorService
         $relationships = [];
         if ($recursive)
         {
+            if (isset($data['target']) && $data['target'] != null)
+            {
+                if (isset($relationships['target']))
+                {
+                    $relationships['target'] = [];
+                }
+                $result = self::generateTarget($data['target'], false);
+                $relationships['target'][] = $result;
+                if (!$result['status'])
+                {
+                    self::$failResource++;
+                    return [
+                        'status' => false,
+                        'id' => null,
+                        'errors' => null,
+                        'relationships' => $relationships,
+                    ];
+                }
+                if ($result['id'] != null)
+                {
+                    $validated['target_id'] = $result['id'];
+                }
+            }
             if (isset($data['wordlist']) && $data['wordlist'] != null)
             {
                 if (isset($relationships['wordlist']))
