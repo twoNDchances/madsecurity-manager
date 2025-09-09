@@ -230,7 +230,7 @@ class ReportForm
 
     public static function ruleWordlist()
     {
-        $state = fn($record, $set) => $set('wordlist', $record->getWordlist?->alias);
+        $state = fn($record, $set) => $set('wordlist', $record->getRule?->getWordlist?->alias);
         return FilamentFormService::textInput('wordlist', 'Wordlist Alias')
         ->afterStateHydrated($state);
     }
